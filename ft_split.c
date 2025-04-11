@@ -33,7 +33,7 @@ static char	*ft_substr(char *s, int st, int ed)
 	return (str);
 }
 
-static	char	**free_all(char **str)
+char	**free_all(char **str)
 {
 	int	i;
 

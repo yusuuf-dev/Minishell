@@ -24,7 +24,7 @@ int main(int ac, char **av, char **envp)
         C_c.sa_flags = 0;
         C_d.sa_handler = SIG_IGN;
         C_c.sa_handler = signal_handler;
-
+	envp = ft_duplicate(envp);
 	while (1)
     	{
 		sigaction(SIGQUIT, &C_d, NULL);
@@ -33,6 +33,7 @@ int main(int ac, char **av, char **envp)
 		if (!p)
 		{
 			printf("exit\n");
+			free_all(envp);
 			free(p);
 			exit(0);
 		}

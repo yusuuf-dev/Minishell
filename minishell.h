@@ -7,6 +7,9 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
+#include <sys/wait.h>
+#include <sys/types.h>
 
 int     minishell(int ac, char **av);
 char    **parsing(char *p, char **envp);
@@ -25,5 +28,9 @@ int	ft_echo(int argc,char	**p, char **envp);
 int	ft_pwd(int argc,char	**argv, char **envp);
 int	ft_cd(int argc, char **argv, char **envp);
 char	**ft_export(int argc, char **argv, char **envp, int *status);
+char	**ft_unset(int argc, char **argv, char **envp, int *status);
+char	**free_all(char **str);
+char	**ft_duplicate(char **s);
+int	ft_env(int argc, char **argv, char **envp, char **envp_paths);
 
 #endif

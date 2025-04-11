@@ -6,7 +6,7 @@
 /*   By: asoufian <asoufian@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 14:05:57 by asoufian          #+#    #+#             */
-/*   Updated: 2025/04/10 14:16:25 by asoufian         ###   ########.fr       */
+/*   Updated: 2025/04/11 10:58:47 by asoufian         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,12 +65,16 @@ char    *ft_strldup(char *s, size_t     n)
 char    *ft_strdup(char *s)
 {
         size_t  i;
-        char    *p;
+	size_t	len;
+        char    *p = NULL;
 
         i = 0;
         if (!s)
                 return (NULL);
-        p = malloc(ft_strlen(s) + 1);
+	len = ft_strlen(s);
+        p = malloc(len + 1);
+	if (!p)
+		exit(-1);
         while (s[i])
         {
                 p[i] = s[i];

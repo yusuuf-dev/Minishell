@@ -19,11 +19,15 @@ char	*ft_remove_isspace(char *s)
 			while ((s[i + t] >= 9 && s[i + t] <= 13) || s[i + t] == ' ')
 				t++;
 			if (s[i + t])
+			{
 				count++;
+				i++;
+			}
 		}
-		i++;
+		else
+			i++;
 	}
-	p = malloc(i + count + 1);
+	p = malloc(i + count + 2);
 	i = t = 0;
 	while ((s[t] >= 9 && s[t] <= 13) || s[t] == ' ')
 		t++;
@@ -35,14 +39,18 @@ char	*ft_remove_isspace(char *s)
 			while ((s[t] >= 9 && s[t] <= 13) || s[t] == ' ')
 				t++;
 			if (s[t])
+			{
 				p[i] = ' ';
+				i++;
+			}
 		}
 		else
 		{
 			p[i] = s[t];
 			t++;
+			i++;
 		}
-		i++;
+//		i++;
 	}
 	p[i] = 0;
 	free(s);
