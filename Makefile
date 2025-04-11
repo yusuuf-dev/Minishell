@@ -1,7 +1,7 @@
 CC = cc
 FLAGS = -Werror -Wextra -Wall
 NAME = minishell
-SRC = minishell.c parsing.c remove_space.c ft_split.c ft_strjoin.c ft_strjoinf.c ft_echo.c ft_pwd.c ft_cd.c ft_export.c ft_unset.c ft_env.c
+SRC = minishell.c parsing.c remove_space.c ft_split.c ft_strjoin.c ft_strjoinf.c ft_echo.c ft_pwd.c ft_cd.c ft_export.c ft_unset.c ft_env.c ft_isspace_to_space.c ft_exit.c ft_atoi.c
 OBJ = $(SRC:.c=.o)
 
 %.o : %.c

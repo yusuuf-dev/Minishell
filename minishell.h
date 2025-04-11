@@ -12,7 +12,7 @@
 #include <sys/types.h>
 
 int     minishell(int ac, char **av);
-char    **parsing(char *p, char **envp);
+char    **parsing(char *p, char **envp, int *s_exit);
 size_t	ft_strlen(char *s);
 char	*ft_remove_isspace(char *s);
 char	**ft_split(char *str, char c);
@@ -32,5 +32,8 @@ char	**ft_unset(int argc, char **argv, char **envp, int *status);
 char	**free_all(char **str);
 char	**ft_duplicate(char **s);
 int	ft_env(int argc, char **argv, char **envp, char **envp_paths);
-
+void	ft_isspace_to_space(char *s);
+long	ft_atoi(char *s);
+int	ft_isdigit(int c);
+int	ft_exit(int argc, char **argv, char **envp);
 #endif

@@ -6,7 +6,7 @@
 /*   By: asoufian <asoufian@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/11 11:00:03 by asoufian          #+#    #+#             */
-/*   Updated: 2025/04/11 11:41:50 by asoufian         ###   ########.fr       */
+/*   Updated: 2025/04/11 15:26:51 by asoufian         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,15 @@ int	ft_env(int argc, char **argv, char **envp, char **envp_paths)
 	int	child_info;
 
 	(void)argc;
+	if (!argv[ar])
+	{
+		while (envp[i])
+		{
+			printf("%s\n", envp[i]);
+			i++;
+		}
+		return (0);
+	}
 	if (!ft_strchr(argv[ar], '='))
 	{
 		printf("Invalid argument\n");
@@ -53,6 +62,11 @@ int	ft_env(int argc, char **argv, char **envp, char **envp_paths)
 	}
 	else
 	{
+		if (child_pid < 0)
+		{
+			printf("error while creating a child\n");
+			exit (-1);
+		}
 		wait(&child_info);
 	}
 	free_all(new_envp);

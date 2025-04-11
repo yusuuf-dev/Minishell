@@ -14,6 +14,7 @@ int main(int ac, char **av, char **envp)
 	char *p;
 	struct sigaction C_d;
         struct sigaction C_c;
+	int	s_exit = 0;
 
 	(void)av;
 	(void)ac;
@@ -25,7 +26,7 @@ int main(int ac, char **av, char **envp)
         C_d.sa_handler = SIG_IGN;
         C_c.sa_handler = signal_handler;
 	envp = ft_duplicate(envp);
-	while (1)
+	while (1 && !s_exit)
     	{
 		sigaction(SIGQUIT, &C_d, NULL);
                 sigaction(SIGINT, &C_c, NULL);
@@ -37,9 +38,9 @@ int main(int ac, char **av, char **envp)
 			free(p);
 			exit(0);
 		}
-        	envp = parsing(p, envp);
+        	envp = parsing(p, envp, &s_exit);
         	add_history(p);
         	free(p);
     	}
-    
+   	exit(s_exit); 
 }
