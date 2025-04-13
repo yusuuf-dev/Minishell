@@ -18,7 +18,7 @@ int     ft_echo(int argc, char **p, char **envp)
 
 	(void)argc;
 	(void)envp;
-	if (!ft_strcmp("-n", p[i], 2) && !p[i][2])
+	if (!ft_strncmp("-n", p[i], 2) && !p[i][2])
 	{
 		i++;
 		while (p[i])

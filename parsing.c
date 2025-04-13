@@ -1,13 +1,7 @@
 #include "minishell.h"
 
-// char *built_cmd(char *cmd)
-// {
-//     return(NULL);
-//     return ("echo");
-// }
-
 int	execute_command(char *path, char **rdl_args, char **envp);
-
+static int	ft_built_in_cmd(char **rdl_args, char ***envp, char **env_paths, int *status, int *s_exit);
 /*void	ft_print_env(char **p)
 {
 	size_t	i = 0;
@@ -39,7 +33,7 @@ char	**ft_duplicate(char	**s)
 	return (p);
 }
 
-static char	*ft_getenv(char *s, char **envp)
+char	*ft_getenv(char *s, char **envp)
 {
 	size_t	i = 0;
 	size_t	size = 0;
@@ -47,7 +41,7 @@ static char	*ft_getenv(char *s, char **envp)
 	size = ft_strlen(s);
 	while (envp[i])
 	{
-		if (!ft_strcmp(envp[i], s, size))
+		if (!ft_strncmp(envp[i], s, size))
 		{
 			return (ft_strchr(envp[i], '=') + 1);
 		}
@@ -56,13 +50,39 @@ static char	*ft_getenv(char *s, char **envp)
 	return (NULL);
 }
 
+static char     **ft_execute_cmd(char *path, char **av, char **envp)
+{
+    int     pid;
+
+    pid = fork();
+    if (pid == 0)
+        execve(path,av,envp);
+    else if (pid > 0)
+        waitpid(pid,NULL,0);
+    return (envp);
+}
+
+static  int is_execute_file(char **rdl_args, char **env)
+{
+    if (!(rdl_args[0][0] == '.' || rdl_args[0][0] == '/'))
+        return (0);
+    if (access(rdl_args[0],F_OK) == -1)
+    {
+        perror("minishell");
+        return(1);
+    }
+    if (access(rdl_args[0],X_OK) == 0)
+        ft_execute_cmd(rdl_args[0],rdl_args,env);
+    else
+        perror("minishell");
+    return(1);
+}
 char	**parsing(char *p, char **envp, int *s_exit)
 {
     char	*env;
     char	**env_paths;
     char	**rdl_args;
     char	*path;
-    char	*temp;
     int		i = 0;
     int		status = 0;
     
@@ -73,33 +93,16 @@ char	**parsing(char *p, char **envp, int *s_exit)
 		printf("home PATH not found\n");
        		return (envp);
    	}
-    	env_paths = ft_split(env,':');
-    	temp = ft_strdup(p);
-    	ft_isspace_to_space(temp); // replaces all isspace with a space
-    	rdl_args = ft_split(temp,' ');
-    	free(temp);
-    	if (!ft_strcmp("echo", rdl_args[0], 4) && !rdl_args[0][4])
-		status = ft_echo(0, rdl_args, envp);
-	else if (!ft_strcmp("pwd", rdl_args[0], 3) && !rdl_args[0][3])
-		status = ft_pwd(0, rdl_args, envp);
-	else if (!ft_strcmp("cd", rdl_args[0], 2) && !rdl_args[0][2])
-		status = ft_cd(0, rdl_args, envp);
-	else if (!ft_strcmp("export", rdl_args[0], 6) && !rdl_args[0][6])
-		envp = ft_export(0, rdl_args, envp, &status);
-	else if (!ft_strcmp("unset", rdl_args[0], 5) && !rdl_args[0][5])
-		envp = ft_unset(0, rdl_args, envp, &status);
-	else if (!ft_strcmp("env", rdl_args[0], 3) && !rdl_args[0][4])
-		status = ft_env(0, rdl_args, envp, env_paths);
-	else if (!ft_strcmp("exit", rdl_args[0], 4) && !rdl_args[0][5])
+    env_paths = ft_split(env,':');
+    rdl_args = ft_split(ft_isspace_to_space(p),' ');
+	if (is_execute_file(rdl_args,envp))
 	{
-		status = ft_exit(0, rdl_args, envp);
-		if (status)
-			*s_exit = status;
-		if (status == 2)
-			*s_exit = 0;
-		else
-			*s_exit = 1;
+		free_all(rdl_args);
+		free_all(env_paths);
+		return (envp);
 	}
+	if (ft_built_in_cmd(rdl_args, &envp, env_paths, &status, s_exit))
+		(void)p;
 	else
 	{
 		while (env_paths[i])
@@ -110,16 +113,60 @@ char	**parsing(char *p, char **envp, int *s_exit)
 				status = execute_command(path, rdl_args, envp);
 				return (free(path), free_all(rdl_args), free_all(env_paths), envp);
 			}
-			//	execve(path,rdl_args,envp)
 			free(path);
 			i++;
 		}
+		printf("minishell: command not found: %s\n",rdl_args[0]);
 	}
 	free_all(rdl_args);
 	free_all(env_paths);
 	return (envp);
 }
 
+static int	ft_built_in_cmd(char **rdl_args, char ***envp, char **env_paths, int *status, int *s_exit)
+{
+	char	**cmds;
+	int	i;
+
+	cmds = ft_split("pwd,cd,export,echo,env,unset,exit",',');
+    i = 0;
+	while (cmds[i] && i < 10)
+	{
+        if (ft_strcmp(cmds[i],rdl_args[0]))
+        {
+			i += 9;
+          //  ft_excmd_built(rdl_args, i, envp, env_paths);
+          //  return(1);
+        }
+        i++;
+	}
+	if (i == 10)
+		*status = ft_pwd(0, rdl_args, *envp);
+	else if (i == 11)
+		*status = ft_cd(0, rdl_args, *envp);
+	else if (i == 12)
+		*envp = ft_export(0, rdl_args, *envp, status);
+	else if (i == 13)
+		*status = ft_echo(0, rdl_args, *envp);
+	else if (i == 14)
+		*status = ft_env(0, rdl_args, *envp, env_paths);
+	else if (i == 15)
+		*envp = ft_unset(0, rdl_args, *envp, status);
+	else if (i == 16)
+	{
+		*status = ft_exit(0, rdl_args, *	envp);
+		if (*status)
+			*s_exit = *status;
+		if (*status == 2)
+			*s_exit = 0;
+		else
+			*s_exit = 1;
+	}
+	if (i > 9)
+		return (1);
+	else
+		return (0);
+}
 int	execute_command(char *path, char **rdl_args, char **envp)
 {
 	int	child_pid = 0;

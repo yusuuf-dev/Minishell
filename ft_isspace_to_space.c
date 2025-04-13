@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-void	ft_isspace_to_space(char *s)
+char	*ft_isspace_to_space(char *s)
 {
 	size_t	i;
 
@@ -24,4 +24,5 @@ void	ft_isspace_to_space(char *s)
 			s[i] = ' ';
 		i++;
 	}
+	return (s);
 }

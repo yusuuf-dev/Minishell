@@ -37,7 +37,7 @@ char	**ft_export(int argc,char **argv, char **envp, int *status)
 	// if the exported variable exist in the environement file
 		while (envp[i])
 		{
-			if (!ft_strcmp(envp[i], s, size))
+			if (!ft_strncmp(envp[i], s, size))
 			{
 				s = ft_strchr(s, '=');
 				new = ft_strldup(envp[i], ft_strchr(envp[i], '=') - envp[i]);

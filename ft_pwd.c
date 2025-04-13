@@ -13,18 +13,19 @@
 #include "minishell.h"
 int     ft_pwd(int argc, char **argv, char **envp)
 {
-        char    *p;
+    char    *p;
 
 	(void)argc;
 	(void)argv;
 	(void)envp;
-        p = NULL;
-	if (!(getcwd(p, 4100)))
+    p = NULL;
+	p = getcwd(p, 4100);
+	if (!p)
 	{
 		perror("pwd");
 		return (errno);
 	}
-        printf("%s\n", p);
-        free(p);
-        return (0);
+    printf("%s\n", p);
+    free(p);
+    return (0);
 }

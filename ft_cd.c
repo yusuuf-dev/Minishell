@@ -15,11 +15,11 @@
 int     ft_cd(int argc, char **argv, char **envp)
 {
 
-    	(void)argc;
+    (void)argc;
 	(void)envp;
 	if (!argv[1])
 	{
-		if (chdir(getenv("HOME")))
+		if (chdir(ft_getenv("HOME", envp)))
 		{
 			perror("cd");
 			return (errno);
@@ -27,11 +27,22 @@ int     ft_cd(int argc, char **argv, char **envp)
 		else 
 			return (0);
 	}
-    	if (argv[2] != NULL)
+    if (argv[2] != NULL)
 	{
 		perror("cd");
 		return (errno);
-	}	
+	}
+	else if (argv[1][0] == '-' && !argv[1][1])	
+	{		
+		if (chdir(ft_getenv("OLDPWD", envp))) // the OLDPWD variabe doesn't change unlik in bash;	
+		{
+			perror("cd");
+			return (errno);
+		}
+		else 
+			return (0);
+		
+	}
 	else
 	{
 		if (chdir(argv[1]))

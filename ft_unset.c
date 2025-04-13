@@ -19,7 +19,7 @@ int	ft_find(char **s, char *find, size_t *index)
 
 	while (s[i])
 	{
-		if (!ft_strcmp(s[i], find, size))
+		if (!ft_strncmp(s[i], find, size))
 		{
 			*index = i;
 			return (1);
