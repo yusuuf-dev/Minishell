@@ -6,7 +6,7 @@
 /*   By: asoufian <asoufian@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/11 11:00:03 by asoufian          #+#    #+#             */
-/*   Updated: 2025/04/11 15:26:51 by asoufian         ###   ########.fr       */
+/*   Updated: 2025/04/13 11:29:06 by asoufian         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,8 +50,10 @@ int	ft_env(int argc, char **argv, char **envp, char **envp_paths)
 		while (envp_paths[i])
 		{
 			path = ft_strjoinf(ft_strjoin(envp_paths[i], "/"), argv[ar]);
-			if (execve(path, new_arg, new_envp) == -1)
+			if (execve(path, new_arg, new_envp))
 			{
+				perror("execve");
+				exit (errno);
 			//	printf("Error while executing execve\n");
 			//	exit(-1);
 			}
@@ -64,8 +66,9 @@ int	ft_env(int argc, char **argv, char **envp, char **envp_paths)
 	{
 		if (child_pid < 0)
 		{
-			printf("error while creating a child\n");
-			exit (-1);
+			perror("fork");
+//			printf("error while creating a child\n");
+			exit (errno);
 		}
 		wait(&child_info);
 	}

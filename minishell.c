@@ -18,7 +18,6 @@ int main(int ac, char **av, char **envp)
 
 	(void)av;
 	(void)ac;
-	(void)envp;
 	sigemptyset(&(C_d.sa_mask));
         sigemptyset(&(C_c.sa_mask));
         C_d.sa_flags = 0;

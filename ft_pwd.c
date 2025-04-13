@@ -6,7 +6,7 @@
 /*   By: asoufian <asoufian@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 15:00:27 by asoufian          #+#    #+#             */
-/*   Updated: 2025/04/10 15:05:26 by asoufian         ###   ########.fr       */
+/*   Updated: 2025/04/13 10:56:15 by asoufian         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,11 @@ int     ft_pwd(int argc, char **argv, char **envp)
 	(void)argv;
 	(void)envp;
         p = NULL;
-        p = getcwd(p, 4100);
+	if (!(getcwd(p, 4100)))
+	{
+		perror("pwd");
+		return (errno);
+	}
         printf("%s\n", p);
         free(p);
         return (0);

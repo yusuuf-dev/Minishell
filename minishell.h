@@ -10,6 +10,7 @@
 #include <string.h>
 #include <sys/wait.h>
 #include <sys/types.h>
+#include <errno.h>
 
 int     minishell(int ac, char **av);
 char    **parsing(char *p, char **envp, int *s_exit);

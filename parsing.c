@@ -8,7 +8,7 @@
 
 int	execute_command(char *path, char **rdl_args, char **envp);
 
-void	ft_print_env(char **p)
+/*void	ft_print_env(char **p)
 {
 	size_t	i = 0;
 	while (p[i])
@@ -16,7 +16,7 @@ void	ft_print_env(char **p)
 		printf("%s\n", p[i]);
 		i++;
 	}
-}
+}*/
 
 char	**ft_duplicate(char	**s)
 {
@@ -39,6 +39,23 @@ char	**ft_duplicate(char	**s)
 	return (p);
 }
 
+static char	*ft_getenv(char *s, char **envp)
+{
+	size_t	i = 0;
+	size_t	size = 0;
+
+	size = ft_strlen(s);
+	while (envp[i])
+	{
+		if (!ft_strcmp(envp[i], s, size))
+		{
+			return (ft_strchr(envp[i], '=') + 1);
+		}
+		i++;
+	}
+	return (NULL);
+}
+
 char	**parsing(char *p, char **envp, int *s_exit)
 {
     char	*env;
@@ -48,8 +65,9 @@ char	**parsing(char *p, char **envp, int *s_exit)
     char	*temp;
     int		i = 0;
     int		status = 0;
+    
 
-    	env= getenv("PATH");
+	env = ft_getenv("PATH", envp);
   	if (!env)
    	{	
 		printf("home PATH not found\n");
@@ -67,22 +85,11 @@ char	**parsing(char *p, char **envp, int *s_exit)
 	else if (!ft_strcmp("cd", rdl_args[0], 2) && !rdl_args[0][2])
 		status = ft_cd(0, rdl_args, envp);
 	else if (!ft_strcmp("export", rdl_args[0], 6) && !rdl_args[0][6])
-	{
-		ft_print_env(envp);
 		envp = ft_export(0, rdl_args, envp, &status);
-		ft_print_env(envp);
-	}
 	else if (!ft_strcmp("unset", rdl_args[0], 5) && !rdl_args[0][5])
-	{
-		ft_print_env(envp);
 		envp = ft_unset(0, rdl_args, envp, &status);
-		ft_print_env(envp);
-	}
 	else if (!ft_strcmp("env", rdl_args[0], 3) && !rdl_args[0][4])
-	{
 		status = ft_env(0, rdl_args, envp, env_paths);
-
-	}
 	else if (!ft_strcmp("exit", rdl_args[0], 4) && !rdl_args[0][5])
 	{
 		status = ft_exit(0, rdl_args, envp);
@@ -103,7 +110,7 @@ char	**parsing(char *p, char **envp, int *s_exit)
 				status = execute_command(path, rdl_args, envp);
 				return (free(path), free_all(rdl_args), free_all(env_paths), envp);
 			}
-//				execve(path,rdl_args,envp)
+			//	execve(path,rdl_args,envp)
 			free(path);
 			i++;
 		}
@@ -123,8 +130,8 @@ int	execute_command(char *path, char **rdl_args, char **envp)
 	{
 		if (execve(path, rdl_args, envp))
 		{
-			printf("Error while executing a command\n");
-			exit (-99);
+			perror("execve");
+			exit (errno);
 		}
 		exit (0);
 	}
@@ -132,8 +139,8 @@ int	execute_command(char *path, char **rdl_args, char **envp)
 	{
 		if (child_pid < 0)
 		{
-			printf("Error while creating a child\n");
-			exit (-1);
+			perror("fork");
+			exit (errno);
 		}
 		wait(&child_info);
 	}
