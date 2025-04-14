@@ -23,7 +23,7 @@ char	*ft_strjoinf(char *s1, char *s2);
 char    *ft_strldup(char *s, size_t     n);
 int     minishell(int ac, char **av);
 char    **parsing(char *p, char **envp, int *s_exit);
-char	*ft_remove_isspace(char *s);
+//char	*ft_remove_isspace(char *s);
 
 int     ft_echo(int argc,char	**p, char **envp);
 int     ft_pwd(int argc,char	**argv, char **envp);

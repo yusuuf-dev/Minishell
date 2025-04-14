@@ -49,6 +49,8 @@ char	**free_all(char **str)
 {
 	int	i;
 
+	if (!str)
+		return (NULL);
 	i = 0;
 	while (str[i])
 	{

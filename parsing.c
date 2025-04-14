@@ -3,27 +3,6 @@
 int	execute_command(char *path, char **rdl_args, char **envp);
 static int	ft_built_in_cmd(char **rdl_args, char ***envp, char **env_paths, int *status, int *s_exit);
 
-char	**ft_duplicate(char	**s)
-{
-	size_t	i;
-	size_t	size;
-	char	**p;
-
-	i = size = 0;
-	while (s[size])
-		size++;
-	p = malloc(sizeof(char *) * (size + 1));
-	if (!p)
-		exit (-1);
-	while (s[i])
-	{
-		p[i] = ft_strdup(s[i]);
-		i++;
-	}
-	p[i] = 0;
-	return (p);
-}
-
 char	*ft_getenv(char *s, char **envp)
 {
 	size_t	i = 0;
@@ -71,7 +50,7 @@ static  int is_execute_file(char **rdl_args, char **env)
 char	**parsing(char *p, char **envp, int *s_exit)
 {
     char	*env;
-    char	**env_paths;
+    char	**env_paths = NULL;
     char	**rdl_args;
     char	*path;
     int		i = 0;
@@ -79,12 +58,8 @@ char	**parsing(char *p, char **envp, int *s_exit)
     
 
 	env = ft_getenv("PATH", envp);
-  	if (!env)
-   	{	
-		printf("home PATH not found\n");
-       		return (envp);
-   	}
-    env_paths = ft_split(env,':');
+	if (env)
+    	env_paths = ft_split(env,':');
     rdl_args = ft_split(ft_isspace_to_space(p),' ');
 	if (is_execute_file(rdl_args,envp))
 	{
@@ -96,7 +71,7 @@ char	**parsing(char *p, char **envp, int *s_exit)
 		(void)p;
 	else
 	{
-		while (env_paths[i])
+		while (env && env_paths[i])
 		{
 			path = ft_strjoinf(ft_strjoin(env_paths[i], "/"),rdl_args[0]);
 			if (!access(path, F_OK) && !access(path, X_OK))
@@ -113,6 +88,7 @@ char	**parsing(char *p, char **envp, int *s_exit)
 	free_all(env_paths);
 	return (envp);
 }
+
 
 static int	ft_built_in_cmd(char **rdl_args, char ***envp, char **env_paths, int *status, int *s_exit)
 {
@@ -158,6 +134,7 @@ static int	ft_built_in_cmd(char **rdl_args, char ***envp, char **env_paths, int 
 	else
 		return (0);
 }
+
 int	execute_command(char *path, char **rdl_args, char **envp)
 {
 	int	child_pid = 0;
