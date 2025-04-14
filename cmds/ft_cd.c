@@ -6,7 +6,7 @@
 /*   By: asoufian <asoufian@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 15:05:34 by asoufian          #+#    #+#             */
-/*   Updated: 2025/04/13 10:55:57 by asoufian         ###   ########.fr       */
+/*   Updated: 2025/04/14 11:16:46 by asoufian         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,14 @@
 
 int     ft_cd(int argc, char **argv, char **envp)
 {
+  //char  *old_wd = NULL;
 
-    (void)argc;
+  (void)argc;
 	(void)envp;
-	if (!argv[1])
+  
+//  old_wd = ft_strdup(ft_getenv("PWD", envp));
+
+	if (!argv[1] || (argv[1][0] == '~' && !argv[1][1]))
 	{
 		if (chdir(ft_getenv("HOME", envp)))
 		{
@@ -25,7 +29,10 @@ int     ft_cd(int argc, char **argv, char **envp)
 			return (errno);
 		}
 		else 
+    {
+     // envp = ft_export()
 			return (0);
+    }
 	}
     if (argv[2] != NULL)
 	{
@@ -34,14 +41,16 @@ int     ft_cd(int argc, char **argv, char **envp)
 	}
 	else if (argv[1][0] == '-' && !argv[1][1])	
 	{		
-		if (chdir(ft_getenv("OLDPWD", envp))) // the OLDPWD variabe doesn't change unlik in bash;	
+		if (chdir(ft_getenv("OLDPWD", envp)))
 		{
 			perror("cd");
 			return (errno);
 		}
 		else 
+    {
+      printf("%s\n", ft_getenv("OLDPWD", envp));
 			return (0);
-		
+    }
 	}
 	else
 	{

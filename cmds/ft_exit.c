@@ -52,12 +52,12 @@ int	ft_exit(int argc, char **argv, char **envp)
 		ret = ft_atoi(argv[1]);
 		if (ret == -1)
 		{
-			printf("numeric argument required\n");
+			printf("minishell: exit: %s: numeric argument required\n", argv[1]);
 			return (2);
 
 		}
 		return(ret);
 	}
-	printf("numeric argument required\n");
+	printf("minishell: exit: %s: numeric argument required\n", argv[1]);
 	return(2);
 }

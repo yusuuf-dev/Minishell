@@ -60,7 +60,7 @@ char	**parsing(char *p, char **envp, int *s_exit)
 	env = ft_getenv("PATH", envp);
 	if (env)
     	env_paths = ft_split(env,':');
-    rdl_args = ft_split(ft_isspace_to_space(p),' ');
+  rdl_args = ft_split(ft_isspace_to_space(p),' ');
 	if (is_execute_file(rdl_args,envp))
 	{
 		free_all(rdl_args);
@@ -92,16 +92,16 @@ char	**parsing(char *p, char **envp, int *s_exit)
 
 static int	ft_built_in_cmd(char **rdl_args, char ***envp, char **env_paths, int *status, int *s_exit)
 {
-	char	**cmds;
-	int	i;
+	char  **cmds = NULL;
+	int   i;
 
-	cmds = ft_split("pwd,cd,export,echo,env,unset,exit",',');
-    i = 0;
-	while (cmds[i] && i < 10)
+	cmds = ft_split("pwd,cd,export,echo,env,unset,exit", ',');
+  i = 0;
+	while (i < 10 && cmds[i])
 	{
         if (ft_strcmp(cmds[i],rdl_args[0]))
         {
-			i += 9;
+			    i += 9;
           //  ft_excmd_built(rdl_args, i, envp, env_paths);
           //  return(1);
         }
@@ -124,11 +124,12 @@ static int	ft_built_in_cmd(char **rdl_args, char ***envp, char **env_paths, int 
 		*status = ft_exit(0, rdl_args, *	envp);
 		if (*status)
 			*s_exit = *status;
-		if (*status == 2)
-			*s_exit = 0;
+		//if (*status == 2)
+		//	*s_exit = 0;
 		else
 			*s_exit = 1;
 	}
+  free_all(cmds);
 	if (i > 9)
 		return (1);
 	else

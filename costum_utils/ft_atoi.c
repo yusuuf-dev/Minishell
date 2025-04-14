@@ -29,7 +29,9 @@ long	ft_atoi(char *s)
 		i++;
 	while (s[i] >= 48 && s[i] <= 57)
 	{
-		if ((rslt == 922337203685477580 && s[i] > 7 && sign == 1) || (rslt == 922337203685477580 && s[i] > 8 && sign == -1))
+		if ((rslt == 922337203685477580 && s[i] > '7' && sign == 1))
+      return (-1);
+    if ((rslt == 922337203685477580 && s[i] > '8' && sign == -1))
 			return (-1);
 		rslt = rslt * 10;
 		rslt = rslt + (s[i] - 48);

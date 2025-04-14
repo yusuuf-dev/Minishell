@@ -11,7 +11,7 @@ void    signal_handler(int signum)
 
 int main(int ac, char **av, char **envp)
 {
-	char *p;
+	char *p = NULL;
 	struct sigaction C_slash;
     struct sigaction C_c;
 	int	s_exit = 0;
@@ -37,9 +37,12 @@ int main(int ac, char **av, char **envp)
 			free(p);
 			exit(0);
 		}
+    if (p[0])
+    {
         envp = parsing(p, envp, &s_exit);
         add_history(p);
-        free(p);
+    }
+    free(p);
     }
    	exit(s_exit); 
 }

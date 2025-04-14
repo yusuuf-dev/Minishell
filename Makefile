@@ -1,6 +1,6 @@
 CC = cc
 FLAGS = -Werror -Wextra -Wall
-NAME = minishellFf
+NAME = minishell
 SRC = minishell.c parsing.c ./costum_utils/ft_duplicate.c ./utils/ft_strdup.c ./utils/ft_strldup.c ./utils/ft_split.c ./utils/ft_strjoin.c ./utils/ft_strlen.c ./utils/ft_strcmp.c ./utils/ft_strncmp.c ./utils/ft_strchr.c ./costum_utils/ft_strjoinf.c ./cmds/ft_echo.c ./cmds/ft_pwd.c ./cmds/ft_cd.c ./cmds/ft_export.c ./cmds/ft_unset.c ./cmds/ft_env.c ./costum_utils/ft_isspace_to_space.c ./cmds/ft_exit.c ./costum_utils/ft_atoi.c
 OBJ = $(SRC:.c=.o)
 
@@ -9,6 +9,7 @@ OBJ = $(SRC:.c=.o)
 
 $(NAME) : $(OBJ)
 	$(CC) $(FLAGS) $(OBJ) -lreadline -g -o $(NAME)
+#	$(CC) $(FLAGS) $(OBJ) -lreadline -fsanitize=address -O1 -fno-omit-frame-pointer -g -o $(NAME)
 
 all : $(NAME)
 
