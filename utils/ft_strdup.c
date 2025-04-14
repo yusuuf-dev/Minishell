@@ -1,45 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_echo.c                                          :+:      :+:    :+:   */
+/*   ft_strdup.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: asoufian <asoufian@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/10 14:23:00 by asoufian          #+#    #+#             */
-/*   Updated: 2025/04/13 10:57:07 by asoufian         ###   ########.fr       */
+/*   Created: 2025/04/10 14:04:00 by asoufian          #+#    #+#             */
+/*   Updated: 2025/04/14 09:11:15 by asoufian         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../minishell.h"
 
-int     ft_echo(int argc, char **p, char **envp)
+char    *ft_strdup(char *s)
 {
-	size_t	i = 1;
+        size_t  i;
+        char    *p;
 
-	(void)argc;
-	(void)envp;
-	if (!ft_strncmp("-n", p[i], 2) && !p[i][2])
-	{
-		i++;
-		while (p[i])
-		{
-			if (i > 2)
-				printf(" ");
-			printf("%s", p[i]);
-			i++;
-		}
-	}
-	else
-	{
-		while (p[i])
-		{
-			if (i > 1)
-				printf(" ");
-			printf("%s", p[i]);
-			i++;
-		}
-		printf("\n");
-	}
-        return (0);
+        i = 0;
+        if (!s)
+                return (NULL);
+        p = malloc(ft_strlen(s) + 1);
+        while (s[i])
+        {
+                p[i] = s[i];
+                i++;
+        }
+        p[i] = 0;
+        return (p);
 }
-

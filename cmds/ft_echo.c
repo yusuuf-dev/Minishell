@@ -1,28 +1,45 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_isspace_to_space.c                              :+:      :+:    :+:   */
+/*   ft_echo.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: asoufian <asoufian@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/11 13:43:56 by asoufian          #+#    #+#             */
-/*   Updated: 2025/04/11 13:52:34 by asoufian         ###   ########.fr       */
+/*   Created: 2025/04/10 14:23:00 by asoufian          #+#    #+#             */
+/*   Updated: 2025/04/13 10:57:07 by asoufian         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../minishell.h"
 
-char	*ft_isspace_to_space(char *s)
+int     ft_echo(int argc, char **p, char **envp)
 {
-	size_t	i;
+	size_t	i = 1;
 
-	i = 0;
-
-	while (s[i])
+	(void)argc;
+	(void)envp;
+	if (!ft_strncmp("-n", p[i], 2) && !p[i][2])
 	{
-		if ((s[i] <= 13 && s[i] >= 11) || s[i] == 9)
-			s[i] = ' ';
 		i++;
+		while (p[i])
+		{
+			if (i > 2)
+				printf(" ");
+			printf("%s", p[i]);
+			i++;
+		}
 	}
-	return (s);
+	else
+	{
+		while (p[i])
+		{
+			if (i > 1)
+				printf(" ");
+			printf("%s", p[i]);
+			i++;
+		}
+		printf("\n");
+	}
+        return (0);
 }
+

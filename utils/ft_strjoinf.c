@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../minishell.h"
 
 char    *ft_strjoinf(char *s1, char *s2)
 {
@@ -39,48 +39,3 @@ char    *ft_strjoinf(char *s1, char *s2)
         free(s1);
         return (p);
 }
-char    *ft_strldup(char *s, size_t     n)
-{
-        size_t  i;
-        size_t  len;
-        char    *p;
-
-        i = 0;
-        if (!s)
-                return (NULL);
-        len = ft_strlen(s);
-        if (n <= len)
-                p = malloc(n + 1);
-        else
-                p = malloc(len + 1);
-        while (s[i] && i < n)
-        {
-                p[i] = s[i];
-                i++;
-        }
-        p[i] = 0;
-        return (p);
-}
-
-char    *ft_strdup(char *s)
-{
-        size_t  i;
-	size_t	len;
-        char    *p = NULL;
-
-        i = 0;
-        if (!s)
-                return (NULL);
-	len = ft_strlen(s);
-        p = malloc(len + 1);
-	if (!p)
-		exit(-1);
-        while (s[i])
-        {
-                p[i] = s[i];
-                i++;
-        }
-        p[i] = 0;
-        return (p);
-}
-
