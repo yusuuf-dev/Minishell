@@ -2,15 +2,6 @@
 
 int	execute_command(char *path, char **rdl_args, char **envp);
 static int	ft_built_in_cmd(char **rdl_args, char ***envp, char **env_paths, int *status, int *s_exit);
-/*void	ft_print_env(char **p)
-{
-	size_t	i = 0;
-	while (p[i])
-	{
-		printf("%s\n", p[i]);
-		i++;
-	}
-}*/
 
 char	**ft_duplicate(char	**s)
 {

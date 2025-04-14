@@ -25,21 +25,19 @@ int     minishell(int ac, char **av);
 char    **parsing(char *p, char **envp, int *s_exit);
 char	*ft_remove_isspace(char *s);
 
-
-
-
-int	ft_echo(int argc,char	**p, char **envp);
-int	ft_pwd(int argc,char	**argv, char **envp);
-int	ft_cd(int argc, char **argv, char **envp);
+int     ft_echo(int argc,char	**p, char **envp);
+int     ft_pwd(int argc,char	**argv, char **envp);
+int     ft_cd(int argc, char **argv, char **envp);
 char	**ft_export(int argc, char **argv, char **envp, int *status);
 char	**ft_unset(int argc, char **argv, char **envp, int *status);
+int     ft_env(int argc, char **argv, char **envp, char **envp_paths);
+int     ft_exit(int argc, char **argv, char **envp);
+
 char	**free_all(char **str);
 char	**ft_duplicate(char **s);
-int	ft_env(int argc, char **argv, char **envp, char **envp_paths);
 char	*ft_isspace_to_space(char *s);
 long	ft_atoi(char *s);
-int	ft_isdigit(int c);
-int	ft_exit(int argc, char **argv, char **envp);
+int     ft_isdigit(int c);
 char	*ft_getenv(char *s, char **envp);
 
 

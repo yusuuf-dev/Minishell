@@ -6,7 +6,7 @@
 /*   By: asoufian <asoufian@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/25 19:49:41 by asoufian          #+#    #+#             */
-/*   Updated: 2025/04/10 09:34:19 by asoufian         ###   ########.fr       */
+/*   Updated: 2025/04/10 14:14:20 by asoufian         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,7 @@ char	*ft_strdup(char *s)
 	return (p);
 }
 
-char	*ft_strjoin(char *s1, char *s2)
+char	*ft_strjoinf(char *s1, char *s2)
 {
 	size_t	i;
 	size_t	t;
@@ -274,23 +274,24 @@ int	ft_cd(char	*p1)
 	printf("curr: %s\n", p);
 }
 
-int	ft_export(char *p1, char ***envp)
+char	**ft_export(char *p1, char ***envp, int *status)
 {
 	char **temp;
+	char	**p;
 	char	*s;
 	char	*new;
+	char	*t;
 	int	size;
 	size_t	i;
 
 	i = 0;
 	size = 0;
 	temp = *envp;
-	if (*(ft_strchr(p1, 't') + 1) != ' ')
-	{
-		printf("Command not found\n");
-		return (-1);
-	}
-	s = ft_strchr(p1, ' ') + 1;
+		//return (*envp);
+	if (!ft_strchr(p1, '='))
+		return (*envp);
+//	s = ft_strchr(p1, ' ') + 1;
+	s = p1;
 	while (s[size] && s[size] != '=')
 		size++;
 	// if the exported variable exist in the environement file
@@ -299,17 +300,124 @@ int	ft_export(char *p1, char ***envp)
 		if (!ft_strcmp(temp[i], s, size))
 		{
 			s = ft_strchr(s, '=');
+			if (ft_strchr(s, ' '))
+				t = ft_strldup(s, ft_strchr(s, ' ') - s);
+			else
+				t = ft_strdup(s);
 			new = ft_strldup(temp[i], ft_strchr(temp[i], '=') - temp[i]);
-//			new = ft_strjoin(s, "=");
-			new = ft_strjoin(new, s);
+			new = ft_strjoinf(new, t);
+			free(t);
 		//	free(temp[i]); the environement is not stored in the heap :)
+		//	what if I allocated the environement in the heap ???
 			temp[i] = new;
-			return (0);
+			*status = 0;
+			return (temp);
 		}
 		i++;
 	}
-	
+	// copying the old variables and making space for the new one;
+	size = 0;
+	while (temp[size])
+		size++;
+	p = malloc(sizeof(char *) * (size + 2));
+	if (!p) ///////////////// CHECK FOR OTHER MALLOCS !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	{
+		*status = -1;
+		return (NULL);
+	}
+	p[size + 1] = NULL;
+	size = 0;
+	while (temp[size])
+	{
+		p[size] = ft_strdup(temp[size]);
+		size++;
+	}
+	if (ft_strchr(s, ' '))
+		p[size] = ft_strldup(s, ft_strchr(s, ' ') - s);
+	else
+		p[size] = ft_strdup(s);
+	*status = 0;
+	return (p);
+//	envp = &p;
 }
+
+char	**ft_unset(char *p1, char **envp, int *status)
+{
+	char	**temp = envp;
+	char	**p;
+	char	*s;
+	char	*t;
+	size_t	i = 0;
+	size_t	size = 0;
+	size_t	size_env = 0;
+	int	found = 0;
+
+//	s = ft_strchr(p1, ' ');
+	if (!s)
+		return (temp);
+//	s++;
+	s = p1;
+	while (s[size] && s[size] != ' ')
+		size++;
+	while (temp[i])
+	{
+		if (ft_strcmp(temp[i], s, size))
+			found++;
+		i++;
+	}
+	if (found)
+	{
+		i = 0;
+		while (temp[size_env])
+			size_env++;
+		p = malloc(sizeof(char *) * (size_env));
+		if (!p)
+			exit(-1);
+		p[size_env] = NULL;
+		size_env = 0;
+		while (temp[i])
+		{	
+			if (ft_strcmp(temp[i], s, size))
+			{
+				p[size_env] = ft_strdup(temp[i]);
+				size_env++;
+			}
+				free(temp[i]);
+			i++;
+		}
+		free(temp);
+		return (p);
+	}
+	return (temp);
+}
+
+int	ft_env(int argc, char **argv, char **envp)
+{
+	size_t	i = 0;
+	int	status;
+	int	child_info;
+	int	child_pid;
+	
+	status = 0;
+	while (argv[i])
+	{
+		if (!ft_strchr(argv[i], '='))
+			i++;
+		envp = ft_export(argv[i], envp, &status);
+		child_pid = fork();
+		if (!child_pid)
+		{
+
+		}
+		else
+		{
+			wait(&child_info);
+		}
+		if (chil
+	}
+
+}
+
 int	main(int argc, char **argv, char **envp)
 {
 	struct sigaction C_d;
@@ -322,14 +430,15 @@ int	main(int argc, char **argv, char **envp)
 	int	child_pid = 0;
 	int	child_info;
 	int	status;
-	arg = malloc(sizeof(char*) * 3);
+	char	*re_run = NULL;
+/*	arg = malloc(sizeof(char*) * 3);
 	arg[0] = NULL;
 	arg[1] = NULL;
 	arg[2] = NULL;
 	t_cmd_history his;
 	his.next = NULL;
 	his.s = NULL;
-	t_cmd_history *temp;
+	t_cmd_history *temp;*/
 	p1 = NULL;
 	g_signum = 0;
 	sigemptyset(&(C_d.sa_mask));
@@ -341,14 +450,14 @@ int	main(int argc, char **argv, char **envp)
 	char *cwd = NULL;
 	cwd = getcwd(cwd, 4100);
 	printf("cwd: %s\n", cwd);
-	cwd = ft_strjoin(cwd, ": ");
+	cwd = ft_strjoinf(cwd, ": ");
 	printf("%s\n", getenv("SHELL"));
 	int i = 0;
-	while (envp[i] != NULL)
+/*	while (envp[i] != NULL)
 	{
 		printf("%s\n", envp[i]);
 		i++;
-	}
+	}*/
 	while (1)
 	{
 		sigaction(SIGQUIT, &C_d, NULL);
@@ -389,12 +498,45 @@ int	main(int argc, char **argv, char **envp)
 		}
 		else if (!ft_strcmp("export", p1, 6))
 		{
-			status = ft_export(p1, &envp);	
-			i = 0;
-			while (envp[i] != NULL)
+			if (*(ft_strchr(p1, 't') + 1) != ' ')
+				printf("Command not found\n");
+			else
 			{
-				printf("%s\n", envp[i]);
-				i++;
+				re_run = ft_strchr(p1, ' ') + 1;
+				envp = ft_export(re_run, &envp, &status);
+				while (ft_strchr(re_run, ' '))
+				{
+					re_run = ft_strchr(re_run, ' ') + 1;
+					envp = ft_export(re_run, &envp, &status);
+					re_run++;
+				}
+				i = 0;
+				while (envp[i] != NULL)
+				{
+					printf("%s\n", envp[i]);
+					i++;
+				}
+			}
+		}
+		else if (!ft_strcmp ("unset", p1, 5))
+		{
+			if (*(ft_strchr(p1, 't') + 1) != ' ')
+				printf("Command not found\n");
+			else
+			{
+				re_run = ft_strchr(p1, ' ') + 1;
+				envp = ft_unset(re_run, envp, &status);							  while (ft_strchr(re_run, ' '))
+				{
+					re_run = ft_strchr(re_run, ' ') + 1;
+					envp = ft_unset(re_run, envp, &status);
+					re_run++;
+				}
+				i = 0;
+				while (envp[i] != NULL)
+				{
+					printf("%s\n", envp[i]);
+					i++;
+				}
 			}
 		}
 		else
