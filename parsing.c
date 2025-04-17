@@ -110,7 +110,7 @@ static int	ft_built_in_cmd(char **rdl_args, char ***envp, char **env_paths, int 
 	if (i == 10)
 		*status = ft_pwd(0, rdl_args, *envp);
 	else if (i == 11)
-		*status = ft_cd(0, rdl_args, *envp);
+		*status = ft_cd(0, rdl_args, envp);
 	else if (i == 12)
 		*envp = ft_export(0, rdl_args, *envp, status);
 	else if (i == 13)

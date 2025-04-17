@@ -11,14 +11,14 @@
 /* ************************************************************************** */
 
 #include "../minishell.h"
-
+// check \t shenanigas 
 int     ft_echo(int argc, char **p, char **envp)
 {
 	size_t	i = 1;
 
 	(void)argc;
 	(void)envp;
-	if (!ft_strncmp("-n", p[i], 2) && !p[i][2])
+	if (p[i] && !ft_strncmp("-n", p[i], 2) && !p[i][2])
 	{
 		i++;
 		while (p[i])
@@ -40,6 +40,6 @@ int     ft_echo(int argc, char **p, char **envp)
 		}
 		printf("\n");
 	}
-        return (0);
+    return (0);
 }
 
