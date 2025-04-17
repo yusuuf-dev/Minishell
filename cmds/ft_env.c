@@ -36,7 +36,7 @@ int	ft_env(int argc, char **argv, char **envp, char **envp_paths)
 	}
 	if (!ft_strchr(argv[ar], '='))
 	{
-		ft_putstr(2, "Invalid argument\n");
+		ft_putstr("Invalid argument\n", 2);
 //		printf("Invalid argument\n");
 		return (-1);
 	}
