@@ -23,11 +23,14 @@ int     ft_cd(int argc, char **argv, char ***envp)
 	int		f = 0;
 	int		status;	// this does nothing yet
 
+	/*minishell : unset HOME
+	minishell : cd
+	*/
   	(void)argc;
 	(void)envp;
 
 	if (argv[1] && argv[2] != NULL) // if we have more than 1 argument, the program returns error
-		return (perror("cd"), errno);
+		return (ft_putstr("minishell: cd: too many arguments\n", 2), errno);
 	t = argv[1]; // this is for when we want to use the $HOME env variable
 	pwd_variable = ft_calloc(sizeof (char *) * 4);
 	// pwd_variable[4] = argv[1]; // remember to change the allocation above if you want to uncomment this line
@@ -44,6 +47,10 @@ int     ft_cd(int argc, char **argv, char ***envp)
 		argv[1] = ft_getenv("HOME", *envp);
 	else if (argv[1][0] != '/' && argv[1][0] != '.')
 		f = search_cdpath_var(argv, envp, pwd_variable);
+	if (argv[1] == NULL && (t == NULL || ft_check_spaces(t)))
+		return (ft_putstr("minishell: cd: HOME not set\n", 2), argv[1] = t, free(pwd_variable[1]), free(pwd_variable), errno);
+	if (argv[1] == NULL && t[0] == '-')
+		return (ft_putstr("minishell: cd: OLDPWD not set\n", 2), argv[1] = t, free(pwd_variable[1]), free(pwd_variable), errno);
 	if (!f && chdir(argv[1]))
 		return (argv[1] = t, perror("cd"), free(pwd_variable[1]), free(pwd_variable), errno);
 	p = update_env_pwd(pwd_variable, envp, &status);

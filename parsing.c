@@ -47,6 +47,27 @@ static  int is_execute_file(char **rdl_args, char **env)
         perror("minishell");
     return(1);
 }
+static void     convert_rdl_vars(char **env, char  **rdl_args)
+{
+    int i;
+	char	*temp;
+    i = 1;
+    while(rdl_args[i])
+    {
+		temp = rdl_args[i];
+        if (ft_strcmp(rdl_args[i],"~")) // UPDATE ME "ls ~asoufian"
+		{
+            rdl_args[i] = ft_strdup(ft_getenv("HOME", env));
+			free(temp);
+		}
+        else if(rdl_args[i][0] == '$' && rdl_args[i][1] && rdl_args[i][1] != '$')
+		{
+            rdl_args[i] = ft_strdup(ft_getenv(&rdl_args[i][1], env));
+			free(temp);
+		}
+        i++;
+    }
+}
 char	**parsing(char *p, char **envp, int *s_exit)
 {
     char	*env;
@@ -60,7 +81,8 @@ char	**parsing(char *p, char **envp, int *s_exit)
 	env = ft_getenv("PATH", envp);
 	if (env)
     	env_paths = ft_split(env,':');
-  rdl_args = ft_split(ft_isspace_to_space(p),' ');
+ 	rdl_args = ft_split(ft_isspace_to_space(p),' ');
+	convert_rdl_vars(envp,rdl_args);
 	if (is_execute_file(rdl_args,envp))
 	{
 		free_all(rdl_args);
