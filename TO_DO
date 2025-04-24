@@ -25,7 +25,8 @@ variables:
     echo $'\n'
     x=-n
     echo $x $PATH $: /home/asoufian/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin%
-    old/a.out doesn't work FIX_ME !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  +  old/a.out doesn't work FIX_ME !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    remember to fix the history bug when we expand the env var !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     */
 -redirection:
     $ > somwhere ls -la
@@ -35,3 +36,10 @@ variables:
     ls /home/ salfkajsdlfjadslkf &>lllll
     3< lllll
     echo "something else" >&3
+    echo testing something to do yeah >'#yo' // works
+    echo testing something to do yeah >#yo // gives an error
+    echo testing something to do yeah >>>>good
+    echo testsomethingtdo >b_file somethingelse ????????????? doesn't work
+    echo testing something 1>"'9991'" ???
+    echo testing something 1>'9991'   ?!@#!@#?1RF?qeF?sd
+    FIX THE HISTORY !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
