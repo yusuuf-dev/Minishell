@@ -12,6 +12,7 @@
 
 #include "../minishell.h"
 // check \t shenanigas 
+// echo -ne hello vs echo '-ne hello'
 static int  found_q(char *s, char q)
 {
     size_t  i;

@@ -1,0 +1,37 @@
+// fix old/a.out: executing a file by it's relative path doesn't work if the file is in a dir
+// check if the builtin functions work properly
+// fix the ~{user} ex: ~asoufian
+// make the code more readable, 
+// store all the needed variables in a struct
+// symbolik links !!!!!!! : CD AND PWD
+// echo "test something" needs to be handled
+- to get the actual output of a command run 'set -x' to unset it run 'set +x'
+/*
+export:
+variables:
+	A word consisting solely of letters, numbers, and underscores, and beginning with a letter or underscore. 
+	Names are used as shell variable and function names. Also referred to as an identifier.
+    also look up if the x-declare in the export means anything
+    if I readonly an env variable it becomes declare -rx in the export 
+
+*/
+/* Parsing:
+    handle the '#' as in echo #test .... : MAYBE ??????????????????????????????????????????????????
+    the shell ignores the comment symbol (‘#’), and the rest of that line. */
+    /*minishell : export test=something
+    minishell : echo testing$test
+    testing$test
+    echo "$PATH"test
+    echo $'\n'
+    x=-n
+    echo $x $PATH $: /home/asoufian/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin%
+    old/a.out doesn't work FIX_ME !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    */
+-redirection:
+    $ > somwhere ls -la
+    need to handle the space in the filename as in ls > "some place"
+    ~/minishell/old/a.out ????????????????????????????????????????????????????????????????????????????????????????????????????????????????
+    ls sdfasfasdf >errortesting 2>&1 
+    ls /home/ salfkajsdlfjadslkf &>lllll
+    3< lllll
+    echo "something else" >&3

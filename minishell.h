@@ -11,7 +11,17 @@
 #include <sys/wait.h>
 #include <sys/types.h>
 #include <errno.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 
+typedef struct apply_red
+{
+    int pos;
+    int bool;
+    struct apply_red *next;
+} t_apply_red;
+
+int costum_atoi(char *s, int *status);
 size_t	ft_strlen(char *s);
 char	**ft_split(char *str, char c);
 char	*ft_strjoin(char *s1, char *s2);

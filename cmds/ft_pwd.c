@@ -6,7 +6,7 @@
 /*   By: asoufian <asoufian@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 15:00:27 by asoufian          #+#    #+#             */
-/*   Updated: 2025/04/14 12:18:48 by asoufian         ###   ########.fr       */
+/*   Updated: 2025/04/21 10:06:59 by asoufian         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,8 @@ int     ft_pwd(int argc, char **argv, char **envp)
 	(void)argv;
 	(void)envp;
     p = NULL;
-	p = getcwd(p, 4100);
+	//p = getcwd(p, 4100);
+	p = getcwd(p, 0);
 	if (!p)
 	{
 		perror("pwd");
