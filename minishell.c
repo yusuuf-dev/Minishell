@@ -66,7 +66,7 @@ int main(int ac, char **av, char **envp)
 		}
     if (p[0])
     {
-        envp = parsing(p, envp, &s_exit);
+        envp = parsing(&p, envp, &s_exit);
         add_history(p);
     }
     free(p);

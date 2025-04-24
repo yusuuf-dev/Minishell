@@ -45,7 +45,7 @@ void    print_rm_q(char *str,char q)
     }
 }
 
-static void    print_envp_var(char *var ,char **envp)
+/*static void    print_envp_var(char *var ,char **envp)
 {
     int     i;
     int     j;
@@ -71,7 +71,7 @@ static void    print_envp_var(char *var ,char **envp)
         }
         i++;
     }
-}
+}*/
 
 
 int     ft_echo(int argc, char **p, char **envp)
@@ -91,8 +91,8 @@ int     ft_echo(int argc, char **p, char **envp)
             print_rm_q(p[i],'\"');
         else if (found_q(p[i],'\''))
             print_rm_q(p[i],'\'');
-        else if (p[i][0] == '$' && p[i][1] && p[i][1] != '$')
-            print_envp_var(p[i],envp);
+      //  else if (p[i][0] == '$' && p[i][1] && p[i][1] != '$')
+        //    print_envp_var(p[i],envp);
         else
             printf("%s",p[i]);
         if (p[i + 1])

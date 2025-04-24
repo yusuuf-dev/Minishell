@@ -47,44 +47,44 @@ static  int is_execute_file(char **rdl_args, char **env)
         perror("minishell");
     return(1);
 }
-static void     convert_rdl_vars(char **env, char  **rdl_args)
-{
-    int i;
-	char	*temp;
-    i = 1;
-    while(rdl_args[i])
-    {
-		temp = rdl_args[i];
-        if (ft_strcmp(rdl_args[i],"~")) // UPDATE ME "ls ~asoufian"
-		{
-            rdl_args[i] = ft_strdup(ft_getenv("HOME", env));
-			free(temp);
-		}
-        else if(rdl_args[i][0] == '$' && rdl_args[i][1] && rdl_args[i][1] != '$')
-		{
-            rdl_args[i] = ft_strdup(ft_getenv(&rdl_args[i][1], env));
-			free(temp);
-		}
-        i++;
-    }
-}
-static void free_move(char **rdl_args, size_t i)
-{
-	size_t	t;
+// /*static void     convert_rdl_vars(char **env, char  **rdl_args)
+// {
+//     int i;
+// 	char	*temp;
+//     i = 1;
+//     while(rdl_args[i])
+//     {
+// 		temp = rdl_args[i];
+//         if (ft_strcmp(rdl_args[i],"~")) // UPDATE ME "ls ~asoufian"
+// 		{
+//             rdl_args[i] = ft_strdup(ft_getenv("HOME", env));
+// 			free(temp);
+// 		}
+//         else if(rdl_args[i][0] == '$' && rdl_args[i][1] && rdl_args[i][1] != '$')
+// 		{
+//             rdl_args[i] = ft_strdup(ft_getenv(&rdl_args[i][1], env));
+// 			free(temp);
+// 		}
+//         i++;
+//     }
+// }*/
+// static void free_move(char **rdl_args, size_t i)
+// {
+// 	size_t	t;
 	
-	free(rdl_args[i]);
-	t = i;
-	while (rdl_args[t + 1])
-	{
-	//	if (t > 0)
-	//	{
-			rdl_args[t] = rdl_args[t + 1];
-	//	}
-		t++;
-	}
-	rdl_args[t] = rdl_args[t + 1];
-}
-int parse_redirection(char **rdl_args, int *status)
+// 	free(rdl_args[i]);
+// 	t = i;
+// 	while (rdl_args[t + 1])
+// 	{
+// 	//	if (t > 0)
+// 	//	{
+// 			rdl_args[t] = rdl_args[t + 1];
+// 	//	}
+// 		t++;
+// 	}
+// 	rdl_args[t] = rdl_args[t + 1];
+// }
+/*int parse_redirection(char **rdl_args, int *status)
 {
 	size_t	i = 0;
 	char	*fd_temp;
@@ -141,9 +141,37 @@ int parse_redirection(char **rdl_args, int *status)
 	if (*rdl_args == NULL)
 		return (1);
 	return (0);
+}*/
+
+static int  found_q(char *s) 
+{
+    size_t  i;
+	int		f_s;
+	int		f_d;
+	int		found;
+
+    i = 0;
+	f_s = 0;
+	f_d = 0;
+	found = 0;
+    while (s[i])
+    {
+		if (s[i] == '\'' && !f_d)
+			f_s = !f_s;
+		if (s[i] == '\"' && !f_s)
+			f_d = !f_d;
+		if (s[i] == '\"' || s[i] == '\'')
+			found++;
+        i++;
+    }
+    if((f_d || f_s) && found > 0)
+        return(-1);
+	else if(found == 0)
+		return(0);
+    return(1);
 }
 
-char	**parsing(char *p, char **envp, int *s_exit)
+char	**parsing(char **p, char **envp, int *s_exit)
 {
     char	*env;
     char	**env_paths = NULL;
@@ -152,18 +180,22 @@ char	**parsing(char *p, char **envp, int *s_exit)
     int		i = 0;
     int		status = 0;
 
+    if (found_q(*p) == -1) // check for the quotes are closed;
+        {return (ft_putstr("Error unclosed quotes\n", 2), envp);}
 	env = ft_getenv("PATH", envp);
 	if (env)
     	env_paths = ft_split(env,':');
- 	rdl_args = ft_split(ft_isspace_to_space(p),' ');
-	if (parse_redirection(rdl_args, &status))
-		return (free_all(rdl_args), free_all(env_paths), envp);
+    *p = convert_env_var(*p,envp);
+    rdl_args = c_split(*p,' ');
+ 	// rdl_args = ft_split(ft_isspace_to_space(*p),' ');
+	/*if (parse_redirection(rdl_args, &status))
+		return (free_all(rdl_args), free_all(env_paths), envp);*/
 	//write(60, "testing", ft_strlen("testing"));
-	convert_rdl_vars(envp,rdl_args);
+//	convert_rdl_vars(envp,rdl_args);
 	if (is_execute_file(rdl_args,envp))
 		return (free_all(rdl_args), free_all(env_paths), envp);
 	if (ft_built_in_cmd(rdl_args, &envp, env_paths, &status, s_exit))
-		(void)p;
+		(void)*p;
 	else
 	{
 		while (env && env_paths[i])
