@@ -113,6 +113,24 @@ static int  found_q(char *s)
     return(1);
 }
 
+static void		ft_space(char *s)
+{
+	size_t	i = 0;
+	int		f_s = 0;
+	int		f_d = 0;
+
+	while(s[i])
+	{
+		if(s[i] == '\'' && !f_d)
+			f_s = !f_s;
+		if(s[i] == '\"' && !f_s)
+			f_d = !f_d;
+		if(!f_d && !f_s && s[i] >= 9 && s[i] <= 13)
+			s[i] = ' ';
+		i++;
+	}
+}
+
 char	**parsing(char **p, char **envp, int *s_exit)
 {
     char	*env;
@@ -124,6 +142,7 @@ char	**parsing(char **p, char **envp, int *s_exit)
 
     if (found_q(*p) == -1) // check for the quotes are closed;
         {return (ft_putstr("Error unclosed quotes\n", 2), envp);}
+	ft_space(*p);
     *p = convert_env_var(*p,envp);
 	if(parse_redirection(*p, &status))
 	 	return (envp);
