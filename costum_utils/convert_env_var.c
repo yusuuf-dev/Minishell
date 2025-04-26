@@ -25,6 +25,17 @@ static  char    *c_strpbrk(char *s)
     }
     return (&s[i]);
 }
+// int	ft_isalpha(int c)
+// {
+// 	if (c >= 65 && c <= 90)
+// 		return (1);
+// 	else if (c >= 97 && c <= 122)
+// 		return (1);
+//     else if (c == '_')
+// 	else
+// 		return (0);
+// }
+
 char    *convert_env_var(char *s,char **envp)
 {
     size_t  i = 0;
@@ -42,7 +53,7 @@ char    *convert_env_var(char *s,char **envp)
 			f_s = !f_s;
         if (s[i] == '\"' && !f_s)
             f_d = !f_d;
-        if (s[i] == '$' && !f_s)
+        if (s[i] == '$' && !f_s) // add condition when you need var to convert because if only $ exist doesn't need to enter this statement
         {
             //left_side = ft_strldup(s, &s[i] - s);
             extract = ft_strldup(&s[i + 1], c_strpbrk(&s[i + 1]) - &s[i + 1]);
