@@ -11,8 +11,7 @@
 /* ************************************************************************** */
 
 #include "../minishell.h"
-// check \t shenanigas 
-// echo -ne hello vs echo '-ne hello'
+
 static int  found_q(char *s, char q)
 {
     size_t  i;
@@ -45,33 +44,6 @@ void    print_rm_q(char *str,char q)
     }
 }
 
-/*static void    print_envp_var(char *var ,char **envp)
-{
-    int     i;
-    int     j;
-
-    var++;
-    i = 0;
-    while (envp[i])
-    {
-        if (ft_strncmp(var,envp[i],ft_strlen(var)))
-        {
-            j = 0;
-            while(envp[i][j])
-            {
-                if (envp[i][j] == '=')
-                {
-                    j++;
-                    while (envp[i][j++])
-                        printf("%c",envp[i][j]);
-                    return;
-                }
-                j++;
-            }
-        }
-        i++;
-    }
-}*/
 
 
 int     ft_echo(int argc, char **p, char **envp)
@@ -87,14 +59,7 @@ int     ft_echo(int argc, char **p, char **envp)
         i++;
     while (p[i])
     {
-        if (found_q(p[i],'\"'))
-            print_rm_q(p[i],'\"');
-        else if (found_q(p[i],'\''))
-            print_rm_q(p[i],'\'');
-      //  else if (p[i][0] == '$' && p[i][1] && p[i][1] != '$')
-        //    print_envp_var(p[i],envp);
-        else
-            printf("%s",p[i]);
+        printf("%s",p[i]);
         if (p[i + 1])
             write(1, " ", 1);
         i++;
@@ -105,34 +70,4 @@ int     ft_echo(int argc, char **p, char **envp)
 	}
 	return (0);
 }
-/*int     ft_echo(int argc, char **p, char **envp)
-{
-	size_t	i = 1;
-
-	(void)argc;
-	(void)envp;
-	if (p[i] && !ft_strncmp("-n", p[i], 2) && !p[i][2])
-	{
-		i++;
-		while (p[i])
-		{
-			if (i > 2)
-				printf(" ");
-			printf("%s", p[i]);
-			i++;
-		}
-	}
-	else
-	{
-		while (p[i])
-		{
-			if (i > 1)
-				printf(" ");
-			printf("%s", p[i]);
-			i++;
-		}
-		printf("\n");
-	}
-    return (0);
-}*/
 
