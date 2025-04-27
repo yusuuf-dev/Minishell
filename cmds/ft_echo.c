@@ -26,8 +26,8 @@ int     ft_echo(int argc, char **p, char **envp)
     while (p[i])
     {
         printf("%s",p[i]);
-        if (p[i + 1])
-            write(1, " ", 1);
+        if(p[i + 1])
+            printf(" ");
         i++;
     }
     if(!ft_strcmp("-n", p[1]))
