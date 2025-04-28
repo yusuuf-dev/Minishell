@@ -93,6 +93,8 @@ char	**parsing(char **p, char **envp, int *s_exit)
 	env = ft_getenv("PATH", envp);
 	if (env)
     	env_paths = ft_split(env,':');
+	if (found_heredoc(*p))
+		printf("found heredoc \n");
     *p = convert_env_var(*p,envp);
     rdl_args = c_split(*p,' ');
 	if (is_execute_file(rdl_args,envp))
