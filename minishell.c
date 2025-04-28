@@ -64,12 +64,12 @@ int main(int ac, char **av, char **envp)
 			free(p);
 			exit(0);
 		}
-    if (p[0])
-    {
-        envp = parsing(&p, envp, &s_exit);
-        add_history(p);
-    }
-    free(p);
+        if (p[0])
+        {
+            add_history(p);
+            envp = parsing(&p, envp, &s_exit);
+        }
+        free(p);
     }
    	exit(s_exit); 
 }

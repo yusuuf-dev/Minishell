@@ -6,25 +6,26 @@ static int ft_isdigit(int n)
 }
 
 
-int costum_atoi(char *nptr, int *status)
+int costum_atoi(char *nptr, int *status, int fd)
 {
     int     i;
 	long    rslt;
 
 	i = 0;
 	rslt = 0;
-
+    if (!nptr || !nptr[0])
+    {    return (1);}
 	while (nptr[i])
 	{
         if (ft_isdigit(nptr[i]))
         {
             if (rslt >= 2147483647)
-                return (*status = 2, 1); // the return used to be '2';
+                return (*status = 2, fd); // the return used to be '2';
 		    rslt = rslt * 10;
 		    rslt = rslt + (nptr[i] - 48);
         }
         else
-            return (*status = 2, 1); // the return used to be '2';
+            return (*status = 2, fd); // the return used to be '2';
         i++;
 	}
 	return (rslt);

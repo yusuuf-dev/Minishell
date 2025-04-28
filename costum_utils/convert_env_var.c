@@ -56,7 +56,8 @@ char    *convert_env_var(char *s,char **envp)
             free(extract);
             i += ft_strlen(var);
         }
-        i++;
+        else
+            i++;
     }
     return (s);
 }

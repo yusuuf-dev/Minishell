@@ -113,7 +113,7 @@ static int  found_q(char *s)
     return(1);
 }
 
-static void		ft_space(char *s)
+static void			ft_space(char *s)
 {
 	size_t	i = 0;
 	int		f_s = 0;

@@ -21,7 +21,7 @@ typedef struct apply_red
     struct apply_red *next;
 } t_apply_red;
 
-int costum_atoi(char *s, int *status);
+int     costum_atoi(char *s, int *status, int fd);
 size_t	ft_strlen(char *s);
 char	**ft_split(char *str, char c);
 char	*ft_strjoin(char *s1, char *s2);
@@ -55,6 +55,6 @@ int		ft_check_spaces(char *s); // this function returns 1 if the argument contai
 void    ft_putstr(char *s, int fd);
 char    *convert_env_var(char *s,char **envp);
 char	**c_split(char *str, char c);
-int	parse_redirection(char *s, int *status);
+int	    parse_redirection(char *s, int *status);
 
 #endif
