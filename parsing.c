@@ -94,7 +94,11 @@ char	**parsing(char **p, char **envp, int *s_exit)
 	if (env)
     	env_paths = ft_split(env,':');
 	if (found_heredoc(*p))
+	{
 		printf("found heredoc \n");
+		printf("%zu\n",ft_strlen(*p));
+		return(envp);
+	}
     *p = convert_env_var(*p,envp);
     rdl_args = c_split(*p,' ');
 	if (is_execute_file(rdl_args,envp))

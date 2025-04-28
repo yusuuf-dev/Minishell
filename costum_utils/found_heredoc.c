@@ -4,7 +4,7 @@
 int     found_heredoc(char *s)
 {
     size_t i = 0;
-    size_t j = 0;
+    // size_t j = 0;
     char    q = 0;
 
     while (s[i])
@@ -15,6 +15,11 @@ int     found_heredoc(char *s)
         {
             if (!s[i + 2] || s[i + 2] == '<' || s[i + 2] == '>')
                 return(-1);
+            i += 2;
+            while (s[i] == ' ')
+                i++:
+            if (!s[i])
+                return(-2);            
             else
                 return(1);
         }
