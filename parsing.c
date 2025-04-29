@@ -1,7 +1,19 @@
 #include "minishell.h"
 
-int	execute_command(char *path, char **rdl_args, char **envp);
+int	execute_command(char *path, char **rdl_args, char **envp, int fd);
 static int	ft_built_in_cmd(char **rdl_args, char ***envp, char **env_paths, int *status, int *s_exit);
+
+static void c_putstr_fd(int fd, char *s)
+{
+	size_t i = 0;
+
+	while (s[i])
+	{
+		write(fd, &s[i], 1);
+		i++;
+	}
+	write(fd, "\n", 1);
+}
 
 char	*ft_getenv(char *s, char **envp)
 {
@@ -87,6 +99,9 @@ char	**parsing(char **p, char **envp, int *s_exit)
     char	*path;
     int		i = 0;
     int		status = 0;
+	char	*delimiter = NULL;
+	char	*tmp;
+	int fd_tmp;
 
     if (found_q(*p) == -1)
         {return (ft_putstr("Error unclosed quotes\n", 2), envp);}
@@ -95,9 +110,18 @@ char	**parsing(char **p, char **envp, int *s_exit)
     	env_paths = ft_split(env,':');
 	if (found_heredoc(*p))
 	{
-		printf("found heredoc \n");
-		printf("%zu\n",ft_strlen(*p));
-		return(envp);
+		delimiter = heredoc_delimiter(*p);
+		if (!delimiter)
+			return(envp); // failed malloc protection
+		fd_tmp = open("tmp.txt", O_RDONLY | O_WRONLY | O_CREAT | O_APPEND,0777);
+		while (1)
+		{
+			tmp = readline("> ");
+			if (ft_strcmp(tmp,delimiter))
+				break;
+			c_putstr_fd(fd_tmp,tmp);
+			free(tmp);
+		}
 	}
     *p = convert_env_var(*p,envp);
     rdl_args = c_split(*p,' ');
@@ -111,7 +135,7 @@ char	**parsing(char **p, char **envp, int *s_exit)
 		{
 			path = ft_strjoinf(ft_strjoin(env_paths[i], "/"),rdl_args[0]);
 			if (!access(path, F_OK) && !access(path, X_OK))
-				return (status = execute_command(path, rdl_args, envp), free(path), free_all(rdl_args), free_all(env_paths), envp);
+				return (status = execute_command(path, rdl_args, envp, fd_tmp), free(path), free_all(rdl_args), free_all(env_paths), envp);
 			free(path);
 			i++;
 		}
@@ -169,7 +193,7 @@ static int	ft_built_in_cmd(char **rdl_args, char ***envp, char **env_paths, int 
 		return (0);
 }
 
-int	execute_command(char *path, char **rdl_args, char **envp)
+int	execute_command(char *path, char **rdl_args, char **envp , int fd)
 {
 	int	child_pid = 0;
 	int	child_info = 0;
@@ -177,6 +201,7 @@ int	execute_command(char *path, char **rdl_args, char **envp)
 	child_pid = fork();
 	if (!child_pid)
 	{
+		dup2(fd,0);
 		if (execve(path, rdl_args, envp))
 		{
 			perror("execve");

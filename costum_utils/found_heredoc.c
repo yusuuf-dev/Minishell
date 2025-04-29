@@ -4,7 +4,6 @@
 int     found_heredoc(char *s)
 {
     size_t i = 0;
-    // size_t j = 0;
     char    q = 0;
 
     while (s[i])
@@ -16,10 +15,10 @@ int     found_heredoc(char *s)
             if (!s[i + 2] || s[i + 2] == '<' || s[i + 2] == '>')
                 return(-1);
             i += 2;
-            while (s[i] == ' ')
-                i++:
+            while (s[i] == ' ' || (s[i] >= 9 && s[i] <= 13))
+                i++;
             if (!s[i])
-                return(-2);            
+                return(-2); // if there's nothing after << must handle it like bash: syntax error near unexpected token `newline'            
             else
                 return(1);
         }
