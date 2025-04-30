@@ -126,37 +126,44 @@ static int	open_file_redi(char *s, int *fd, int mode, int *end)
 	free(s);
 	return (0);
 }
+static char *parsing_input_fd(char *s, size_t *i, int *fd, int *dest, int *status)
+{
+	char	*fd_input = NULL;
+
+	if (ft_strr_isspace(s, *i))
+		fd_input = ft_strldup((ft_strr_isspace(s, *i) + 1), &s[*i] - (ft_strr_isspace(s, *i) + 1));
+	else if (*i > 0)
+		fd_input = ft_strldup(s, *i);
+	else
+		fd_input = NULL;
+	if (fd_input && fd_input[0] && fd_input[0] != '>' && fd_input[0] != '<')
+	{
+		*fd = costum_atoi(fd_input, status, *fd); // handle INT_MAX and if the fd contains a char
+		if (*status != 2)
+			*dest = 0; // this is in case the redi is the first thing in the command but we have a valid fd and we want to remove it;
+		if (ft_strr_isspace(s, *i) && *status != 2)
+			*dest = ((ft_strr_isspace(s, *i) + 1) - s);
+	}
+	return (fd_input);
+}
 static int apply_redirection(char *s, size_t *i, int *status, int fd)
 {
-	char	*fd_temp; // this is used to store between a 'isspace' and '>' if there are any, after that we check if It's a valid 'fd';
+	char	*fd_input; // this is used to store between a 'isspace' and '>' if there are any, after that we check if It's a valid 'fd';
 	int		dest; // this is in case we have a valid fd before the '>', I save the index of the num cuz I'll have to remove it from the string;   
 	int		f_mode; // free mode
 	int		end_file_name= 0;
 
     dest = *i;
-	if (ft_strr_isspace(s, *i))
-		fd_temp = ft_strldup((ft_strr_isspace(s, *i) + 1), &s[*i] - (ft_strr_isspace(s, *i) + 1));
-	else if (*i > 0)
-		fd_temp = ft_strldup(s, *i);
-	else
-		fd_temp = NULL;
-	if (fd_temp && fd_temp[0] && fd_temp[0] != '>' && fd_temp[0] != '<')
-	{
-		fd = costum_atoi(fd_temp, status, fd); // handle INT_MAX and if the fd contains a char
-		if (*status != 2)
-			dest = 0; // this is in case the redi is the first thing in the command but we have a valid fd and we want to remove it;
-		if (ft_strr_isspace(s, *i) && *status != 2)
-			dest = ((ft_strr_isspace(s, *i) + 1) - s);
-	}
+	fd_input = parsing_input_fd(s, i, &fd, &dest, status);
 	if (s[*i] == '>') 	
 		f_mode = open_file_redi(&s[*i + 1], &fd, 1, &end_file_name);
 	else
 		f_mode = open_file_redi(&s[*i + 1], &fd, 0, &end_file_name);
 	if	(f_mode == 1)
-		return (free(fd_temp), *status = 1, 1);
+		return (free(fd_input), *status = 1, 1);
 	else if (f_mode == 2)
-		return(ft_putstr("minishell: ", 2), ft_putstr(fd_temp, 2), ft_putstr(": ", 2), perror(""), free(fd_temp), *status = 1, 2);
-	free(fd_temp);
+		return(ft_putstr("minishell: ", 2), ft_putstr(fd_input, 2), ft_putstr(": ", 2), perror(""), free(fd_input), *status = 1, 2);
+	free(fd_input);
 	if (end_file_name) // this indicates wether the file name is the last thing in the string or not
 		*i += end_file_name;
 	else
@@ -173,9 +180,9 @@ int	parse_redirection(char *s, int *status)
 
 	while (s[i])
 	{        
-		if (s[i] == '\'')
+		if (s[i] == '\'' && !f_d)
 			f_s = !f_s;
-        if (s[i] == '\"')
+        if (s[i] == '\"' && !f_s)
             f_d = !f_d;
 		if (!f_d && !f_s && s[i] == '>' && (apply_redirection(s, &i, status, 1)))
 			return (1);

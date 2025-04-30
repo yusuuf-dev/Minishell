@@ -29,6 +29,7 @@ variables:
   +  remember to fix the history bug when we expand the env var !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     export test=a_file
     echo '"'$test'"'
+    echo "$"HOME
 
     */
 -redirection:

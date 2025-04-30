@@ -4,8 +4,6 @@ static int ft_isdigit(int n)
         return (1);
     return (0);
 }
-
-
 int costum_atoi(char *nptr, int *status, int fd)
 {
     int     i;
@@ -28,5 +26,7 @@ int costum_atoi(char *nptr, int *status, int fd)
             return (*status = 2, fd); // the return used to be '2';
         i++;
 	}
+    if (rslt > 2147483647)
+        {return (*status = 2, fd);}
 	return (rslt);
 }
