@@ -6,7 +6,9 @@ char    *heredoc_delimiter(char *s)
     size_t st = 0;
     size_t f = 0;
     size_t j = 0;
+    char    q = 0;
     char    *delimiter;
+    char    *tmp;
 
     while (s[i])
     {
@@ -18,7 +20,14 @@ char    *heredoc_delimiter(char *s)
                 i++;
             st = i;
             while (s[i] && s[i] != ' ' && !(s[i] >= 9 && s[i] <= 13))
+            {
+                if (!q && (s[i] == '\'' || s[i] == '\"'))
+                    q = s[i++];
+                while(q && s[i] != q)
+                    i++;
+                q = 0;
                 i++;
+            }
             break;
         }
         i++;
@@ -40,6 +49,11 @@ char    *heredoc_delimiter(char *s)
         i++;
     }
     s[f + j] = 0;
+    tmp = delimiter;
+    delimiter = rm_quotes(delimiter);
+    if (!delimiter)
+        return (NULL);
+    free(tmp);    
     return(delimiter);
 }
    

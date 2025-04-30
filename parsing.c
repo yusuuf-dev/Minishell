@@ -62,35 +62,6 @@ static  int is_execute_file(char **rdl_args, char **env)
     return(1);
 }
 
-
-static int  found_q(char *s) 
-{
-    size_t  i;
-	int		f_s;
-	int		f_d;
-	int		found;
-
-    i = 0;
-	f_s = 0;
-	f_d = 0;
-	found = 0;
-    while (s[i])
-    {
-		if (s[i] == '\'' && !f_d)
-			f_s = !f_s;
-		if (s[i] == '\"' && !f_s)
-			f_d = !f_d;
-		if (s[i] == '\"' || s[i] == '\'')
-			found++;
-        i++;
-    }
-    if((f_d || f_s) && found > 0)
-        return(-1);
-	else if(found == 0)
-		return(0);
-    return(1);
-}
-
 char	**parsing(char **p, char **envp, int *s_exit)
 {
     char	*env;
@@ -101,7 +72,7 @@ char	**parsing(char **p, char **envp, int *s_exit)
     int		status = 0;
 	char	*delimiter = NULL;
 	char	*tmp;
-	int fd_tmp;
+	int fd_tmp = 0;
 
     if (found_q(*p) == -1)
         {return (ft_putstr("Error unclosed quotes\n", 2), envp);}
@@ -111,17 +82,34 @@ char	**parsing(char **p, char **envp, int *s_exit)
 	if (found_heredoc(*p))
 	{
 		delimiter = heredoc_delimiter(*p);
+		// //test
+		// printf("%s\n",delimiter);
+		// printf("%s\n",*p);
+		// return(envp);
+		// //test
 		if (!delimiter)
 			return(envp); // failed malloc protection
-		fd_tmp = open("tmp.txt", O_RDONLY | O_WRONLY | O_CREAT | O_APPEND,0777);
+		fd_tmp = open("/tmp/tmp.txt", O_RDWR | O_CREAT | O_TRUNC , 0777);
+		if (fd_tmp < 0)
+			return (perror(""), envp);
 		while (1)
 		{
 			tmp = readline("> ");
-			if (ft_strcmp(tmp,delimiter))
+			if (!tmp)
 				break;
+			if (ft_strcmp(tmp,delimiter))
+			{
+				free(tmp);
+				break;
+			}
 			c_putstr_fd(fd_tmp,tmp);
 			free(tmp);
 		}
+		free(delimiter);
+		close(fd_tmp);
+		fd_tmp = open("/tmp/tmp.txt", O_RDWR, 0777);
+		if (fd_tmp < 0)
+			return (perror(""), envp);
 	}
     *p = convert_env_var(*p,envp);
     rdl_args = c_split(*p,' ');
@@ -143,6 +131,7 @@ char	**parsing(char **p, char **envp, int *s_exit)
 		ft_putstr(rdl_args[0], 2);
 		ft_putstr("\n", 2);
 	}
+	close(fd_tmp);
 	return (free_all(rdl_args), free_all(env_paths), envp);
 }
 
@@ -197,11 +186,19 @@ int	execute_command(char *path, char **rdl_args, char **envp , int fd)
 {
 	int	child_pid = 0;
 	int	child_info = 0;
+//	char *read_buf = ft_calloc(sizeof(char) * 10);
+
+	if (dup2(fd, 0) < 0)
+		return (perror(""), errno);
+	//if (lseek(fd, 0, SEEK_SET) < 0 )
+	//	return (perror (""), errno);
+	/*if (read(fd, read_buf, 5) < 0)
+		return (perror(""), errno);
+	read_buf[5] = 0;*/
 
 	child_pid = fork();
 	if (!child_pid)
 	{
-		dup2(fd,0);
 		if (execve(path, rdl_args, envp))
 		{
 			perror("execve");

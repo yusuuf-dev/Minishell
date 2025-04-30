@@ -57,5 +57,7 @@ char    *convert_env_var(char *s,char **envp);
 char	**c_split(char *str, char c);
 int     found_heredoc(char *s);
 char    *heredoc_delimiter(char *s);
+char    *rm_quotes(char *str);
+int     found_q(char *s);
 
 #endif
