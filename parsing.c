@@ -79,7 +79,7 @@ char	**parsing(char **p, char **envp, int *s_exit)
 	env = ft_getenv("PATH", envp);
 	if (env)
     	env_paths = ft_split(env,':');
-	if (found_heredoc(*p))
+	while (found_heredoc(*p))
 	{
 		delimiter = heredoc_delimiter(*p);
 		if (!delimiter)
