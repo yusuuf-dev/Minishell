@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-static int     exit_minishell(char **envp, char *p, int status, char msg)
+static int     exit_minishell(char **envp, char *p, int status, char *msg)
 {
     free_all(envp);
     free(p);
@@ -84,6 +84,7 @@ int main(int ac, char **av, char **envp)
                     envp = parsing(&segments[i], envp, &s_exit);
                     i++;    
                 }
+                free_all(segments);
                 add_history(p);   
             }
             else if (i == 0)
@@ -92,7 +93,7 @@ int main(int ac, char **av, char **envp)
                 add_history(p);
             }
             else
-                return(exit_minishell(envp,p,1,"failed malloc\n"))//protect malloc
+                return(exit_minishell(envp,p,1,"failed malloc\n"));//protect malloc
         }
         free(p);
     }

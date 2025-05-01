@@ -11,6 +11,11 @@ int     found_pipe(char *line)
     i = 0;
     while (segments[i])
     {
+        // if (ft_strncmp(segments[i], "||",2))
+        // {
+        //     free_all(segments);
+        //     return(2);
+        // }
         if (ft_strcmp(segments[i],"|"))
         {
             free_all(segments);
