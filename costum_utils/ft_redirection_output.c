@@ -155,7 +155,7 @@ static int apply_redirection(char *s, size_t *i, int *status, int fd)
 
     dest = *i;
 	fd_input = parsing_input_fd(s, i, &fd, &dest, status);
-	if (s[*i] == '>') 	
+	if (s[*i] == '>')
 		f_mode = open_file_redi(&s[*i + 1], &fd, 1, &end_file_name);
 	else
 		f_mode = open_file_redi(&s[*i + 1], &fd, 0, &end_file_name);
@@ -184,8 +184,11 @@ int	parse_redirection(char *s, int *status)
 			f_s = !f_s;
         if (s[i] == '\"' && !f_s)
             f_d = !f_d;
-		if (!f_d && !f_s && s[i] == '>' && (apply_redirection(s, &i, status, 1)))
-			return (1);
+		if (!f_d && !f_s && s[i] == '>' )
+		{
+			if (apply_redirection(s, &i, status, 1))
+				return (1);
+		}
 		else if (!f_d && !f_s && s[i] == '<')
 		{
             if (apply_redirection(s, &i, status, 0))

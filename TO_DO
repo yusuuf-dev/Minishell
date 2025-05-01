@@ -14,6 +14,7 @@ variables:
     also look up if the x-declare in the export means anything
     if I readonly an env variable it becomes declare -rx in the export 
 
+revisit all built-in functions !!!!!!!!!!!
 */
 /* Parsing:
     handle the '#' as in echo #test .... : MAYBE ??????????????????????????????????????????????????
@@ -27,10 +28,14 @@ variables:
     echo $x $PATH $: /home/asoufian/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin%
   +  old/a.out doesn't work FIX_ME !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   +  remember to fix the history bug when we expand the env var !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    export test=a_file
+  export test=a_file
+    the export cmd prints the env vars sorted and with 'DECLARE -X'
     echo '"'$test'"'
     echo "$"HOME
-
+    echo $99pppl
+    MEMORY LEAK !!!!!
+      echo $1try
+  
     */
 -redirection:
     $ > somwhere ls -la
@@ -50,3 +55,5 @@ variables:
     echo testing something 1>"'9991'" ???
     echo testing something 1>'9991'   ?!@#!@#?1RF?qeF?sd
   * FIX THE HISTORY !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  exit:
+    unsigned char c = n (n is the return of atoi, which byitself is the argument that is given to the exit command)

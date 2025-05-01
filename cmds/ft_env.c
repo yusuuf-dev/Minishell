@@ -40,11 +40,12 @@ int	ft_env(int argc, char **argv, char **envp, char **envp_paths)
 //		printf("Invalid argument\n");
 		return (-1);
 	}
-	new_envp = ft_duplicate(envp);
+	// NOT GOOD !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	new_envp = ft_duplicate(envp, 0);
 	new_envp = ft_export(0, argv, new_envp, &status);
 	while (argv[ar] && ft_strchr(argv[ar], '='))
 		ar++;
-	new_arg = ft_duplicate(&argv[ar]);
+	new_arg = ft_duplicate(&argv[ar], 0);
 	child_pid = fork();
 	if (!child_pid)
 	{

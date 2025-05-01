@@ -45,7 +45,7 @@ int main(int ac, char **av, char **envp)
     C_c.sa_flags = 0;
     C_slash.sa_handler = SIG_IGN;
     C_c.sa_handler = signal_handler;
-	envp = ft_duplicate(envp);
+	envp = ft_duplicate(envp, 0);
     term = ttyname(1);
     if (!term)
         {return (perror("minishell:"), free_all(envp), errno);}

@@ -46,7 +46,7 @@ int     ft_env(int argc, char **argv, char **envp, char **envp_paths);
 int     ft_exit(int argc, char **argv, char **envp);
 
 char	**free_all(char **str);
-char	**ft_duplicate(char **s);
+char	**ft_duplicate(char **s, size_t add_size);
 char	*ft_isspace_to_space(char *s);
 long	ft_atoi(char *s);
 int     ft_isdigit(int c);
