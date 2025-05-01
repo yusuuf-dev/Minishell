@@ -81,7 +81,7 @@ int main(int ac, char **av, char **envp)
                     return(exit_minishell(envp,p,1,"failed malloc\n"));//protect malloc                    
                 while(segments[i])
                 {
-                    envp = parsing(&p, envp, &s_exit);
+                    envp = parsing(&segments[i], envp, &s_exit);
                     i++;    
                 }
                 add_history(p);   
