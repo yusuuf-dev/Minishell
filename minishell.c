@@ -1,6 +1,15 @@
 #include "minishell.h"
 
-void    signal_handler(int signum)
+static int     exit_minishell(char **envp, char *p, int status, char msg)
+{
+    free_all(envp);
+    free(p);
+    if (msg)
+        printf("%s",msg);
+    exit(status);
+}
+
+static void    signal_handler(int signum)
 {
 	(void)signum;
     rl_replace_line("", 0);
@@ -31,11 +40,13 @@ static int    set_default_fd(char *term_path)
 
 int main(int ac, char **av, char **envp)
 {
+    char    **segments;
 	char *p = NULL;
     char    *term = NULL;
 	struct sigaction C_slash;
     struct sigaction C_c;
 	int	s_exit = 0;
+    int i = 0;
 
 	(void)av;
 	(void)ac;
@@ -58,18 +69,32 @@ int main(int ac, char **av, char **envp)
             return (free_all(envp), errno);
 		p = readline("minishell : ");
 		if (!p)
-		{
-			printf("exit\n");
-			free_all(envp);
-			free(p);
-			exit(0);
-		}
-    if (p[0])
-    {
-        envp = parsing(&p, envp, &s_exit);
-        add_history(p);
-    }
-    free(p);
+            exit_minishell(envp,p,0,"exit\n");
+        if (p[0])
+        {
+            i = found_pipe(p);
+            if (i == 1)
+            {
+                i = 0;
+                segments = c_split(p, '|');
+                if (!segments)
+                    return(exit_minishell(envp,p,1,"failed malloc\n"));//protect malloc                    
+                while(segments[i])
+                {
+                    envp = parsing(&p, envp, &s_exit);
+                    i++;    
+                }
+                add_history(p);   
+            }
+            else if (i == 0)
+            {
+                envp = parsing(&p, envp, &s_exit);
+                add_history(p);
+            }
+            else
+                return(exit_minishell(envp,p,1,"failed malloc\n"))//protect malloc
+        }
+        free(p);
     }
    	exit(s_exit); 
 }

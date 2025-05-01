@@ -59,5 +59,6 @@ int     found_heredoc(char *s);
 char    *heredoc_delimiter(char *s);
 char    *rm_quotes(char *str);
 int     found_q(char *s);
+int     found_pipe(char *line);
 
 #endif

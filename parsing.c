@@ -72,7 +72,7 @@ char	**parsing(char **p, char **envp, int *s_exit)
     int		status = 0;
 	char	*delimiter = NULL;
 	char	*tmp;
-	int fd_tmp = 0;
+	int 	fd_tmp = 0;
 
     if (found_q(*p) == -1)
         {return (ft_putstr("Error unclosed quotes\n", 2), envp);}
@@ -82,11 +82,6 @@ char	**parsing(char **p, char **envp, int *s_exit)
 	if (found_heredoc(*p))
 	{
 		delimiter = heredoc_delimiter(*p);
-		// //test
-		// printf("%s\n",delimiter);
-		// printf("%s\n",*p);
-		// return(envp);
-		// //test
 		if (!delimiter)
 			return(envp); // failed malloc protection
 		fd_tmp = open("/tmp/tmp.txt", O_RDWR | O_CREAT | O_TRUNC , 0777);
