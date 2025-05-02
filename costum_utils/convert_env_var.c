@@ -1,5 +1,15 @@
 #include "../minishell.h"
 
+static int	ft_isalpha(int c)
+{
+	if (c >= 65 && c <= 90)
+		return (1);
+	else if (c >= 97 && c <= 122)
+		return (1);
+	else
+		return (0);
+}
+
 static int	ft_isalnum(int c)
 {
 	if (c >= 48 && c <= 57)
@@ -11,30 +21,21 @@ static int	ft_isalnum(int c)
 	else
 		return (0);
 }
+
 static  char    *c_strpbrk(char *s)
 {
-    size_t  i,j;
+    size_t  i;
 
-    i = j = 0;
+    i =  0;
     while(s[i])
     {
-        j = 0;
         if (!ft_isalnum(s[i]) && s[i] != '_') 
             return (&s[i]);
         i++;
     }
     return (&s[i]);
 }
-// int	ft_isalpha(int c)
-// {
-// 	if (c >= 65 && c <= 90)
-// 		return (1);
-// 	else if (c >= 97 && c <= 122)
-// 		return (1);
-//     else if (c == '_')
-// 	else
-// 		return (0);
-// }
+
 
 char    *convert_env_var(char *s,char **envp)
 {
@@ -53,9 +54,8 @@ char    *convert_env_var(char *s,char **envp)
 			f_s = !f_s;
         if (s[i] == '\"' && !f_s)
             f_d = !f_d;
-        if (s[i] == '$' && s[i] && !f_s) // add condition when you need var to convert because if only $ exist doesn't need to enter this statement
+        if (s[i] == '$' && !f_s && (ft_isalpha(s[i + 1]) || s[i + 1] == '_' || s[i + 1] == '?'))
         {
-            //left_side = ft_strldup(s, &s[i] - s);
             extract = ft_strldup(&s[i + 1], c_strpbrk(&s[i + 1]) - &s[i + 1]);
             var = ft_getenv(extract, envp);
             left_side = ft_strldup(s, i);

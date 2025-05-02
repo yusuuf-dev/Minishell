@@ -3,17 +3,6 @@
 int	execute_command(char *path, char **rdl_args, char **envp, int fd);
 static int	ft_built_in_cmd(char **rdl_args, char ***envp, char **env_paths, int *status, int *s_exit);
 
-static void c_putstr_fd(int fd, char *s)
-{
-	size_t i = 0;
-
-	while (s[i])
-	{
-		write(fd, &s[i], 1);
-		i++;
-	}
-	write(fd, "\n", 1);
-}
 
 char	*ft_getenv(char *s, char **envp)
 {
@@ -70,8 +59,6 @@ char	**parsing(char **p, char **envp, int *s_exit)
     char	*path;
     int		i = 0;
     int		status = 0;
-	char	*delimiter = NULL;
-	char	*tmp;
 	int 	fd_tmp = 0;
 
     if (found_q(*p) == -1)
@@ -79,33 +66,8 @@ char	**parsing(char **p, char **envp, int *s_exit)
 	env = ft_getenv("PATH", envp);
 	if (env)
     	env_paths = ft_split(env,':');
-	while (found_heredoc(*p))
-	{
-		delimiter = heredoc_delimiter(*p);
-		if (!delimiter)
-			return(envp); // failed malloc protection
-		fd_tmp = open("/tmp/tmp.txt", O_RDWR | O_CREAT | O_TRUNC , 0777);
-		if (fd_tmp < 0)
-			return (perror(""), envp);
-		while (1)
-		{
-			tmp = readline("> ");
-			if (!tmp)
-				break;
-			if (ft_strcmp(tmp,delimiter))
-			{
-				free(tmp);
-				break;
-			}
-			c_putstr_fd(fd_tmp,tmp);
-			free(tmp);
-		}
-		free(delimiter);
-		close(fd_tmp);
-		fd_tmp = open("/tmp/tmp.txt", O_RDWR, 0777);
-		if (fd_tmp < 0)
-			return (perror(""), envp);
-	}
+	if (!ft_isheredoc(p,fd_tmp,envp))
+		return(NULL);// need protection when failed fd or malloc
     *p = convert_env_var(*p,envp);
     rdl_args = c_split(*p,' ');
 	if (is_execute_file(rdl_args,envp))
