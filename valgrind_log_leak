@@ -1,0 +1,34 @@
+minishell : export something=todoyeah this_is_invalid-_=something this_is_valid=111-value- 0this_is_notvalid=somethingelse
+minishell: export: `this_is_invalid-_=something': not a valid identifier
+minishell: export: `0this_is_notvalid=somethingelse': not a valid identifier
+minishell : echo $something
+minishell : echo $something
+minishell : echo $this_is_valid
+minishell : export something=todoyeah
+minishell : echo $something
+minishell : 
+exit
+==42986== 
+==42986== HEAP SUMMARY:
+==42986==     in use at exit: 209,075 bytes in 250 blocks
+==42986==   total heap usage: 885 allocs, 635 frees, 243,678 bytes allocated
+==42986== 
+==42986== 24 bytes in 4 blocks are definitely lost in loss record 17 of 76
+==42986==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==42986==    by 0x402417: ft_strldup (ft_strldup.c:26)
+==42986==    by 0x40481D: convert_env_var (convert_env_var.c:50)
+==42986==    by 0x40170B: parsing (parsing.c:146)
+==42986==    by 0x4014C9: main (minishell.c:70)
+==42986== 
+==42986== LEAK SUMMARY:
+==42986==    definitely lost: 24 bytes in 4 blocks
+==42986==    indirectly lost: 0 bytes in 0 blocks
+==42986==      possibly lost: 0 bytes in 0 blocks
+==42986==    still reachable: 209,051 bytes in 246 blocks
+==42986==         suppressed: 0 bytes in 0 blocks
+==42986== Reachable blocks (those to which a pointer was found) are not shown.
+==42986== To see them, rerun with: --leak-check=full --show-leak-kinds=all
+==42986== 
+==42986== For lists of detected and suppressed errors, rerun with: -s
+==42986== ERROR SUMMARY: 1 errors from 1 contexts (suppressed: 0 from 0)
+

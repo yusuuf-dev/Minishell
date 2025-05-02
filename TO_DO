@@ -33,6 +33,8 @@ revisit all built-in functions !!!!!!!!!!!
     echo '"'$test'"'
     echo "$"HOME
     echo $99pppl
+    sort <<te's't // this should not expand the env vars
+    echo -nnnnnnnnnnnnnnnnnnn // ??
     MEMORY LEAK !!!!!
       echo $1try
   
