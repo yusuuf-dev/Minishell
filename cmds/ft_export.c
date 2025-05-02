@@ -12,13 +12,6 @@
 
 #include "../minishell.h"
 
-
-/*typedef struct env_table
-{
-	int			index;
-	struct env_table *next;
-}	t_env_table;*/
-
 static int	ft_isalnum(int c)
 {
 	if (c >= 48 && c <= 57)
@@ -53,8 +46,8 @@ static  int    valid_var(char *s)
     return (0);
 }
 
-static char	**ft_duplicate_add_s(char **dup, char *s);
-static int ft_var_exists(char *s, char **envp);
+//static char	**ft_duplicate_add_s(char **dup, char *s);
+//static int ft_var_exists(char *s, char **envp);
 
 static void print_error(char *s1, char *s2, char *s3)
 {
@@ -93,60 +86,22 @@ void	ft_putstr_quote(char *s)
 	{
 		if (!found && s[i] == '=')
 		{
+			write(1, &s[i], 1);
 			write(1, "\"", 1);
 			found = 1;
 		}
-		write(1, &s[i], 1);
+		else
+			write(1, &s[i], 1);
 		i++;
 	}
 	write(1, "\"\n", 2);
 }
 
-void	no_args(char **envp)
+static void print_the_envs(char **envp, int *sorted, int size)
 {
-	// this functions need to imitate the behaviour of export without any argument:
-		//It addds 'X- Declare to ever env name
-		// It sorts the variables in alphabetical order 
-		// It prints them after applying the above steps
-	int smallest;
-	int		i = 0, j = 0;
-	int	size = 0;
-	while (envp[size])
-		size++;
-	//t_env_table = ft_calloc(sizeof(t_env_table));
-	int		*sorted = ft_calloc((size) * sizeof(int)); // I need to change the starting point of the index from 0 to 1 cuz how would I know if 0 is alread sorted or not ?
-	// FREE THE SORTED POINTER WHEN I"M DONE USING IT !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	smallest = 0;
-	//while (sorted[smallest]) // skips the string if It's already sorted,
-	//				smallest++;
-	while (envp[i])
-	{
-		j = smallest = 0;
-		while (sorted[smallest]) // skips the string if It's already sorted,
-			smallest++;
-		while (envp[j])
-		{
-		/*	while (sorted[j]) // skips the string if It's already sorted,
-			{	
-				j++;
-				smallest = j; // this is done so we can compare the other strings ?? dunno
-			}*/
-			if (!(sorted[j]) && c_strncmp(envp[j], envp[smallest], '='))
-			{
-				smallest = j;
-			}
-			j++;
-		}
-		sorted[smallest] = i + 1;
-		i++;
-	}
-	i = 0;
-	while (i < size)
-	{
-		printf("%d, ", sorted[i]);
-		i++;
-	}
-	printf("\n");
+	int	i;
+	int	j;
+	
 	i = 0;
 	j = 0;
 	while (i < size)
@@ -154,59 +109,44 @@ void	no_args(char **envp)
 		j = 0;
 		while (sorted[j] != (i + 1))
 			j++;
-		ft_putstr("declare -x  ", 1);
+		ft_putstr("declare -x ", 1);
 		ft_putstr_quote(envp[j]);
-		//printf("%s\n", envp[j]);
-		/*if (!i)
-		{
-			printf("the frist string in the sorted list is : %s\n", envp[j]);
-			printf("j: %d, sorted[%d]: %d\n", j, j, sorted[j]);
-			break;
-		}*/
 		i++;
 	}
-
-	free(sorted);
-	//printf("the frist string in the sorted list is : %s\n", envp[sorted])
-	// count size of the env var
-	// allocate (size * 4) of bytes in the heap, and assign it to int pointer
-	//sort the indexes of the env in the arr, based on their alphabetical order
-
 }
 
-
-char	**ft_export(int argc, char **argv, char **envp, int *status)
+/* this functions need to imitate the behaviour of export without any argument:
+	It addds 'X- Declare to ever env name
+	It sorts the variables in alphabetical order 
+	It prints them after applying the above steps*/
+void	no_args(char **envp)
 {
-	size_t	ar = 1;
+	int		i, j, smallest, size;
+	int		*sorted; // I need to change the starting point of the index from 0 to 1 cuz how would I know if 0 is alread sorted or not ?
 
-	(void)argc;
-	if (!argv[ar])
-		return (no_args(envp), envp);
-	while (argv[ar])
-	{ 
-		while (argv[ar] && (valid_var(argv[ar]) || !(ft_strchr(argv[ar], '='))))
+	i = j = smallest = size = 0;
+	while (envp[size])
+		size++;
+	sorted = ft_calloc((size) * sizeof(int));
+	if (!sorted)
+		;// exit the program;
+	while (envp[i])
+	{
+		j = smallest = 0;
+		while (sorted[smallest]) // skips the string if It's already sorted,
+			smallest++;
+		while (envp[j])
 		{
-			if (argv[ar] && valid_var(argv[ar])) // check for invalid variable name
-			{
-				print_error("minishell: export: `", argv[ar], "': not a valid identifier\n");
-				*status = 1;
-			}
-			ar++;
+			if (!(sorted[j]) && (c_strncmp(envp[j], envp[smallest], '=') < 0)) // this line checks if the string is alread sorted if it is it skips it
+				smallest = j;
+			j++;
 		}
-		if (argv[ar] == NULL)
-			return (envp);
-		if (ft_var_exists(argv[ar], envp))
-		{
-			*status = 0;
-			envp = ft_duplicate_add_s(envp, argv[ar]); // copying the old variables and making space for the new one;
-			if (!envp) ///////////////// CHECK FOR OTHER MALLOCS !!!!!!!!!!!!!!!
-				return (*status = -1, NULL);
-		}
-		ar++;
+		sorted[smallest] = i + 1;
+		i++;
 	}
-	return (envp);
+	print_the_envs(envp, sorted, size);
+	free(sorted);
 }
-
 static int ft_var_exists(char *s, char **envp)
 {
 	size_t	i;
@@ -247,4 +187,35 @@ static char	**ft_duplicate_add_s(char **dup, char *s)
 	p[i] = ft_strdup(s);
 	free_all(dup);
 	return (p);
+}
+char	**ft_export(int argc, char **argv, char **envp, int *status)
+{
+	size_t	ar = 1;
+
+	(void)argc;
+	if (!argv[ar])
+		return (no_args(envp), envp);
+	while (argv[ar])
+	{ 
+		while (argv[ar] && (valid_var(argv[ar]) || !(ft_strchr(argv[ar], '='))))
+		{
+			if (argv[ar] && valid_var(argv[ar])) // check for invalid variable name
+			{
+				print_error("minishell: export: `", argv[ar], "': not a valid identifier\n");
+				*status = 1;
+			}
+			ar++;
+		}
+		if (argv[ar] == NULL)
+			return (envp);		
+		if (ft_var_exists(argv[ar], envp))
+		{
+			*status = 0;
+			envp = ft_duplicate_add_s(envp, argv[ar]); // copying the old variables and making space for the new one;
+			if (!envp) ///////////////// CHECK FOR OTHER MALLOCS !!!!!!!!!!!!!!!
+				return (*status = -1, NULL);
+		}
+		ar++;
+	}
+	return (envp);
 }

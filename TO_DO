@@ -35,6 +35,8 @@ revisit all built-in functions !!!!!!!!!!!
     echo $99pppl
     sort <<te's't // this should not expand the env vars
     echo -nnnnnnnnnnnnnnnnnnn // ??
+    echo $ABC $1ABC $ABC1
+    echo $.ABC
     MEMORY LEAK !!!!!
       echo $1try
   
