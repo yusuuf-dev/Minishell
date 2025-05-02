@@ -45,10 +45,6 @@ static  int    valid_var(char *s)
 	}
     return (0);
 }
-
-//static char	**ft_duplicate_add_s(char **dup, char *s);
-//static int ft_var_exists(char *s, char **envp);
-
 static void print_error(char *s1, char *s2, char *s3)
 {
 	ft_putstr(s1, 2);

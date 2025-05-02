@@ -38,7 +38,7 @@ int	ft_exit(int argc, char **argv, char **envp)
 {
 //	size_t	i = 0;
 	long	ret = 0;
-
+	unsigned char c;
 	(void)argc;
 	(void)envp;
 	if (argv[2] != NULL)
@@ -49,14 +49,13 @@ int	ft_exit(int argc, char **argv, char **envp)
 	
 	if (ft_valid_int(argv[1]))
 	{
-		ret = ft_atoi(argv[1]);
-		if (ret == -1)
+		//ret = ft_atoi(argv[1], &ret);
+		if (c_atoi(argv[1], &ret) == -1)
 		{
 			printf("minishell: exit: %s: numeric argument required\n", argv[1]);
 			return (2);
-
 		}
-		return(ret);
+		return(c = ret, c);
 	}
 	printf("minishell: exit: %s: numeric argument required\n", argv[1]);
 	return(2);

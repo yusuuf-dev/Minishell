@@ -34,7 +34,7 @@ char    *ft_strldup(char *s, size_t     n);
 void    *ft_calloc(size_t n);
 
 int     minishell(int ac, char **av);
-char    **parsing(char **p, char **envp, int *s_exit);
+char	**parsing(char **p, char **envp, int *s_exit, int *status);
 //char	*ft_remove_isspace(char *s);
 
 int     ft_echo(int argc,char	**p, char **envp);
@@ -48,7 +48,7 @@ int     ft_exit(int argc, char **argv, char **envp);
 char	**free_all(char **str);
 char	**ft_duplicate(char **s, size_t add_size);
 char	*ft_isspace_to_space(char *s);
-long	ft_atoi(char *s);
+int	    c_atoi(char *s, long *rslt);
 int     ft_isdigit(int c);
 char	*ft_getenv(char *s, char **envp);
 int		ft_check_spaces(char *s); // this function returns 1 if the argument contains only (isspace) chars.

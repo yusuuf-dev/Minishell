@@ -131,20 +131,19 @@ static void			ft_space(char *s)
 	}
 }
 
-char	**parsing(char **p, char **envp, int *s_exit)
+char	**parsing(char **p, char **envp, int *s_exit, int *status)
 {
     char	*env;
     char	**env_paths = NULL;
     char	**rdl_args;
     char	*path;
     int		i = 0;
-    int		status = 0;
 
     if (found_q(*p) == -1) // check for the quotes are closed;
         {return (ft_putstr("Error unclosed quotes\n", 2), envp);}
 	ft_space(*p);
     *p = convert_env_var(*p,envp);
-	if(parse_redirection(*p, &status))
+	if(parse_redirection(*p, status))
 	 	return (envp);
 	env = ft_getenv("PATH", envp);
 	if (env)
@@ -157,7 +156,7 @@ char	**parsing(char **p, char **envp, int *s_exit)
 //	convert_rdl_vars(envp,rdl_args);
 	if (is_execute_file(rdl_args,envp))
 		return (free_all(rdl_args), free_all(env_paths), envp);
-	if (ft_built_in_cmd(rdl_args, &envp, env_paths, &status, s_exit))
+	if (ft_built_in_cmd(rdl_args, &envp, env_paths, status, s_exit))
 		(void)*p;
 	else
 	{
@@ -165,7 +164,7 @@ char	**parsing(char **p, char **envp, int *s_exit)
 		{
 			path = ft_strjoinf(ft_strjoin(env_paths[i], "/"),rdl_args[0]);
 			if (!access(path, F_OK) && !access(path, X_OK))
-				return (status = execute_command(path, rdl_args, envp), free(path), free_all(rdl_args), free_all(env_paths), envp);
+				return (*status = execute_command(path, rdl_args, envp), free(path), free_all(rdl_args), free_all(env_paths), envp);
 			free(path);
 			i++;
 		}
@@ -208,15 +207,15 @@ static int	ft_built_in_cmd(char **rdl_args, char ***envp, char **env_paths, int 
 		*envp = ft_unset(0, rdl_args, *envp, status);
 	else if (i == 16)
 	{
-		*status = ft_exit(0, rdl_args, *	envp);
-		if (*status)
-			*s_exit = *status;
+		*status = ft_exit(0, rdl_args, *envp);
+		//if (*status)
+		//	*s_exit = *status;
 		//if (*status == 2)
 		//	*s_exit = 0;
-		else
-			*s_exit = 1;
+	//	else
+		*s_exit = 1;
 	}
-  free_all(cmds);
+  	free_all(cmds);
 	if (i > 9)
 		return (1);
 	else

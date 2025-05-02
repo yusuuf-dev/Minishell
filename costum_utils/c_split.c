@@ -1,6 +1,6 @@
 #include "../minishell.h"
 
-static char *rm_quotes(char *str)
+char *rm_quotes(char *str)
 {
 	size_t	i;
 	size_t	j;
@@ -134,7 +134,7 @@ char	**split_q(char *str, char c)
 }
 
 
-static int  found_q(char *s) 
+int  found_q(char *s) 
 {
     size_t  i;
 	int		f_s;

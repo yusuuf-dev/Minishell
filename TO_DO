@@ -13,6 +13,7 @@ variables:
 	Names are used as shell variable and function names. Also referred to as an identifier.
     also look up if the x-declare in the export means anything
     if I readonly an env variable it becomes declare -rx in the export 
+  export --help, what does 'export --' do ??
 
 revisit all built-in functions !!!!!!!!!!!
 */
@@ -26,19 +27,21 @@ revisit all built-in functions !!!!!!!!!!!
     echo $'\n'
     x=-n
     echo $x $PATH $: /home/asoufian/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin%
-  +  old/a.out doesn't work FIX_ME !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  +  remember to fix the history bug when we expand the env var !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  *  old/a.out doesn't work FIX_ME !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  *  remember to fix the history bug when we expand the env var !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   export test=a_file
     the export cmd prints the env vars sorted and with 'DECLARE -X'
-    echo '"'$test'"'
-    echo "$"HOME
-    echo $99pppl
+    echo '"'$test'"'    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  * echo "$"HOME
+  * echo $99pppl
     sort <<te's't // this should not expand the env vars
     echo -nnnnnnnnnnnnnnnnnnn // ??
-    echo $ABC $1ABC $ABC1
-    echo $.ABC
-    MEMORY LEAK !!!!!
-      echo $1try
+  *  echo $ABC $1ABC $ABC1
+  *  echo $.ABC
+  *  the exit status doesn't return the right int when 'exit 0'
+    (ttyname) what if we change the fd of the parent to a non terminal one ? (exec ?)
+  *  MEMORY LEAK !!!!!
+  *    echo $1try
   
     */
 -redirection:
@@ -61,3 +64,6 @@ revisit all built-in functions !!!!!!!!!!!
   * FIX THE HISTORY !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   exit:
     unsigned char c = n (n is the return of atoi, which byitself is the argument that is given to the exit command)
+
+
+  see how fork and children handle signals

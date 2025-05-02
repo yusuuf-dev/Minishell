@@ -36,6 +36,7 @@ int main(int ac, char **av, char **envp)
 	struct sigaction C_slash;
     struct sigaction C_c;
 	int	s_exit = 0;
+    int status = 0;
 
 	(void)av;
 	(void)ac;
@@ -46,7 +47,7 @@ int main(int ac, char **av, char **envp)
     C_slash.sa_handler = SIG_IGN;
     C_c.sa_handler = signal_handler;
 	envp = ft_duplicate(envp, 0);
-    term = ttyname(1);
+    term = ttyname(1); // what if we change the fd of the parent to a non terminal one ? (exec ?)
     if (!term)
         {return (perror("minishell:"), free_all(envp), errno);}
 	while (1 && !s_exit)
@@ -67,9 +68,10 @@ int main(int ac, char **av, char **envp)
         if (p[0])
         {
             add_history(p);
-            envp = parsing(&p, envp, &s_exit);
+            envp = parsing(&p, envp, &s_exit, &status);
         }
         free(p);
     }
-   	exit(s_exit); 
+    free_all(envp);
+   	exit(status);
 }
