@@ -21,15 +21,12 @@ int     ft_isheredoc(char **p, char **envp)
     (void)envp;//need use later when expend on input lines
 
 	if (found_heredoc(*p) == -1)
-	{
-		printf("Error\n");
-		return(0);
-	}
+		return (0);
     while (found_heredoc(*p))
 	{
 		dl = heredoc_delimiter(*p);
 		if (!dl)
-			return(0); // failed malloc protection
+			return(-1); // failed malloc protection
 		fd = open("/tmp/tmp.txt", O_RDWR | O_CREAT | O_TRUNC , 0777);
 		if (fd < 0)
 			return (perror(""),0);

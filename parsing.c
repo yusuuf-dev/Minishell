@@ -51,6 +51,29 @@ static  int is_execute_file(char **rdl_args, char **env)
     return(1);
 }
 
+static void			ft_space(char *s)
+{
+	ssize_t	i = 0;
+	int		f_s = 0;
+	int		f_d = 0;
+
+	while(s[i])
+	{
+		if(s[i] == '\'' && !f_d)
+			f_s = !f_s;
+		else if(s[i] == '\"' && !f_s)
+			f_d = !f_d;
+		if(!f_d && !f_s && s[i] >= 9 && s[i] <= 13)
+			s[i] = ' ';
+		i++;
+	}
+	i = (ssize_t)ft_strlen(s) - 1;
+	if (i < 0)
+		return;
+	while (i >= 0 && s[i] == ' ')
+		s[i--] = 0;
+}
+
 char	**parsing(char **p, char **envp, int *s_exit)
 {
     char	*env;
@@ -65,8 +88,9 @@ char	**parsing(char **p, char **envp, int *s_exit)
 	env = ft_getenv("PATH", envp);
 	if (env)
     	env_paths = ft_split(env,':');
+	ft_space(*p);
 	if (!ft_isheredoc(p,envp))
-		return(NULL);// need protection when failed fd or malloc
+		return(free_all(env_paths), envp);// need protection when failed fd or malloc
     *p = convert_env_var(*p,envp);
     rdl_args = c_split(*p,' ');
 	if (is_execute_file(rdl_args,envp))
