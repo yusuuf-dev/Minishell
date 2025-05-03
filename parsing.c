@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-int	execute_command(char *path, char **rdl_args, char **envp, int fd);
+int	execute_command(char *path, char **rdl_args, char **envp);
 static int	ft_built_in_cmd(char **rdl_args, char ***envp, char **env_paths, int *status, int *s_exit);
 
 
@@ -59,14 +59,13 @@ char	**parsing(char **p, char **envp, int *s_exit)
     char	*path;
     int		i = 0;
     int		status = 0;
-	int 	fd_tmp = 0;
 
     if (found_q(*p) == -1)
         {return (ft_putstr("Error unclosed quotes\n", 2), envp);}
 	env = ft_getenv("PATH", envp);
 	if (env)
     	env_paths = ft_split(env,':');
-	if (!ft_isheredoc(p,fd_tmp,envp))
+	if (!ft_isheredoc(p,envp))
 		return(NULL);// need protection when failed fd or malloc
     *p = convert_env_var(*p,envp);
     rdl_args = c_split(*p,' ');
@@ -80,7 +79,7 @@ char	**parsing(char **p, char **envp, int *s_exit)
 		{
 			path = ft_strjoinf(ft_strjoin(env_paths[i], "/"),rdl_args[0]);
 			if (!access(path, F_OK) && !access(path, X_OK))
-				return (status = execute_command(path, rdl_args, envp, fd_tmp), free(path), free_all(rdl_args), free_all(env_paths), envp);
+				return (status = execute_command(path, rdl_args, envp), free(path), free_all(rdl_args), free_all(env_paths), envp);
 			free(path);
 			i++;
 		}
@@ -88,7 +87,6 @@ char	**parsing(char **p, char **envp, int *s_exit)
 		ft_putstr(rdl_args[0], 2);
 		ft_putstr("\n", 2);
 	}
-	close(fd_tmp);
 	return (free_all(rdl_args), free_all(env_paths), envp);
 }
 
@@ -139,14 +137,14 @@ static int	ft_built_in_cmd(char **rdl_args, char ***envp, char **env_paths, int 
 		return (0);
 }
 
-int	execute_command(char *path, char **rdl_args, char **envp , int fd)
+int	execute_command(char *path, char **rdl_args, char **envp)
 {
 	int	child_pid = 0;
 	int	child_info = 0;
 //	char *read_buf = ft_calloc(sizeof(char) * 10);
 
-	if (dup2(fd, 0) < 0)
-		return (perror(""), errno);
+	// if (dup2(fd, 0) < 0)
+	// 	return (perror(""), errno);
 	//if (lseek(fd, 0, SEEK_SET) < 0 )
 	//	return (perror (""), errno);
 	/*if (read(fd, read_buf, 5) < 0)

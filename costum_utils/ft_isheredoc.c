@@ -12,13 +12,19 @@ static void c_putstr_fd(int fd, char *s)
 	write(fd, "\n", 1);
 }
 
-int     ft_isheredoc(char **p, int fd, char **envp)
+int     ft_isheredoc(char **p, char **envp)
 {
     char    *tmp;
     char    *dl;
+	int		fd;
 
     (void)envp;//need use later when expend on input lines
 
+	if (found_heredoc(*p) == -1)
+	{
+		printf("Error\n");
+		return(0);
+	}
     while (found_heredoc(*p))
 	{
 		dl = heredoc_delimiter(*p);
@@ -45,6 +51,8 @@ int     ft_isheredoc(char **p, int fd, char **envp)
 		fd = open("/tmp/tmp.txt", O_RDWR, 0777);
 		if (fd < 0)
 			return (perror(""), 0);
+		if (dup2(fd, 0) < 0)
+			return (perror(""), errno);
 	}
     return(1);
 }
