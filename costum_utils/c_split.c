@@ -1,50 +1,5 @@
 #include "../minishell.h"
 
-char *rm_quotes(char *str)
-{
-	size_t	i;
-	size_t	j;
-	char	*ptr;
-	char	q;
-
-	i = 0;
-	j = 0;
-	q = 0;
-	if (!str)
-		return (NULL);
-	while (str[i])
-	{
-		if (!q && (str[i] == '\'' || str[i] == '\"'))
-			q = str[i];
-		else if (str[i] != q)
-			j++;
-		else
-			q = 0;
-		i++;
-	}
-	ptr = malloc((j + 1) * sizeof(char));
-	if (!ptr)
-		return (NULL);
-	i = 0;
-	j = 0;
-	q = 0;
-	while (str[i])
-	{
-		if (!q && (str[i] == '\'' || str[i] == '\"'))
-			q = str[i];
-		else if(str[i] != q)
-		{
-			ptr[j] = str[i];
-			j++;
-		}
-		else
-			q = 0;
-		i++;
-	}
-	ptr[j] = '\0';
-	return(ptr);
-}
-
 static int	ft_count_wd(char *s, char c)
 {
 	int	i;
@@ -89,18 +44,17 @@ static char	*ft_substr(char *s, int st, int ed)
 	return (str);
 }
 
-char	**split_q(char *str, char c)
+char	**split_q(char *str, char c, char **envp)
 {
 	char	**ptr;
-	int	i;
-	int	j;
-	int	st;
-	int	wd;
-	char q;
-	char	*tmp;
+	size_t	i;
+	size_t	j;
+	size_t	st;
+	size_t	wd;
+	char q = 0;
 
 
-	wd = ft_count_wd(str,c);
+	wd = (size_t)ft_count_wd(str,c);
 	ptr = malloc((wd + 1) * sizeof(char*));
 	if(!ptr)
 		return(NULL);
@@ -123,11 +77,10 @@ char	**split_q(char *str, char c)
 			i++;
 		}
 		ptr[j] = ft_substr(str,st,i);
-		tmp = ptr[j];
-		ptr[j] = rm_quotes(ptr[j]);
-		free(tmp);
+		ptr[j] = rm_quotes_expand(ptr[j],envp);	
 		if (!ptr[j++])
 			return(free_all(ptr));
+		q = 0;
 	}
 	ptr[j] = NULL;
 	return (ptr);
@@ -163,17 +116,26 @@ int  found_q(char *s)
 }
 
 
-char	**c_split(char *str, char c)
+char	**c_split(char *str, char c, char **envp)
 {
     char    **ptr;
 	int		status;
+	int		i;
 
+	i = 0;
 	status = found_q(str);
 	if (status == -1)
 		return (NULL);
 	else if (status == 1)
-		ptr = split_q(str,c);
+		ptr = split_q(str,c,envp);
     else
+	{
         ptr = ft_split(str,c);
+		while (ptr[i])
+		{
+			ptr[i] = rm_quotes_expand(ptr[i],envp);
+			i++;
+		}
+	}
     return(ptr);
 }

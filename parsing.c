@@ -3,7 +3,6 @@
 int	execute_command(char *path, char **rdl_args, char **envp);
 static int	ft_built_in_cmd(char **rdl_args, char ***envp, char **env_paths, int *status, int *s_exit);
 
-
 char	*ft_getenv(char *s, char **envp)
 {
 	size_t	i = 0;
@@ -14,6 +13,11 @@ char	*ft_getenv(char *s, char **envp)
 	size = ft_strlen(s);
 	while (envp[i])
 	{
+		//if (c_strncmp(envp[i], s, '='))
+		//if (!ft_strncmp(envp[i], s, (ft_strchr(envp[i], '=') - envp[i])))
+		size = ft_strlen(s);
+		if (ft_strlen(s) < (size_t)(ft_strchr(envp[i], '=') - envp[i]))
+			size = (ft_strchr(envp[i], '=') - envp[i]);
 		if (!ft_strncmp(envp[i], s, size))
 		{
 			return (ft_strchr(envp[i], '=') + 1);
@@ -91,8 +95,8 @@ char	**parsing(char **p, char **envp, int *s_exit)
 	ft_space(*p);
 	if (!ft_isheredoc(p,envp))
 		return(free_all(env_paths), envp);// need protection when failed fd or malloc
-    *p = convert_env_var(*p,envp);
-    rdl_args = c_split(*p,' ');
+    // *p = convert_env_var(*p,envp);
+    rdl_args = c_split(*p,' ',envp);
 	if (is_execute_file(rdl_args,envp))
 		return (free_all(rdl_args), free_all(env_paths), envp);
 	if (ft_built_in_cmd(rdl_args, &envp, env_paths, &status, s_exit))

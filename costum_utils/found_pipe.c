@@ -1,11 +1,11 @@
 #include "../minishell.h"
 
-int     found_pipe(char *line)
+int     found_pipe(char *line,char **envp)
 {
     int  i;
     char **segments;
 
-    segments = c_split(line, ' ');
+    segments = c_split(line, ' ',envp);
     if (!segments)
         return(-1); // protect malloc error
     i = 0;
