@@ -1,6 +1,6 @@
 #include "../minishell.h"
 
-char    *heredoc_delimiter(char *s)
+char    *heredoc_delimiter(char *s ,int *isquote)
 {
     size_t i = 0;
     size_t st = 0;
@@ -22,7 +22,10 @@ char    *heredoc_delimiter(char *s)
             while (s[i] && s[i] != ' ' && !(s[i] >= 9 && s[i] <= 13))
             {
                 if (!q && (s[i] == '\'' || s[i] == '\"'))
+                {
                     q = s[i++];
+                    *isquote = 1;
+                }
                 while(q && s[i] != q)
                     i++;
                 q = 0;
