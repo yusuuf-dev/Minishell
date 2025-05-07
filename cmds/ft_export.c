@@ -93,14 +93,14 @@ void	ft_putstr_quote(char *s)
 	write(1, "\"\n", 2);
 }
 
-static void print_the_envs(char **envp, int *sorted, int size)
+static void print_the_envs(char **envp, int *sorted)
 {
 	int	i;
 	int	j;
 	
 	i = 0;
 	j = 0;
-	while (i < size)
+	while (envp[i])
 	{
 		j = 0;
 		while (sorted[j] != (i + 1))
@@ -117,13 +117,13 @@ static void print_the_envs(char **envp, int *sorted, int size)
 	It prints them after applying the above steps*/
 void	no_args(char **envp)
 {
-	int		i, j, smallest, size;
+	int		i, j, smallest;
 	int		*sorted; // I need to change the starting point of the index from 0 to 1 cuz how would I know if 0 is alread sorted or not ?
 
-	i = j = smallest = size = 0;
-	while (envp[size])
-		size++;
-	sorted = ft_calloc((size) * sizeof(int));
+	i = j = smallest =0;
+	while (envp[j])
+		j++;
+	sorted = ft_calloc((j) * sizeof(int));
 	if (!sorted)
 		;// exit the program;
 	while (envp[i])
@@ -140,7 +140,7 @@ void	no_args(char **envp)
 		sorted[smallest] = i + 1;
 		i++;
 	}
-	print_the_envs(envp, sorted, size);
+	print_the_envs(envp, sorted);
 	free(sorted);
 }
 static int ft_var_exists(char *s, char **envp)

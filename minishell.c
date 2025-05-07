@@ -8,35 +8,37 @@ void    signal_handler(int signum)
     rl_on_new_line();
     rl_redisplay();
 }
-static int    set_default_fd(char *term_path)
+static int assign_std_in_out_err(int *fd0, int *fd1, int *fd2)
 {
-    size_t  i = 0;
-    int     temp_fd = 0;
-
-    while (i < 3)
-    {
-        if (!isatty(i))
-        {
-            temp_fd = open(term_path, O_RDWR);
-            if (temp_fd < 0)
-                return (perror("minishell: setting fd"), errno);
-            temp_fd = dup2(temp_fd, i);
-            if (temp_fd < 0)
-                return (perror("minishell: setting fd"), errno);
-        }
-        i++;
-    }
+    *fd0 = dup(0);
+    if (*fd0 == -1)
+        return (perror(""), 1);
+    *fd1 = dup(1);
+    if (*fd1 == -1)
+        return (perror(""), 1);
+    *fd2 = dup(2);
+    if (*fd2 == -1)
+        return (perror(""), 1);
     return (0);
 }
-
+static int reset_std_in_out_err(int fd0, int fd1, int fd2)
+{
+    if (dup2(fd0, 0) == -1)
+        return (perror(""), 1);
+    if (dup2(fd1, 1) == -1)
+        return (perror(""), 1);
+    if (dup2(fd2, 2) == -1)
+        return (perror(""), 1);       
+    return (0);
+}
 int main(int ac, char **av, char **envp)
 {
 	char *p = NULL;
-    char    *term = NULL;
 	struct sigaction C_slash;
     struct sigaction C_c;
 	int	s_exit = 0;
     int status = 0;
+    int fd0, fd1, fd2;
 
 	(void)av;
 	(void)ac;
@@ -47,23 +49,21 @@ int main(int ac, char **av, char **envp)
     C_slash.sa_handler = SIG_IGN;
     C_c.sa_handler = signal_handler;
 	envp = ft_duplicate(envp, 0);
-    term = ttyname(1); // what if we change the fd of the parent to a non terminal one ? (exec ?)
-    if (!term)
-        {return (perror("minishell:"), free_all(envp), errno);}
+    if (assign_std_in_out_err(&fd0, &fd1, &fd2))
+        {return (free_all(envp), 1);}
 	while (1 && !s_exit)
     {
-       // printf("term_path: %s\n", term);
 		sigaction(SIGQUIT, &C_slash, NULL);
         sigaction(SIGINT, &C_c, NULL);
-        if (set_default_fd(term))
-            return (free_all(envp), errno);
+        if (reset_std_in_out_err(fd0, fd1, fd2))
+            return (free_all(envp), 1);
 		p = readline("minishell : ");
 		if (!p)
 		{
 			printf("exit\n");
 			free_all(envp);
 			free(p);
-			exit(0);
+			return (0);
 		}
         if (p[0])
         {

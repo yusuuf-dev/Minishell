@@ -14,13 +14,6 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
-typedef struct apply_red
-{
-    int pos;
-    int bool;
-    struct apply_red *next;
-} t_apply_red;
-
 int     costum_atoi(char *s, int *status, int fd);
 size_t	ft_strlen(char *s);
 char	**ft_split(char *str, char c);
@@ -33,7 +26,7 @@ char	*ft_strjoinf(char *s1, char *s2);
 char    *ft_strldup(char *s, size_t     n);
 void    *ft_calloc(size_t n);
 
-int     minishell(int ac, char **av);
+//int     minishell(int ac, char **av);
 char	**parsing(char **p, char **envp, int *s_exit, int *status);
 //char	*ft_remove_isspace(char *s);
 
@@ -54,7 +47,11 @@ char	*ft_getenv(char *s, char **envp);
 int		ft_check_spaces(char *s); // this function returns 1 if the argument contains only (isspace) chars.
 void    ft_putstr(char *s, int fd);
 char    *convert_env_var(char *s,char **envp);
-char	**c_split(char *str, char c);
-int	    parse_redirection(char *s, int *status);
+char	**c_split(char *str, char c, char **envp);
+int	    parse_redirection(char **full_str, int *status, char **envp);
+char *rm_quotes_expand(char *str, char **envp);
+char *rm_quotes(char *str);
+int     ft_isheredoc(char *p, char **envp);
+char    *heredoc_delimiter(char *s ,int *isquote);
 
 #endif

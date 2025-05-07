@@ -1,0 +1,21 @@
+ls
+#echo "test output" >mini_echo.txt
+ls /somwhere
+
+echo "double quotes test"
+echo 'single quotes test'
+echo 'double "quotes" inside single quotes'
+echo "single 'quotes' inside double quotes"
+
+echo ""this should not print any quotes""
+echo ''this should not print any quotes''
+echo ""'this should not print any quotes'""
+echo ''"this should not print any quotes"''
+
+echo ''""this should not print any quotes''""
+echo ""''this should not print any quotes""''
+
+echo this should expand $HOME
+echo "this should expand $HOME"
+echo 'this should not expand $HOME'
+echo "this should expand $EXP"

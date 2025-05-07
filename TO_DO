@@ -13,6 +13,7 @@ variables:
 	Names are used as shell variable and function names. Also referred to as an identifier.
     also look up if the x-declare in the export means anything
     if I readonly an env variable it becomes declare -rx in the export 
+  maybe I should remove the variable '_' since the minishell doesn't update it and the bash doesn't seem to give it the 'x' attribute
   export --help, what does 'export --' do ??
 
 revisit all built-in functions !!!!!!!!!!!
@@ -42,6 +43,15 @@ revisit all built-in functions !!!!!!!!!!!
     (ttyname) what if we change the fd of the parent to a non terminal one ? (exec ?)
   *  MEMORY LEAK !!!!!
   *    echo $1try
+  export test="'some_file$'"
+  echo $test
+
+  minishell : export file_name="'a_file'"
+  minishell : echo $file_name
+  a_file
+  the output should be 'a_file', but we get a_file because we perform variable expansion and then we remove quotes, a possible solution would be to rm quotes first,
+   expect for when there's a '$' and then perform variable expansion after that we rm quotes again;
+
   
     */
 -redirection:
@@ -55,15 +65,46 @@ revisit all built-in functions !!!!!!!!!!!
     echo testing something to do yeah >'#yo' // works
     echo testing something to do yeah >#yo // gives an error
     echo testing something to do yeah >>>>good
-  * echo testsomethingtdo >b_file somethingelse ????????????? doesn't work
+  *  echo testsomethingtdo >b_file somethingelse ????????????? doesn't work
+  export test="'somefile'"
+  ls /somehwere /home 2f>>a_file >>a_file > $test 2>$test
+  echo "testing expansion with spaces" >"$test file"
+  ls /somehwere /home > $test 2>$test
+  echo "some dumb weird sin" > "'$test in $test'"
+  <test_progm.c grep 'test' > b >c >$test >$non
+  make a program that opens all 1024 fds; // this won't effect the shell cuz when we run a proram we use fork;
     quotes shenannigas 
         maybe dup the file name and passe to youssef's function that handles quotes ? I assumed this (this won't work cuz the shell doesn't use the same logic) cuz
         // I didn't know that ls adds quotes when it finds a meta charactere on a file/dir name;
-    echo testing something 1>"'9991'" ???
-    echo testing something 1>'9991'   ?!@#!@#?1RF?qeF?sd
+    ls /somehwere /home 2f>>a_file >>a_file > f_file 2>f_file
+  *  echo testing something 1>"'9991'" ???
+  *  echo testing something 1>'9991'   ?!@#!@#?1RF?qeF?sd
   * FIX THE HISTORY !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  ??
+  asoufian@c2r4p1:~/minishell$ export EXP='my files'
+  asoufian@c2r4p1:~/minishell$ echo "test something to do yeah" >$EXP
+  bash: $EXP: ambiguous redirect
+  ??
+  weird here-doc behaviour:
+      asoufian@c2r4p1:~/minishell$ sort << EOF
+    > some text
+    > $HOME
+    > some more text
+    > '$HOME'
+    > another sentence
+    > EOF
+    another sentence
+    '/home/asoufian'
+    /home/asoufian
+    some more text
+    some text
+
   exit:
     unsigned char c = n (n is the return of atoi, which byitself is the argument that is given to the exit command)
 
 
   see how fork and children handle signals
+
+==============================
+./minishell < inputs.txt
+==============================

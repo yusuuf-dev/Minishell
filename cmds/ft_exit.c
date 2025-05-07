@@ -41,11 +41,11 @@ int	ft_exit(int argc, char **argv, char **envp)
 	unsigned char c;
 	(void)argc;
 	(void)envp;
+
+	if (!argv[1])
+		return (0);
 	if (argv[2] != NULL)
-	{
-		printf("too many arguments\n");
-		return (2);
-	}
+		return (ft_putstr("too many arguments\n", 2), 2);
 	
 	if (ft_valid_int(argv[1]))
 	{
