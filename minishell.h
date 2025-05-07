@@ -62,5 +62,7 @@ int     found_pipe(char *line,char **envp);
 int     ft_isheredoc(char **p, char **envp);
 char    *rm_quotes_expand(char *str, char **envp);
 char    *heredoc_delimiter(char *s ,int *isquote);
+int	    ft_isalpha(int c);
+int	    ft_isalnum(int c);
 
 #endif

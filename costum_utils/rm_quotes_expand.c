@@ -1,17 +1,5 @@
 #include "../minishell.h"
 
-static int	validchar(int c)
-{
-	if (c == '_')
-		return (1);
-	else if (c >= 65 && c <= 90)
-		return (1);
-	else if (c >= 97 && c <= 122)
-		return (1);
-	else
-		return (0);
-}
-
 static char *c_strjoinf(char *s1, char c)
 {
 	size_t i;
@@ -54,11 +42,11 @@ char *rm_quotes_expand(char *str, char **envp)
 			q = 0;
 			i++;
 		}
-		else if (str[i] == '$' && q != '\'' && validchar(str[i + 1]))
+		else if (str[i] == '$' && q != '\'' && (ft_isalpha(str[i + 1]) || str[i + 1] == '_'))
 		{
 			i++;
 			len = 0;
-			while (str[i + len] && str[i + len] != ' ' && str[i + len] != '\"' && str[i + len] != '\'' && str[i + len] != '$')
+			while (str[i + len] && ft_isalnum(str[i + len]))
 				len++;
 			key = ft_strldup(&str[i],len);
 			var = ft_getenv(key,envp);
