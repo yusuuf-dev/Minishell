@@ -14,12 +14,13 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
-typedef struct apply_red
+typedef struct data
 {
-    int pos;
-    int bool;
-    struct apply_red *next;
-} t_apply_red;
+    char    *rdline;
+    char    **rdl_args;
+    char    **envp;
+    char    **env_paths;
+} t_data;
 
 int costum_atoi(char *s, int *status);
 size_t	ft_strlen(char *s);

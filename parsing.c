@@ -6,22 +6,15 @@ static int	ft_built_in_cmd(char **rdl_args, char ***envp, char **env_paths, int 
 char	*ft_getenv(char *s, char **envp)
 {
 	size_t	i = 0;
-	size_t	size = 0;
+	size_t	len = 0;
 
 	if (!s || !(s[0]))
 		return (NULL);
-	size = ft_strlen(s);
+	len = ft_strlen(s);
 	while (envp[i])
 	{
-		//if (c_strncmp(envp[i], s, '='))
-		//if (!ft_strncmp(envp[i], s, (ft_strchr(envp[i], '=') - envp[i])))
-		size = ft_strlen(s);
-		if (ft_strlen(s) < (size_t)(ft_strchr(envp[i], '=') - envp[i]))
-			size = (ft_strchr(envp[i], '=') - envp[i]);
-		if (!ft_strncmp(envp[i], s, size))
-		{
+		if (!ft_strncmp(envp[i], s, len) && envp[i][len] == '=')
 			return (ft_strchr(envp[i], '=') + 1);
-		}
 		i++;
 	}
 	return (NULL);
