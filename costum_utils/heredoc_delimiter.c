@@ -10,31 +10,25 @@ char    *heredoc_delimiter(char *s ,int *isquote)
     char    *delimiter;
     char    *tmp;
 
-    while (s[i])
+    i = 2;
+    f = 0;
+
+    while (s[i] == ' ' || (s[i] >= 9 && s[i] <= 13))
+        i++;
+    st = i;
+    while (s[i] && s[i] != ' ' && !(s[i] >= 9 && s[i] <= 13))
     {
-        if (i > 0 && s[i - 1] == '<' && s[i] == '<')
+        if (!q && (s[i] == '\'' || s[i] == '\"'))
         {
-            f = i - 1;
-            i++;
-            while (s[i] == ' ' || (s[i] >= 9 && s[i] <= 13))
-                i++;
-            st = i;
-            while (s[i] && s[i] != ' ' && !(s[i] >= 9 && s[i] <= 13))
-            {
-                if (!q && (s[i] == '\'' || s[i] == '\"'))
-                {
-                    q = s[i++];
-                    *isquote = 1;
-                }
-                while(q && s[i] != q)
-                    i++;
-                q = 0;
-                i++;
-            }
-            break;
+            q = s[i++];
+            *isquote = 1;
         }
+        while(q && s[i] != q)
+            i++;
+        q = 0;
         i++;
     }
+
     delimiter = malloc((i - st + 1) * sizeof(char));
     if (!delimiter)
         return (NULL);

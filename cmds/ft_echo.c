@@ -12,12 +12,12 @@
 
 #include "../minishell.h"
 
-int     ft_echo(int argc, char **p, char **envp)
+int     ft_echo( char **p, char **envp)
 {
 	size_t	i = 1;
 
 	(void)envp;
-	(void)argc;
+
 
     if (!p[i])
     	return(0);

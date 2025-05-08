@@ -34,29 +34,27 @@ static int	ft_valid_int(char *s)
 	}
 	return (1);
 }
-int	ft_exit(int argc, char **argv, char **envp)
+int	ft_exit(char **argv, char **envp)
 {
 //	size_t	i = 0;
 	long	ret = 0;
-
-	(void)argc;
+	unsigned char c;
 	(void)envp;
+
+	if (!argv[1])
+		return (0);
 	if (argv[2] != NULL)
-	{
-		printf("too many arguments\n");
-		return (2);
-	}
+		return (ft_putstr("too many arguments\n", 2), 2);
 	
 	if (ft_valid_int(argv[1]))
 	{
-		ret = ft_atoi(argv[1]);
-		if (ret == -1)
+		//ret = ft_atoi(argv[1], &ret);
+		if (c_atoi(argv[1], &ret) == -1)
 		{
 			printf("minishell: exit: %s: numeric argument required\n", argv[1]);
 			return (2);
-
 		}
-		return(ret);
+		return(c = ret, c);
 	}
 	printf("minishell: exit: %s: numeric argument required\n", argv[1]);
 	return(2);

@@ -11,11 +11,10 @@
 /* ************************************************************************** */
 
 #include "../minishell.h"
-int     ft_pwd(int argc, char **argv, char **envp)
+int     ft_pwd(char **argv, char **envp)
 {
     char    *p;
 
-	(void)argc;
 	(void)argv;
 	(void)envp;
     p = NULL;
