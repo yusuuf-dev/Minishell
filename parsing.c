@@ -3,6 +3,21 @@
 int	execute_command(char *path, char **rdl_args, char **envp);
 static int	ft_built_in_cmd(char **rdl_args, char ***envp, char **env_paths, int *status, int *s_exit);
 
+int     c_strncmp(const char *s1, const char *s2)
+{
+    size_t  i;
+
+    i = 0;
+    while(s1[i] && s1[i] != '=')
+    {
+        if (s1[i] - s2[i])
+            return (s1[i] - s2[i]);
+        i++;
+    }
+	if (!(s2[i]))
+		return (0);
+    return (s1[i] - s2[i]);
+}
 char	*ft_getenv(char *s, char **envp)
 {
 	size_t	i = 0;
@@ -11,7 +26,7 @@ char	*ft_getenv(char *s, char **envp)
 	size = ft_strlen(s);
 	while (envp[i])
 	{
-		if (!ft_strncmp(envp[i], s, size))
+		if (!c_strncmp(envp[i], s))
 		{
 			return (ft_strchr(envp[i], '=') + 1);
 		}
@@ -152,20 +167,20 @@ static int	ft_built_in_cmd(char **rdl_args, char ***envp, char **env_paths, int 
         i++;
 	}
 	if (i == 10)
-		*status = ft_pwd(0, rdl_args, *envp);
+		*status = ft_pwd(rdl_args, *envp);
 	else if (i == 11)
-		*status = ft_cd(0, rdl_args, envp);
+		*status = ft_cd(rdl_args, envp);
 	else if (i == 12)
-		*envp = ft_export(0, rdl_args, *envp, status);
+		*envp = ft_export(rdl_args, *envp, status);
 	else if (i == 13)
-		*status = ft_echo(0, rdl_args, *envp);
+		*status = ft_echo(rdl_args, *envp);
 	else if (i == 14)
-		*status = ft_env(0, rdl_args, *envp, env_paths);
+		*status = ft_env(rdl_args, *envp, env_paths);
 	else if (i == 15)
-		*envp = ft_unset(0, rdl_args, *envp, status);
+		*envp = ft_unset(rdl_args, *envp, status);
 	else if (i == 16)
 	{
-		*status = ft_exit(0, rdl_args, *envp);
+		*status = ft_exit(rdl_args, *envp);
 		//if (*status)
 		//	*s_exit = *status;
 		//if (*status == 2)

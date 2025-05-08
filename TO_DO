@@ -80,6 +80,8 @@ revisit all built-in functions !!!!!!!!!!!
   *  echo testing something 1>"'9991'" ???
   *  echo testing something 1>'9991'   ?!@#!@#?1RF?qeF?sd
   * FIX THE HISTORY !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    cat <<EOF>some_file.txt
+  * cat << EOF <file.txt>some_file.txt
   ??
   asoufian@c2r4p1:~/minishell$ export EXP='my files'
   asoufian@c2r4p1:~/minishell$ echo "test something to do yeah" >$EXP
@@ -108,3 +110,74 @@ revisit all built-in functions !!!!!!!!!!!
 ==============================
 ./minishell < inputs.txt
 ==============================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+echo $HOME-test 
+cat <<EOF <some_file.txt 
+  the delimited should be 'EOF' but our minishell takes 'EOF>some_file.txt' as the delimited;
+
+<file.txt <<EOF sort
+
+
+IF MALLOC FAILS, make a function that will free the struct and exit;
+
+reform/refactor the code; 
+
+STATUS '$?'
+make a struct that should include atleast : (for now)
+  (char **rdl_args, char ***envp, char **env_paths, int *status, int *s_exit)
+
+SIGNLAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAS
+
+PIPE,
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

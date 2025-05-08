@@ -15,7 +15,7 @@
 char	*update_env_pwd(char **pwd_variable, char ***envp, int *status);
 int		search_cdpath_var(char **argv, char ***envp, char **pwd_variable);
 
-int     ft_cd(int argc, char **argv, char ***envp)
+int     ft_cd(char **argv, char ***envp)
 {
 	char	**pwd_variable;
 	char	*p = NULL;
@@ -23,7 +23,6 @@ int     ft_cd(int argc, char **argv, char ***envp)
 	int		f = 0;
 	int		status;	// this does nothing yet
 
-  	(void)argc;
 
 	if (argv[1] && argv[2] != NULL) // if we have more than 1 argument, the program returns error
 		return (ft_putstr("minishell: cd: too many arguments\n", 2), errno);
@@ -88,12 +87,12 @@ char	*update_env_pwd(char **pwd_variable, char ***envp, int *status)
 {
 	char	*p = NULL;
 
-	*envp = ft_export(0, pwd_variable, *envp, status);
+	*envp = ft_export(pwd_variable, *envp, status);
 	//p = getcwd(p, 4100);
 	p = getcwd(p, 0);
 	if (!p)
 		return (NULL);
 	pwd_variable[2] = ft_strjoin("PWD=", p);
-	*envp = ft_export(0, &pwd_variable[1], *envp, status);
+	*envp = ft_export(&pwd_variable[1], *envp, status);
 	return (p);
 }

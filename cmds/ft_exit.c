@@ -34,12 +34,11 @@ static int	ft_valid_int(char *s)
 	}
 	return (1);
 }
-int	ft_exit(int argc, char **argv, char **envp)
+int	ft_exit(char **argv, char **envp)
 {
 //	size_t	i = 0;
 	long	ret = 0;
 	unsigned char c;
-	(void)argc;
 	(void)envp;
 
 	if (!argv[1])

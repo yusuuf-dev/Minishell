@@ -29,7 +29,7 @@ int	ft_find(char **s, char *find, size_t *index)
 	return (0);
 }
 
-char	**ft_unset(int argc, char **argv, char **envp, int *status)
+char	**ft_unset(char **argv, char **envp, int *status)
 {
 	char	**p = NULL;
 	size_t	i = 0;
@@ -40,7 +40,6 @@ char	**ft_unset(int argc, char **argv, char **envp, int *status)
 	// the index indicates the index of the passed argument in the list
 	size_t	index = 0;
 
-	(void)argc;
 	while (argv[ar])
 	{
 		if (ft_find(envp, argv[ar], &index))

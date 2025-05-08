@@ -236,6 +236,7 @@ static int open_assign_fd(char *s, int *fd, int mode, int append, int *ret)
 {
 	int		fd_file = 0;
 
+	//fd = open("/proc/sys/kernel/pid_max", (argc > 1) ? O_RDWR : O_RDONLY);
 	if (append)
 		fd_file = open(s, O_WRONLY|O_CREAT|O_APPEND, 00644);
 	else if (mode && !append)

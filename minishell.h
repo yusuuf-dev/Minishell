@@ -30,13 +30,13 @@ void    *ft_calloc(size_t n);
 char	**parsing(char **p, char **envp, int *s_exit, int *status);
 //char	*ft_remove_isspace(char *s);
 
-int     ft_echo(int argc,char	**p, char **envp);
-int     ft_pwd(int argc,char	**argv, char **envp);
-int     ft_cd(int argc, char **argv, char ***envp);
-char	**ft_export(int argc, char **argv, char **envp, int *status);
-char	**ft_unset(int argc, char **argv, char **envp, int *status);
-int     ft_env(int argc, char **argv, char **envp, char **envp_paths);
-int     ft_exit(int argc, char **argv, char **envp);
+int     ft_echo(char **p, char **envp);
+int     ft_pwd(char	**argv, char **envp);
+int     ft_cd(char **argv, char ***envp);
+char	**ft_export(char **argv, char **envp, int *status);
+char	**ft_unset(char **argv, char **envp, int *status);
+int     ft_env(char **argv, char **envp, char **envp_paths);
+int     ft_exit(char **argv, char **envp);
 
 char	**free_all(char **str);
 char	**ft_duplicate(char **s, size_t add_size);
@@ -49,8 +49,8 @@ void    ft_putstr(char *s, int fd);
 char    *convert_env_var(char *s,char **envp);
 char	**c_split(char *str, char c, char **envp);
 int	    parse_redirection(char **full_str, int *status, char **envp);
-char *rm_quotes_expand(char *str, char **envp);
-char *rm_quotes(char *str);
+char    *rm_quotes_expand(char *str, char **envp);
+char    *rm_quotes(char *str);
 int     ft_isheredoc(char *p, char **envp);
 char    *heredoc_delimiter(char *s ,int *isquote);
 
