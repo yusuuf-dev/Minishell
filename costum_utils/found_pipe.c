@@ -2,25 +2,27 @@
 
 int     found_pipe(char *line,char **envp)
 {
-    int  i;
+    size_t  i;
+    size_t  j;
     char **segments;
 
-    segments = c_split(line, ' ',envp);
+    segments = ft_split(line, ' ');
     if (!segments)
         return(-1); // protect malloc error
     i = 0;
     while (segments[i])
     {
-        // if (ft_strncmp(segments[i], "||",2))
-        // {
-        //     free_all(segments);
-        //     return(2);
-        // }
-        if (ft_strcmp(segments[i],"|"))
+        j = 0;
+        if (segments[i][0] == '|')
+            return(free_all(segments),1);
+        while (segments[i][j])
         {
-            free_all(segments);
-            return(1);
+            j++;
+            if (j > 0 && !segments[i][j] && segments[i][j - 1] == '|')
+                return(free_all(segments),1);
         }
+        if (ft_strcmp(segments[i],"|"))
+            return(free_all(segments),1);
         i++;
     }
     free_all(segments);
