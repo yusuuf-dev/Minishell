@@ -34,6 +34,7 @@ static int reset_std_in_out_err(int fd0, int fd1, int fd2)
 int main(int ac, char **av, char **envp)
 {
 	char *p = NULL;
+    char **segments = NULL;
 	struct sigaction C_slash;
     struct sigaction C_c;
 	int	s_exit = 0;
@@ -67,6 +68,28 @@ int main(int ac, char **av, char **envp)
 		}
         if (p[0])
         {
+            i = found_pipe(p,envp);
+            if (i == 1)
+            {
+                i = 0;
+                segments = c_split(p, '|',envp);
+                if (!segments)
+                    return(exit_minishell(envp,p,1,"failed malloc\n"));//protect malloc                    
+                while(segments[i])
+                {
+                    envp = parsing(&segments[i], envp, &s_exit);
+                    i++;    
+                }
+                free_all(segments);
+                add_history(p);   
+            }
+            else if (i == 0)
+            {
+                    add_history(p);
+                    envp = parsing(&p, envp, &s_exit, &status);
+            }
+            else
+                return(exit_minishell(envp,p,1,"failed malloc\n"));//protect malloc            
             add_history(p);
             envp = parsing(&p, envp, &s_exit, &status);
         }
