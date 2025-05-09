@@ -26,8 +26,8 @@ char	*ft_strjoinf(char *s1, char *s2);
 char    *ft_strldup(char *s, size_t     n);
 void    *ft_calloc(size_t n);
 
-int     minishell(int ac, char **av);
-char	**parsing(char **p, char **envp, int *s_exit, int *status);
+//int     minishell(int ac, char **av);
+char	**parsing(char **p, char **envp, int *s_exit, int *status, int is_a_pipe);
 //char	*ft_remove_isspace(char *s);
 
 int     ft_echo(char **p, char **envp);
@@ -47,7 +47,7 @@ int		ft_check_spaces(char *s); // this function returns 1 if the argument contai
 void    ft_putstr(char *s, int fd);
 char    *convert_env_var(char *s,char **envp);
 char	**c_split(char *str, char c, char **envp);
-int     found_heredoc(char *s);
+//int     found_heredoc(char *s);
 char    *rm_quotes(char *str);
 int     found_q(char *s);
 int     found_pipe(char *line,char **envp);
@@ -59,5 +59,6 @@ int	    ft_isalnum(int c);
 int	    c_atoi(char *s, long *rslt);
 int	    parse_redirection(char **full_str, int *status, char **envp);
 int     costum_atoi(char *nptr, int *status, int fd);
+int     ft_pipes(char **piped_cmds, char **p, int *status, int *is_a_pipe);
 
 #endif

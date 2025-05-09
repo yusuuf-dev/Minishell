@@ -1,5 +1,7 @@
 #include "minishell.h"
 
+static int     exit_minishell(char **envp, char *p, int status, char *msg);
+
 void    signal_handler(int signum)
 {
 	(void)signum;
@@ -39,7 +41,9 @@ int main(int ac, char **av, char **envp)
     struct sigaction C_c;
 	int	s_exit = 0;
     int status = 0;
+    int is_a_pipe = 0;
     int fd0, fd1, fd2;
+    int i;
 
 	(void)av; // maybe we can remove these two from the argument since we don't use them, the problem is wether the envp will work or not;
 	(void)ac; //
@@ -52,12 +56,10 @@ int main(int ac, char **av, char **envp)
 	envp = ft_duplicate(envp, 0);
     if (assign_std_in_out_err(&fd0, &fd1, &fd2))
         {return (free_all(envp), 1);}
-	while (1 && !s_exit)
+	while (1 && !s_exit && !is_a_pipe)
     {
 		sigaction(SIGQUIT, &C_slash, NULL);
         sigaction(SIGINT, &C_c, NULL);
-        if (reset_std_in_out_err(fd0, fd1, fd2))
-            return (free_all(envp), 1);
 		p = readline("minishell : ");
 		if (!p)
 		{
@@ -68,45 +70,39 @@ int main(int ac, char **av, char **envp)
 		}
         if (p[0])
         {
-            i = found_pipe(p,envp);
+            add_history(p);
+            i = found_pipe(p, envp);
             if (i == 1)
             {
-                i = 0;
                 segments = c_split(p, '|',envp);
                 if (!segments)
-                    return(exit_minishell(envp,p,1,"failed malloc\n"));//protect malloc                    
-                while(segments[i])
-                {
-                    envp = parsing(&segments[i], envp, &s_exit);
-                    i++;    
-                }
-                free_all(segments);
-                add_history(p);   
+                    return(exit_minishell(envp, p, 1, "failed malloc\n"));//protect malloc  
+                if (ft_pipes(segments, &p, &status, &is_a_pipe))
+                    return (errno);
+               // free_all(segments);
             }
-            else if (i == 0)
-            {
-                    add_history(p);
-                    envp = parsing(&p, envp, &s_exit, &status);
-            }
-            else
-                return(exit_minishell(envp,p,1,"failed malloc\n"));//protect malloc            
-            add_history(p);
-            envp = parsing(&p, envp, &s_exit, &status);
+            else if (i == -1)
+                return(exit_minishell(envp, p, 1, "failed malloc\n"));//protect malloc
+            if (p)  // not great, this is done for when the piping is done so that the program wouldn't check for cmds;
+                envp = parsing(&p, envp, &s_exit, &status, is_a_pipe);
+            if (reset_std_in_out_err(fd0, fd1, fd2))
+                return (free_all(envp), 1);
         }
         free(p);
     }
     free_all(envp);
-   	exit(status);
+    //return (0);
+    exit(status);
 }
 
-// static int     exit_minishell(char **envp, char *p, int status, char *msg)
-// {
-//     free_all(envp);
-//     free(p);
-//     if (msg)
-//         printf("%s",msg);
-//     exit(status);
-// }
+static int     exit_minishell(char **envp, char *p, int status, char *msg)
+{
+     free_all(envp);
+     free(p);
+     if (msg)
+         printf("%s",msg);
+     exit(status);
+}
 
 // static void    signal_handler(int signum)
 // {
