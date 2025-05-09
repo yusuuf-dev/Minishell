@@ -76,7 +76,7 @@ int main(int ac, char **av, char **envp)
                 i = 0;
                 segments = c_split(p, '|',envp);
                 if (!segments)
-                    return(free_all(envp),free(p),1);//protect malloc            
+                    return(free_all(envp),free(p),1);//protect malloc
                 while(segments[i])
                 {
                     add_history(p); 
