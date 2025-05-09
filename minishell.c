@@ -38,10 +38,11 @@ int main(int ac, char **av, char **envp)
     struct sigaction C_c;
 	int	s_exit = 0;
     int status = 0;
+    int is_a_pipe = 0;
     int fd0, fd1, fd2;
 
-	(void)av;
-	(void)ac;
+	(void)av; // maybe we can remove these two from the argument since we don't use them, the problem is wether the envp will work or not;
+	(void)ac; //
 	sigemptyset(&(C_slash.sa_mask));
     sigemptyset(&(C_c.sa_mask));
     C_slash.sa_flags = 0;
@@ -51,7 +52,7 @@ int main(int ac, char **av, char **envp)
 	envp = ft_duplicate(envp, 0);
     if (assign_std_in_out_err(&fd0, &fd1, &fd2))
         {return (free_all(envp), 1);}
-	while (1 && !s_exit)
+	while (1 && !s_exit && !is_a_pipe)
     {
 		sigaction(SIGQUIT, &C_slash, NULL);
         sigaction(SIGINT, &C_c, NULL);
@@ -73,5 +74,6 @@ int main(int ac, char **av, char **envp)
         free(p);
     }
     free_all(envp);
-   	exit(status);
+    return (status);
+   	//exit(status);
 }

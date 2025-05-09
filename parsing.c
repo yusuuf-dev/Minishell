@@ -201,6 +201,11 @@ int	execute_command(char *path, char **rdl_args, char **envp)
 	int	child_info = 0;
 
 	child_pid = fork();
+	if (child_pid < 0)
+	{
+		perror("fork");
+		exit (errno);
+	}
 	if (!child_pid)
 	{
 		if (execve(path, rdl_args, envp))
@@ -212,11 +217,6 @@ int	execute_command(char *path, char **rdl_args, char **envp)
 	}
 	else
 	{
-		if (child_pid < 0)
-		{
-			perror("fork");
-			exit (errno);
-		}
 		wait(&child_info);
 	}
 	if (WIFEXITED(child_info))

@@ -134,7 +134,6 @@ revisit all built-in functions !!!!!!!!!!!
 
 
 
-
 echo $HOME-test 
 cat <<EOF <some_file.txt 
   the delimited should be 'EOF' but our minishell takes 'EOF>some_file.txt' as the delimited;

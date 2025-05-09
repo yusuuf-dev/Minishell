@@ -53,5 +53,6 @@ char    *rm_quotes_expand(char *str, char **envp);
 char    *rm_quotes(char *str);
 int     ft_isheredoc(char *p, char **envp);
 char    *heredoc_delimiter(char *s ,int *isquote);
+int     ft_pipe(char **piped_cmds, char **p, int *status, int *is_a_pipe);
 
 #endif
