@@ -26,7 +26,7 @@ char	*ft_strjoinf(char *s1, char *s2);
 char    *ft_strldup(char *s, size_t     n);
 void    *ft_calloc(size_t n);
 
-//int     minishell(int ac, char **av);
+int     minishell(int ac, char **av);
 char	**parsing(char **p, char **envp, int *s_exit, int *status);
 //char	*ft_remove_isspace(char *s);
 
@@ -39,20 +39,25 @@ int     ft_env(char **argv, char **envp, char **envp_paths);
 int     ft_exit(char **argv, char **envp);
 
 char	**free_all(char **str);
-char	**ft_duplicate(char **s, size_t add_size);
+char	**ft_duplicate(char	**s, size_t add_size);
 char	*ft_isspace_to_space(char *s);
-int	    c_atoi(char *s, long *rslt);
 int     ft_isdigit(int c);
 char	*ft_getenv(char *s, char **envp);
 int		ft_check_spaces(char *s); // this function returns 1 if the argument contains only (isspace) chars.
 void    ft_putstr(char *s, int fd);
 char    *convert_env_var(char *s,char **envp);
 char	**c_split(char *str, char c, char **envp);
-int	    parse_redirection(char **full_str, int *status, char **envp);
-char    *rm_quotes_expand(char *str, char **envp);
+int     found_heredoc(char *s);
 char    *rm_quotes(char *str);
+int     found_q(char *s);
+int     found_pipe(char *line,char **envp);
 int     ft_isheredoc(char *p, char **envp);
+char    *rm_quotes_expand(char *str, char **envp);
 char    *heredoc_delimiter(char *s ,int *isquote);
-int     ft_pipe(char **piped_cmds, char **p, int *status, int *is_a_pipe);
+int	    ft_isalpha(int c);
+int	    ft_isalnum(int c);
+int	    c_atoi(char *s, long *rslt);
+int	    parse_redirection(char **full_str, int *status, char **envp);
+int     costum_atoi(char *nptr, int *status, int fd);
 
 #endif

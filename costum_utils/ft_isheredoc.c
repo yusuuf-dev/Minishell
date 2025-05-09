@@ -12,18 +12,6 @@ static void c_putstr_fd(int fd, char *s)
 	write(fd, "\n", 1);
 }
 
-static int	validchar(int c)
-{
-	if (c == '_')
-		return (1);
-	else if (c >= 65 && c <= 90)
-		return (1);
-	else if (c >= 97 && c <= 122)
-		return (1);
-	else
-		return (0);
-}
-
 static char *c_strjoinf(char *s1, char c)
 {
 	size_t i;
@@ -58,11 +46,11 @@ static char *c_expand(char *str, char **envp)
 		return (NULL);
 	while (str[i])
 	{
-		if (str[i] == '$' && validchar(str[i + 1]))
+		if (str[i] == '$' && (str[i + 1] == '_' || ft_isalpha(str[i + 1])))
 		{
 			i++;
 			len = 0;
-			while (str[i + len] && str[i + len] != ' ' && str[i + len] != '\"' && str[i + len] != '\'' && str[i + len] != '$')
+			while (str[i + len] && ft_isalnum(str[i + 1]))
 				len++;
 			key = ft_strldup(&str[i],len);
 			var = ft_getenv(key,envp);
@@ -88,37 +76,39 @@ int     ft_isheredoc(char *p, char **envp)
 	int		fd;
 	int		isquote = 0;
 
-    (void)envp;//need use later when expend on input lines
 
-
-    if (!(p[2]) && ( p[2] == '<' || p[2] == '>'))
-        {return(ft_putstr("minishell: syntax error near unexpected token `newline'\n", 2), -1);}
-	dl = heredoc_delimiter(p, &isquote);
-	if (!dl)
-		return(-1); // failed malloc protection
-	fd = open("/tmp/tmp.txt", O_RDWR | O_CREAT | O_TRUNC , 0777);
-	if (fd < 0)
-		return (perror(""),0);
-	while (1)
-	{
-		tmp = readline("> ");
-		if (!tmp || ft_strcmp(tmp, dl))
+  //  while (found_heredoc(*p))
+//{
+	if (!(p[2]) && ( p[2] == '<' || p[2] == '>'))
+		{return(ft_putstr("minishell: syntax error near unexpected token `newline'\n", 2), -1);}
+		dl = heredoc_delimiter(p,&isquote);
+		if (!dl)
+			return(-1); // failed malloc protection
+		fd = open("/tmp/tmp.txt", O_RDWR | O_CREAT | O_TRUNC , 0777);
+		if (fd < 0)
+			return (perror(""), 0);
+		while (1)
 		{
+			tmp = readline("> ");
+			//if (!tmp)
+		//		break;
+			if (!tmp || ft_strcmp(tmp,dl))
+			{
+				free(tmp);
+				break;
+			}
+			if (!isquote && tmp[0])
+				tmp = c_expand(tmp,envp);
+			c_putstr_fd(fd,tmp);
 			free(tmp);
-			break;
 		}
-		if (!isquote && tmp[0])
-			tmp = c_expand(tmp, envp);
-		c_putstr_fd(fd, tmp);
-		free(tmp);
-	}
-	free(dl);
-	close(fd);
-	fd = open("/tmp/tmp.txt", O_RDWR, 0777);
-	if (fd < 0)
-		return (perror(""), errno);
-	if (dup2(fd, 0) < 0)
-		return (close(fd), perror(""), errno);
-    close(fd);
-    return(0);
+		free(dl);
+		close(fd);
+		fd = open("/tmp/tmp.txt", O_RDWR, 0777);
+		if (fd < 0)
+			return (perror(""), errno);
+		if (dup2(fd, 0) < 0)
+			return (close(fd), perror(""), errno);
+		close(fd);
+		return(0);
 }

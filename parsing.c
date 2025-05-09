@@ -1,5 +1,22 @@
 #include "minishell.h"
 
+// char	*ft_getenv(char *s, char **envp)
+// {
+// 	size_t	i = 0;
+// 	size_t	len = 0;
+
+// 	if (!s || !(s[0]))
+// 		return (NULL);
+// 	len = ft_strlen(s);
+// 	while (envp[i])
+// 	{
+// 		if (!ft_strncmp(envp[i], s, len) && envp[i][len] == '=')
+// 			return (ft_strchr(envp[i], '=') + 1);
+// 		i++;
+// 	}
+// 	return (NULL);
+// }
+
 int	execute_command(char *path, char **rdl_args, char **envp);
 static int	ft_built_in_cmd(char **rdl_args, char ***envp, char **env_paths, int *status, int *s_exit);
 
@@ -63,33 +80,6 @@ static  int is_execute_file(char **rdl_args, char **env)
     return(1);
 }
 
-static int  found_q(char *s) 
-{
-    size_t  i;
-	int		f_s;
-	int		f_d;
-	int		found;
-
-    i = 0;
-	f_s = 0;
-	f_d = 0;
-	found = 0;
-    while (s[i])
-    {
-		if (s[i] == '\'' && !f_d)
-			f_s = !f_s;
-		if (s[i] == '\"' && !f_s)
-			f_d = !f_d;
-		if (s[i] == '\"' || s[i] == '\'')
-			found++;
-        i++;
-    }
-    if((f_d || f_s) && found > 0)
-        return(-1);
-	else if(found == 0)
-		return(0);
-    return(1);
-}
 
 static void			ft_space(char *s)
 {

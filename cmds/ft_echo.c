@@ -11,10 +11,8 @@
 /* ************************************************************************** */
 
 #include "../minishell.h"
-// check \t shenanigas 
-// echo -ne hello vs echo '-ne hello'
 
-int     ft_echo(char **p, char **envp)
+int     ft_echo( char **p, char **envp)
 {
 	size_t	i = 1;
 
@@ -37,34 +35,4 @@ int     ft_echo(char **p, char **envp)
 	}
 	return (0);
 }
-/*int     ft_echo(int argc, char **p, char **envp)
-{
-	size_t	i = 1;
-
-	(void)argc;
-	(void)envp;
-	if (p[i] && !ft_strncmp("-n", p[i], 2) && !p[i][2])
-	{
-		i++;
-		while (p[i])
-		{
-			if (i > 2)
-				printf(" ");
-			printf("%s", p[i]);
-			i++;
-		}
-	}
-	else
-	{
-		while (p[i])
-		{
-			if (i > 1)
-				printf(" ");
-			printf("%s", p[i]);
-			i++;
-		}
-		printf("\n");
-	}
-    return (0);
-}*/
 
