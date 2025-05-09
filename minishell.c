@@ -34,6 +34,7 @@ static int reset_std_in_out_err(int fd0, int fd1, int fd2)
 int main(int ac, char **av, char **envp)
 {
 	char *p = NULL;
+    int    i;
     char **segments = NULL;
 	struct sigaction C_slash;
     struct sigaction C_c;
@@ -69,20 +70,20 @@ int main(int ac, char **av, char **envp)
         p = ft_isspace_to_space(p);
         if (p[0])
         {
-            i = found_pipe(p,envp);
+            i = found_pipe(p);
             if (i == 1)
             {
                 i = 0;
                 segments = c_split(p, '|',envp);
                 if (!segments)
-                    return(exit_minishell(envp,p,1,"failed malloc\n"));//protect malloc            
+                    return(free_all(envp),free(p),1);//protect malloc            
                 while(segments[i])
                 {
-                    envp = parsing(&segments[i], envp, &s_exit);
+                    add_history(p); 
+                    envp = parsing(&segments[i], envp, &s_exit,&status);
                     i++;    
                 }
                 free_all(segments);
-                add_history(p);   
             }
             else if (i == 0)
             {
@@ -90,9 +91,10 @@ int main(int ac, char **av, char **envp)
                     envp = parsing(&p, envp, &s_exit, &status);
             }
             else
-                return(exit_minishell(envp,p,1,"failed malloc\n"));//protect malloc            
-            add_history(p);
-            envp = parsing(&p, envp, &s_exit, &status);
+            {
+                add_history(p);
+                ft_putstr("minishell: syntax error near unexpected token `|'\n",2);//invalid pipe
+            }
         }
         free(p);
     }
