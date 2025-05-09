@@ -66,6 +66,7 @@ int main(int ac, char **av, char **envp)
 			free(p);
 			return (0);
 		}
+        p = ft_isspace_to_space(p);
         if (p[0])
         {
             i = found_pipe(p,envp);
