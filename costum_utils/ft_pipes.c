@@ -10,24 +10,17 @@ int ft_pipes(char **piped_cmds, char **p, int *status, int *is_a_pipe)
     pid_t   cpid;
 
     (void)*status;
-
-   // if (pipe(pipefd_0) == -1)
-    //    return (perror(""), errno);
     *is_a_pipe = 1;
-
     while (piped_cmds[i])
     {
-        if (i % 2 == 0)
-        {
-            if (pipe(pipefd_0) == -1)
-                return (perror(""), errno);
-            if (pipe(pipefd_1) == -1)
-                return (perror(""), errno);
-        }
+        *p = piped_cmds[i];
+        if ((!i || ((i % 2) && i > 1)) && pipe(pipefd_1) == -1)
+            return (perror(""), errno);
+        if ((!i || (!(i % 2) && i > 1)) && pipe(pipefd_0) == -1)
+            return (perror(""), errno);
         cpid = fork();
         if (cpid == -1)
             return (perror(""), errno);
-        *p = piped_cmds[i];
         if (cpid == 0)
         { // child
             if (!pos)
@@ -41,24 +34,24 @@ int ft_pipes(char **piped_cmds, char **p, int *status, int *is_a_pipe)
             {
                 if (i % 2)
                 {
-                    if (close((pipefd_0[1]) == -1) == -1)
+                    if (close(pipefd_0[1]) == -1)
                         return (perror(""), errno);
                     if (dup2(pipefd_0[0], 0) == -1)
                         return (perror(""), errno);
 
-                    if (close((pipefd_1[0]) == -1) == -1)
+                    if (close(pipefd_1[0]) == -1)
                         return (perror(""), errno);
                     if (dup2(pipefd_1[1], 1) == -1)
                         return (perror(""), errno);
                 }
                 else
                 {
-                    if (close((pipefd_1[1]) == -1) == -1)
+                    if (close(pipefd_1[1]) == -1)
                         return (perror(""), errno);
                     if (dup2(pipefd_1[0], 0) == -1)
                         return (perror(""), errno);
 
-                    if (close((pipefd_0[0]) == -1) == -1)
+                    if (close(pipefd_0[0]) == -1)
                         return (perror(""), errno);
                     if (dup2(pipefd_0[1], 1) == -1)
                         return (perror(""), errno);
@@ -68,6 +61,9 @@ int ft_pipes(char **piped_cmds, char **p, int *status, int *is_a_pipe)
             {
                 if (i % 2)
                 {
+                    if (close(pipefd_1[0]) == -1 || close(pipefd_1[1]) == -1)
+                        return (perror(""), errno);
+
                     if (close(pipefd_0[1]) == -1)
                         return (perror(""), errno);
                     if (dup2(pipefd_0[0], 0) == -1)
@@ -75,6 +71,9 @@ int ft_pipes(char **piped_cmds, char **p, int *status, int *is_a_pipe)
                 }
                 else
                 {
+                    if (close(pipefd_0[0]) == -1 || close(pipefd_0[1]) == -1)
+                        return (perror(""), errno);
+
                     if (close(pipefd_1[1]) == -1)
                         return (perror(""), errno);
                     if (dup2(pipefd_1[0], 0) == -1)
@@ -85,11 +84,11 @@ int ft_pipes(char **piped_cmds, char **p, int *status, int *is_a_pipe)
         }
         else // parent
         {
-            if (pos == 1)
+            if (pos == 1 )//|| !pos)
             {
-                if (i % 2 && close((pipefd_1[1]) == -1))
+                if (i % 2 && ((close(pipefd_0[0]) == -1) || (close(pipefd_0[1]) == -1))) //|| close((pipefd_1[1]) == -1)))
                     return (perror(""), errno);
-                if (!(i % 2) && close((pipefd_0[1]) == -1))
+                if (!(i % 2) && ((close(pipefd_1[0]) == -1) || (close(pipefd_1[1]) == -1))) //|| close((pipefd_0[1]) == -1)))
                     return (perror(""), errno);
             }
             if (pos == 2) // meaning the last command
@@ -110,6 +109,7 @@ int ft_pipes(char **piped_cmds, char **p, int *status, int *is_a_pipe)
             pos = 2;
         i++;
     }
+    free_all(piped_cmds);
     *p = NULL;
     *is_a_pipe = 0;
     return (WEXITSTATUS(child_info)); // returns the exit code of the last child ??
