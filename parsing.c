@@ -192,7 +192,7 @@ int	execute_command(char *path, char **rdl_args, char **envp, int is_a_pipe)
 
 	(void)is_a_pipe;
 //	if (!is_a_pipe)
-		child_pid = fork();
+	child_pid = fork();
 	if (child_pid < 0)
 	{
 		perror("fork");

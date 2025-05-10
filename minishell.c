@@ -80,7 +80,6 @@ int main(int ac, char **av, char **envp)
                 free(p);
                 if (ft_pipes(segments, &p, &status, &is_a_pipe))
                     return (errno);
-               // free_all(segments);
             }
             else if (i == -1)
                 return(exit_minishell(envp, p, 1, "failed malloc\n"));//protect malloc

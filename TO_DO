@@ -105,6 +105,13 @@ revisit all built-in functions !!!!!!!!!!!
     unsigned char c = n (n is the return of atoi, which byitself is the argument that is given to the exit command)
 
 
+PIPING:
+ echo "somethign to do yeah" | grep to | grep t | sort | wc | cut -f2 -d '1' | awk '{print $2}'
+
+
+
+
+
   see how fork and children handle signals
 
 ==============================
