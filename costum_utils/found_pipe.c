@@ -1,28 +1,76 @@
 #include "../minishell.h"
 
-int     found_pipe(char *line,char **envp)
+static int check_out_quotes(char *p)
 {
-    int  i;
-    char **segments;
+    size_t i = 0;
+    char    q = 0; 
 
-    segments = c_split(line, ' ',envp);
-    if (!segments)
-        return(-1); // protect malloc error
-    i = 0;
-    while (segments[i])
+    while (p[i])
     {
-        // if (ft_strncmp(segments[i], "||",2))
-        // {
-        //     free_all(segments);
-        //     return(2);
-        // }
-        if (ft_strcmp(segments[i],"|"))
-        {
-            free_all(segments);
+        if (!q && (p[i] == '\"' || p[i] == '\''))
+            q = p[i];
+        else if (q && p[i] == q)
+            q = 0;
+        else if (!q && p[i] == '|')
             return(1);
+        i++;
+    }
+    return (0);
+}
+
+static int check_error_pip(char *p)
+{
+    size_t i = 0;
+    char    q = 0;
+
+    if (p[0] == '|')
+        return(0);
+    while (p[i] == ' ')
+    {
+        i++;
+        if (p[i] == '|')
+            return(0);
+    }
+    i = ft_strlen(p) - 1;
+    if (p[i] == '|')
+        return (0);
+    while (p[i] == ' ')
+    {
+        i--;
+        if (p[i] == '|')
+            return (0);
+    }
+    i = 0;
+    while (p[i])
+    {
+        if (!q && (p[i] == '\"' || p[i] == '\''))
+            q = p[i];
+        else if (q && p[i] == q)
+            q = 0;
+        else if (!q && p[i] == '|')
+        {
+            i++;
+            if (p[i] == '|')
+                return(0);
+            while (p[i] == ' ')
+            {
+                i++;
+                if (p[i] == '|')
+                    return(0);
+            }
+            i--;
         }
         i++;
     }
-    free_all(segments);
-    return(0);
+    return (1);
+}
+
+
+int     found_pipe(char *line)
+{
+    if (!check_out_quotes(line))
+        return (0);
+    if (!check_error_pip(line))
+        return (-1);
+    return(1);
 }

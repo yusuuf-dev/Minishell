@@ -66,8 +66,13 @@ static char     **ft_execute_cmd(char *path, char **av, char **envp)
 
 static  int is_execute_file(char **rdl_args, char **env)
 {
-    if (!(rdl_args[0][0] == '.' || ft_strchr(rdl_args[0], '/')))
-        return (0);
+	int is_a_file = 0;
+
+    if (!(rdl_args[0][0] == '.' || (ft_strchr(rdl_args[0], '/'))))// && rdl_args[0][ft_strlen(rdl_args[0] - 1)] != '/')))
+    {    return (0);}
+	is_a_file = open(rdl_args[0], O_DIRECTORY);
+	if (is_a_file != -1)
+		{return (close(is_a_file), ft_putstr("minishell: ", 2), ft_putstr(rdl_args[0], 2), ft_putstr(": Is a directory\n", 2), 126);} // need to set the status to 126;
     if (access(rdl_args[0],F_OK) == -1)
     {
         perror("minishell");
@@ -79,7 +84,6 @@ static  int is_execute_file(char **rdl_args, char **env)
         perror("minishell");
     return(1);
 }
-
 
 static void			ft_space(char *s)
 {

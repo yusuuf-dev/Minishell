@@ -22,7 +22,7 @@ int ft_pipes(char **piped_cmds, char **p, int *status, int *is_a_pipe)
         if (cpid == -1)
             return (perror(""), errno);
         if (cpid == 0)
-        { // child
+        { // child   // maybe split every single pos possibelity into functs ??
             if (!pos)
             {// I probably need to redirect the std in,out before I fork so 
                 if (close(pipefd_0[0]) == -1 || dup2(pipefd_0[1], 1) == -1) //closing the reading end of the pipe

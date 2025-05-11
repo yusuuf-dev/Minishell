@@ -71,7 +71,7 @@ int main(int ac, char **av, char **envp)
         if (p[0])
         {
             add_history(p);
-            i = found_pipe(p, envp);
+            i = found_pipe(p);
             if (i == 1)
             {
                 segments = c_split(p, '|',envp);
