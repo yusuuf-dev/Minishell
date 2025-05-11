@@ -4,7 +4,7 @@ static int ft_isdigit(int n)
         return (1);
     return (0);
 }
-int costum_atoi(char *nptr, int *status, int fd)
+int costum_atoi(char *nptr, unsigned char *status, int fd)
 {
     int     i;
 	long    rslt;

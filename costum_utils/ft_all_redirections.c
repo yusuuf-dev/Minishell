@@ -116,7 +116,7 @@ static  char    *c_strpbrk(char *s)
     return (&s[i]);
 }
 
-static char *parsing_input_fd(char *s, size_t *i, int *fd, int *dest, int *status)
+static char *parsing_input_fd(char *s, size_t *i, int *fd, int *dest, unsigned char *status)
 {
 	char	*fd_input = NULL;
 
@@ -138,7 +138,7 @@ static char *parsing_input_fd(char *s, size_t *i, int *fd, int *dest, int *statu
 	return (fd_input);
 }
 
-static char *var_expansion(char **str, char **envp, int *n, char **full_str)
+static char *var_expansion(char **str, char **envp, int *n, char **full_str, unsigned char *status)
 {
 	char    *extract = NULL;
     char    *var = NULL;
@@ -148,7 +148,7 @@ static char *var_expansion(char **str, char **envp, int *n, char **full_str)
 	int  ret = (*str) - (*full_str); // this is to save the index where the '$' was found and return it;
 	int i = (*str) - (*full_str) + (*n); // the size of how much left side shoud be
 	extract = ft_strldup(&s[*n + 1], c_strpbrk(&s[*n + 1]) - &s[*n + 1]);
-	var = ft_getenv(extract, envp);
+	var = ft_getenv(extract, envp, status);
 	left_side = ft_strldup(*full_str, (i));
 	if (!var && !(*n))
 		return (ft_putstr("minishell: $" , 2), ft_putstr(extract, 2), ft_putstr(": ambiguous redirect\n", 2), free(left_side), free(extract), NULL);
@@ -169,7 +169,7 @@ static char *var_expansion(char **str, char **envp, int *n, char **full_str)
 	//return (&s[i]);
 }
 
-static int expand_rm_quotes(char *str, char **envp, char **full_str)
+static int expand_rm_quotes(char *str, char **envp, char **full_str, unsigned char *status)
 {
 	int i = 0;
 	int j = 0;
@@ -189,7 +189,7 @@ static int expand_rm_quotes(char *str, char **envp, char **full_str)
 			move_remaining(str, i, j);
 			// replace the variable with it's value if it exist otherwise replace it with nothing
 			i = j; // update the index in case we deleted quotes;
-			str = var_expansion(&str, envp, &i, full_str);
+			str = var_expansion(&str, envp, &i, full_str, status);
 			if (!str)
 				return (-1);
 			// handle if expnaded variable doesn't exist
@@ -232,7 +232,7 @@ static int open_assign_fd(char *s, int *fd, int mode, int append, int *ret)
  	return (0);
 }
 
-static int	open_file_redi(char *s, int *fd, int mode, int *end, char **envp, char **full_str)
+static int	open_file_redi(char *s, int *fd, int mode, int *end, char **envp, char **full_str, unsigned char *status)
 {
 	int		append = 0;
 	int		begin = 0;
@@ -248,7 +248,7 @@ static int	open_file_redi(char *s, int *fd, int mode, int *end, char **envp, cha
 	// need to check if the file name is valid or not, also quotation make a difference !!
 	if (!(s[begin]) || s[begin] == '\n') // need to check for whitespaces too maybe ?
 		return(ft_putstr("minishell: syntax error near unexpected token `newline'\n", 2), 1);
-	*end = expand_rm_quotes(&s[begin], envp, full_str);
+	*end = expand_rm_quotes(&s[begin], envp, full_str, status);
 	if (*end == -1)
 		return (1);
 	s = (*full_str) + old_i;
@@ -268,7 +268,7 @@ static int	open_file_redi(char *s, int *fd, int mode, int *end, char **envp, cha
 	return (0);
 }
 
-static int apply_redirection(size_t *i, int *status, int fd, char **envp, char **full_str)
+static int apply_redirection(size_t *i, unsigned char *status, int fd, char **envp, char **full_str)
 {
 	char	*fd_input; // this is used to store between a 'isspace' and '>' if there are any, after that we check if It's a valid 'fd';
 	int		dest; // this is in case we have a valid fd before the '>', I save the index of the num cuz I'll have to remove it from the string;   
@@ -278,9 +278,9 @@ static int apply_redirection(size_t *i, int *status, int fd, char **envp, char *
     dest = *i;
 	fd_input = parsing_input_fd((*full_str), i, &fd, &dest, status);
 	if ((*full_str)[*i] == '>')
-		f_mode = open_file_redi(&(*full_str)[*i + 1], &fd, 1, &end_file_name, envp, full_str);
+		f_mode = open_file_redi(&(*full_str)[*i + 1], &fd, 1, &end_file_name, envp, full_str, status);
 	else
-		f_mode = open_file_redi(&(*full_str)[*i + 1], &fd, 0, &end_file_name, envp, full_str);
+		f_mode = open_file_redi(&(*full_str)[*i + 1], &fd, 0, &end_file_name, envp, full_str, status);
 	if (f_mode == 1)
 		return (free(fd_input), *status = 1, 1);
 	else if (f_mode == 2)
@@ -295,7 +295,7 @@ static int apply_redirection(size_t *i, int *status, int fd, char **envp, char *
     return (0);
 }
 
-int	parse_redirection(char **full_str, int *status, char **envp)
+int	parse_redirection(char **full_str, unsigned char *status, char **envp)
 {
 	size_t	i = 0;
 	int     f_d = 0;
@@ -314,7 +314,7 @@ int	parse_redirection(char **full_str, int *status, char **envp)
 		}
 		else if (!f_d && !f_s && (*full_str)[i] == '<' && (*full_str)[i + 1] == '<')
 		{
-			if ((ft_isheredoc((*full_str) + i, envp)))
+			if ((ft_isheredoc((*full_str) + i, envp, status)))
                 return (1);
 		}
 		else if (!f_d && !f_s && (*full_str)[i] == '<')

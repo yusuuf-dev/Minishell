@@ -18,7 +18,7 @@
 // }
 
 int	execute_command(char *path, char **rdl_args, char **envp);
-static int	ft_built_in_cmd(char **rdl_args, char ***envp, char **env_paths, int *status, int *s_exit);
+static int	ft_built_in_cmd(char **rdl_args, char ***envp, char **env_paths, unsigned char *status, int *s_exit);
 
 int     c_strncmp(const char *s1, const char *s2)
 {
@@ -35,7 +35,24 @@ int     c_strncmp(const char *s1, const char *s2)
 		return (0);
     return (s1[i] - s2[i]);
 }
-char	*ft_getenv(char *s, char **envp)
+
+static char	*ft_itoa(int n)
+{
+	char	*s = ft_calloc(17);
+	int		i = 15;
+
+	if (!n)
+		return (s[0] = '0', s);
+	while (n)
+	{
+		s[i] = (n % 10) + '0';
+		i--;
+		n = n / 10;
+	}
+	ft_strcmp(s, (s + i + 1));
+	return (s);
+}
+char	*ft_getenv(char *s, char **envp, unsigned char *status)
 {
 	size_t	i = 0;
 	size_t	size = 0;
@@ -47,6 +64,8 @@ char	*ft_getenv(char *s, char **envp)
 		{
 			return (ft_strchr(envp[i], '=') + 1);
 		}
+		if (s[0] == '?' && !s[1])
+			return (i = *status, ft_itoa(i));
 		i++;
 	}
 	return (NULL);
@@ -103,7 +122,7 @@ static void			ft_space(char *s)
 	}
 }
 
-char	**parsing(char **p, char **envp, int *s_exit, int *status)
+char	**parsing(char **p, char **envp, int *s_exit, unsigned char *status)
 {
     char	*env;
     char	**env_paths = NULL;
@@ -117,10 +136,10 @@ char	**parsing(char **p, char **envp, int *s_exit, int *status)
 	if(parse_redirection(p, status, envp)) // this also removes spaces;
 	 	return (envp);
 	//*p = convert_env_var(*p, envp);
-	env = ft_getenv("PATH", envp);
+	env = ft_getenv("PATH", envp, status);
 	if (env)
 		env_paths = ft_split(env,':');
-    rdl_args = c_split(*p,' ', envp);
+    rdl_args = c_split(*p,' ', envp, status);
 	
 	if (is_execute_file(rdl_args,envp))
 		return (free_all(rdl_args), free_all(env_paths), envp);
@@ -143,7 +162,7 @@ char	**parsing(char **p, char **envp, int *s_exit, int *status)
 	return (free_all(rdl_args), free_all(env_paths), envp);
 }
 
-static int	ft_built_in_cmd(char **rdl_args, char ***envp, char **env_paths, int *status, int *s_exit)
+static int	ft_built_in_cmd(char **rdl_args, char ***envp, char **env_paths, unsigned char *status, int *s_exit)
 {
 	char  **cmds = NULL;
 	int   i;

@@ -40,7 +40,7 @@ int main(int ac, char **av, char **envp)
 	struct sigaction C_slash;
     struct sigaction C_c;
 	int	s_exit = 0;
-    int status = 0;
+    unsigned char status = 0;
     int is_a_pipe = 0;
     int fd0, fd1, fd2;
     int i;

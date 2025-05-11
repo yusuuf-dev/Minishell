@@ -18,7 +18,7 @@ int	ft_env(char **argv, char **envp, char **envp_paths)
 //	size_t	size = 0;
 	size_t	ar = 1;
 	char	*path;
-	int	status = 0;
+	unsigned char		status = 0;
 	char	**new_envp = NULL;
 	char	**new_arg = NULL;
 	int	child_pid;

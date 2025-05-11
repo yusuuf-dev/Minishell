@@ -22,7 +22,7 @@ static char *c_strjoinf(char *s1, char c)
 	return (ptr);
 }
 
-char *rm_quotes_expand(char *str, char **envp)
+char *rm_quotes_expand(char *str, char **envp, unsigned char *status)
 {
 	size_t	i = 0;
 	size_t	len = 0;
@@ -42,14 +42,21 @@ char *rm_quotes_expand(char *str, char **envp)
 			q = 0;
 			i++;
 		}
+		else if (str[i] == '$' && q != '\'' && str[i + 1] == '?')
+		{
+			var = ft_getenv("?", envp, status);
+			if (var)
+				ptr = ft_strjoinf(ptr,var); // need to free var since it isn't saved in the envp, and will get updated each time we call ft_getenv with "?"
+			i++;
+		}
 		else if (str[i] == '$' && q != '\'' && (ft_isalpha(str[i + 1]) || str[i + 1] == '_'))
 		{
 			i++;
 			len = 0;
 			while (str[i + len] && ft_isalnum(str[i + len]))
 				len++;
-			key = ft_strldup(&str[i],len);
-			var = ft_getenv(key,envp);
+			key = ft_strldup(&str[i], len);
+			var = ft_getenv(key, envp, status);
 			if (var)
 				ptr = ft_strjoinf(ptr,var);
 			free(key);

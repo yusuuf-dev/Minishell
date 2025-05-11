@@ -166,7 +166,7 @@ static char	**ft_duplicate_add_s(char **dup, char *s)
 	free_all(dup);
 	return (p);
 }
-char	**ft_export(char **argv, char **envp, int *status)
+char	**ft_export(char **argv, char **envp, unsigned char *status)
 {
 	size_t	ar = 1;
 
