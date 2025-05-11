@@ -77,7 +77,8 @@ char	**split_q(char *str, char c, char **envp)
 			i++;
 		}
 		ptr[j] = ft_substr(str,st,i);
-		ptr[j] = rm_quotes_expand(ptr[j],envp);	
+		if (c != '|')
+			ptr[j] = rm_quotes_expand(ptr[j],envp);	
 		if (!ptr[j++])
 			return(free_all(ptr));
 		q = 0;

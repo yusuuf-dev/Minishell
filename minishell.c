@@ -67,8 +67,7 @@ int main(int ac, char **av, char **envp)
 			free(p);
 			return (0);
 		}
-        p = ft_isspace_to_space(p);
-        if (p[0])
+        else if (!ft_isspace_to_space(&p) && p[0])
         {
             i = found_pipe(p);
             if (i == 1)
@@ -81,7 +80,7 @@ int main(int ac, char **av, char **envp)
                 {
                     add_history(p); 
                     envp = parsing(&segments[i], envp, &s_exit,&status);
-                    i++;    
+                    i++;
                 }
                 free_all(segments);
             }

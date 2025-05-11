@@ -47,7 +47,7 @@ int     ft_exit(char **argv, char **envp);
 
 char	**free_all(char **str);
 char	**ft_duplicate(char	**s, size_t add_size);
-char	*ft_isspace_to_space(char *s);
+int 	ft_isspace_to_space(char **s);
 int     ft_isdigit(int c);
 char	*ft_getenv(char *s, char **envp);
 int		ft_check_spaces(char *s); // this function returns 1 if the argument contains only (isspace) chars.
