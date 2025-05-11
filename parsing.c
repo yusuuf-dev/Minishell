@@ -17,7 +17,7 @@
 // 	return (NULL);
 // }
 
-int	execute_command(char *path, char **rdl_args, char **envp, int is_a_pipe);
+int	execute_command(char *path, char **rdl_args, char **envp);
 static int	ft_built_in_cmd(char **rdl_args, char ***envp, char **env_paths, int *status, int *s_exit);
 
 int     c_strncmp(const char *s1, const char *s2)
@@ -103,7 +103,7 @@ static void			ft_space(char *s)
 	}
 }
 
-char	**parsing(char **p, char **envp, int *s_exit, int *status, int is_a_pipe)
+char	**parsing(char **p, char **envp, int *s_exit, int *status)
 {
     char	*env;
     char	**env_paths = NULL;
@@ -132,7 +132,7 @@ char	**parsing(char **p, char **envp, int *s_exit, int *status, int is_a_pipe)
 		{
 			path = ft_strjoinf(ft_strjoin(env_paths[i], "/"),rdl_args[0]);
 			if (!access(path, F_OK) && !access(path, X_OK))
-				return (*status = execute_command(path, rdl_args, envp, is_a_pipe), free(path), free_all(rdl_args), free_all(env_paths), envp);
+				return (*status = execute_command(path, rdl_args, envp), free(path), free_all(rdl_args), free_all(env_paths), envp);
 			free(path);
 			i++;
 		}
@@ -189,13 +189,11 @@ static int	ft_built_in_cmd(char **rdl_args, char ***envp, char **env_paths, int 
 		return (0);
 }
 
-int	execute_command(char *path, char **rdl_args, char **envp, int is_a_pipe)
+int	execute_command(char *path, char **rdl_args, char **envp)
 {
 	int	child_pid = 0;
 	int	child_info = 0;
 
-	(void)is_a_pipe;
-//	if (!is_a_pipe)
 	child_pid = fork();
 	if (child_pid < 0)
 	{

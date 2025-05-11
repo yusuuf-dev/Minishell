@@ -27,7 +27,7 @@ char    *ft_strldup(char *s, size_t     n);
 void    *ft_calloc(size_t n);
 
 //int     minishell(int ac, char **av);
-char	**parsing(char **p, char **envp, int *s_exit, int *status, int is_a_pipe);
+char	**parsing(char **p, char **envp, int *s_exit, int *status);
 //char	*ft_remove_isspace(char *s);
 
 int     ft_echo(char **p, char **envp);
