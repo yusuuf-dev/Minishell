@@ -66,8 +66,13 @@ static char     **ft_execute_cmd(char *path, char **av, char **envp)
 
 static  int is_execute_file(char **rdl_args, char **env)
 {
-    if (!(rdl_args[0][0] == '.' || ft_strchr(rdl_args[0], '/')))
-        return (0);
+	int is_a_file = 0;
+
+    if (!(rdl_args[0][0] == '.' || (ft_strchr(rdl_args[0], '/'))))// && rdl_args[0][ft_strlen(rdl_args[0] - 1)] != '/')))
+    {    return (0);}
+	is_a_file = open(rdl_args[0], O_DIRECTORY);
+	if (is_a_file != -1)
+		{return (close(is_a_file), ft_putstr("minishell: ", 2), ft_putstr(rdl_args[0], 2), ft_putstr(": Is a directory\n", 2), 126);} // need to set the status to 126;
     if (access(rdl_args[0],F_OK) == -1)
     {
         perror("minishell");
@@ -79,7 +84,6 @@ static  int is_execute_file(char **rdl_args, char **env)
         perror("minishell");
     return(1);
 }
-
 
 static void			ft_space(char *s)
 {
@@ -109,7 +113,7 @@ char	**parsing(char **p, char **envp, int *s_exit, int *status)
 
     if (found_q(*p) == -1) // check if the quotes are closed;
         {return (ft_putstr("Error unclosed quotes\n", 2), envp);}
-	ft_space(*p);
+	ft_space(*p); 
 	if(parse_redirection(p, status, envp)) // this also removes spaces;
 	 	return (envp);
 	//*p = convert_env_var(*p, envp);
@@ -117,9 +121,10 @@ char	**parsing(char **p, char **envp, int *s_exit, int *status)
 	if (env)
 		env_paths = ft_split(env,':');
     rdl_args = c_split(*p,' ', envp);
+	
 	if (is_execute_file(rdl_args,envp))
 		return (free_all(rdl_args), free_all(env_paths), envp);
-	if ( ft_built_in_cmd(rdl_args, &envp, env_paths, status, s_exit))
+	if (ft_built_in_cmd(rdl_args, &envp, env_paths, status, s_exit))
 		(void)*p;
 	else
 	{
@@ -190,23 +195,24 @@ int	execute_command(char *path, char **rdl_args, char **envp)
 	int	child_info = 0;
 
 	child_pid = fork();
+	if (child_pid < 0)
+	{
+		perror("fork");
+		exit(errno);
+	}
 	if (!child_pid)
 	{
 		if (execve(path, rdl_args, envp))
 		{
 			perror("execve");
-			exit (errno);
+			exit(errno);
 		}
-		exit (0);
+		exit(0);
 	}
 	else
 	{
-		if (child_pid < 0)
-		{
-			perror("fork");
-			exit (errno);
-		}
-		wait(&child_info);
+		wait(&child_info); // check for error
+		//printf("child waiting status in excute_command: %d\n",waitpid(child_pid, &child_info, 0));
 	}
 	if (WIFEXITED(child_info))
 		return (WEXITSTATUS(child_info));

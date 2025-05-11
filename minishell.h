@@ -66,5 +66,6 @@ int	    ft_isalnum(int c);
 int	    c_atoi(char *s, long *rslt);
 int	    parse_redirection(char **full_str, int *status, char **envp);
 int     costum_atoi(char *nptr, int *status, int fd);
+int     ft_pipes(char **piped_cmds, char **p, int *status, int *is_a_pipe);
 
 #endif

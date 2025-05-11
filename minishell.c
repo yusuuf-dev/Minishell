@@ -31,19 +31,29 @@ static int reset_std_in_out_err(int fd0, int fd1, int fd2)
         return (perror(""), 1);       
     return (0);
 }
+
+static int     exit_minishell(char **envp, char *p, int status, char *msg)
+{
+     free_all(envp);
+     free(p);
+     if (msg)
+         printf("%s",msg);
+     exit(status);
+}
 int main(int ac, char **av, char **envp)
 {
 	char *p = NULL;
-    int    i;
     char **segments = NULL;
 	struct sigaction C_slash;
     struct sigaction C_c;
 	int	s_exit = 0;
     int status = 0;
+    int is_a_pipe = 0;
     int fd0, fd1, fd2;
+    int i;
 
-	(void)av;
-	(void)ac;
+	(void)av; // maybe we can remove these two from the argument since we don't use them, the problem is wether the envp will work or not;
+	(void)ac; //
 	sigemptyset(&(C_slash.sa_mask));
     sigemptyset(&(C_c.sa_mask));
     C_slash.sa_flags = 0;
@@ -53,12 +63,10 @@ int main(int ac, char **av, char **envp)
 	envp = ft_duplicate(envp, 0);
     if (assign_std_in_out_err(&fd0, &fd1, &fd2))
         {return (free_all(envp), 1);}
-	while (1 && !s_exit)
+	while (1 && !s_exit && !is_a_pipe)
     {
 		sigaction(SIGQUIT, &C_slash, NULL);
         sigaction(SIGINT, &C_c, NULL);
-        if (reset_std_in_out_err(fd0, fd1, fd2))
-            return (free_all(envp), 1);
 		p = readline("minishell : ");
 		if (!p)
 		{
@@ -67,38 +75,31 @@ int main(int ac, char **av, char **envp)
 			free(p);
 			return (0);
 		}
-        else if (!ft_isspace_to_space(&p) && p[0])
+        if (!ft_isspace_to_space(&p) && p[0])
         {
+            add_history(p);
             i = found_pipe(p);
             if (i == 1)
             {
-                i = 0;
                 segments = c_split(p, '|',envp);
                 if (!segments)
-                    return(free_all(envp),free(p),1);//protect malloc
-                while(segments[i])
-                {
-                    add_history(p); 
-                    envp = parsing(&segments[i], envp, &s_exit,&status);
-                    i++;
-                }
-                free_all(segments);
+                    return(exit_minishell(envp, p, 1, "failed malloc\n"));//protect malloc
+                free(p);
+                if (ft_pipes(segments, &p, &status, &is_a_pipe))
+                    return (errno);
             }
-            else if (i == 0)
-            {
-                    add_history(p);
-                    envp = parsing(&p, envp, &s_exit, &status);
-            }
-            else
-            {
-                add_history(p);
-                ft_putstr("minishell: syntax error near unexpected token `|'\n",2);//invalid pipe
-            }
+            else if (i == -1)
+                return(exit_minishell(envp, p, 1, "failed malloc\n"));//protect malloc
+            if (p)  // not great, this is done for when the piping is done so that the program wouldn't check for cmds;
+                envp = parsing(&p, envp, &s_exit, &status);
+            if (reset_std_in_out_err(fd0, fd1, fd2))
+                return (free_all(envp), 1);
         }
         free(p);
     }
     free_all(envp);
-   	exit(status);
+    //return (0);
+    exit(status);
 }
 
 // static int     exit_minishell(char **envp, char *p, int status, char *msg)
