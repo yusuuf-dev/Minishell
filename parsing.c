@@ -109,7 +109,7 @@ char	**parsing(char **p, char **envp, int *s_exit, int *status)
 
     if (found_q(*p) == -1) // check if the quotes are closed;
         {return (ft_putstr("Error unclosed quotes\n", 2), envp);}
-	ft_space(*p); 
+	ft_space(*p);
 	if(parse_redirection(p, status, envp)) // this also removes spaces;
 	 	return (envp);
 	//*p = convert_env_var(*p, envp);
@@ -117,10 +117,9 @@ char	**parsing(char **p, char **envp, int *s_exit, int *status)
 	if (env)
 		env_paths = ft_split(env,':');
     rdl_args = c_split(*p,' ', envp);
-	
 	if (is_execute_file(rdl_args,envp))
 		return (free_all(rdl_args), free_all(env_paths), envp);
-	if (ft_built_in_cmd(rdl_args, &envp, env_paths, status, s_exit))
+	if ( ft_built_in_cmd(rdl_args, &envp, env_paths, status, s_exit))
 		(void)*p;
 	else
 	{
