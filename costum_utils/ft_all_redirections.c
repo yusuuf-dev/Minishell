@@ -246,7 +246,7 @@ static int	open_file_redi(char *s, int *fd, int mode, int *end, char **envp, cha
 	while (s[begin] == ' ' || s[begin] == '\t' || s[begin] == '\v' || s[begin] == '\f' || s[begin] == '\r')
 		begin += 1;
 	// need to check if the file name is valid or not, also quotation make a difference !!
-	if (!(s[begin]) || s[begin] == '\n') // need to check for whitespaces too maybe ?
+	if (!(s[begin]) || s[begin] == '\n' || (s[begin] == '>' && !append) || (s[begin] == '>' && s[begin] == '>' && append) || s[begin] == '<') // need to check for whitespaces too maybe ?
 		return(ft_putstr("minishell: syntax error near unexpected token `newline'\n", 2), 1);
 	*end = expand_rm_quotes(&s[begin], envp, full_str, status);
 	if (*end == -1)
@@ -282,7 +282,7 @@ static int apply_redirection(size_t *i, unsigned char *status, int fd, char **en
 	else
 		f_mode = open_file_redi(&(*full_str)[*i + 1], &fd, 0, &end_file_name, envp, full_str, status);
 	if (f_mode == 1)
-		return (free(fd_input), *status = 1, 1);
+		return (free(fd_input), *status = 2, 1);
 	else if (f_mode == 2)
 		return(ft_putstr("minishell: ", 2), ft_putstr(fd_input, 2), ft_putstr(": ", 2), perror(""), free(fd_input), *status = 1, 2);
 	free(fd_input);

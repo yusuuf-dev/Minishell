@@ -14,6 +14,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
+//extern volatile sig_atomic_t child_exists;
 int     costum_atoi(char *s, unsigned char *status, int fd);
 size_t	ft_strlen(char *s);
 char	**ft_split(char *str, char c);
@@ -40,7 +41,7 @@ int     ft_exit(char **argv, char **envp);
 
 char	**free_all(char **str);
 char	**ft_duplicate(char	**s, size_t add_size);
-char	*ft_isspace_to_space(char *s);
+//char	*ft_isspace_to_space(char *s);
 int     ft_isdigit(int c);
 char	*ft_getenv(char *s, char **envp, unsigned char *status);
 int		ft_check_spaces(char *s); // this function returns 1 if the argument contains only (isspace) chars.
@@ -60,5 +61,6 @@ int	    c_atoi(char *s, long *rslt);
 int	    parse_redirection(char **full_str, unsigned char *status, char **envp);
 int     costum_atoi(char *nptr, unsigned char *status, int fd);
 int     ft_pipes(char **piped_cmds, char **p, unsigned char *status, int *is_a_pipe);
+int	 ft_isspace_to_space(char **s);
 
 #endif

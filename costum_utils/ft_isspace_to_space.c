@@ -12,17 +12,20 @@
 
 #include "../minishell.h"
 
-char	*ft_isspace_to_space(char *s)
+int	 ft_isspace_to_space(char **s)
 {
 	size_t	i;
+	int		ischar;
 
 	i = 0;
-
-	while (s[i])
+	ischar = 1;
+	while ((*s)[i])
 	{
-		if ((s[i] <= 13 && s[i] >= 11) || s[i] == 9)
-			s[i] = ' ';
+		if ((*s)[i] <= 13 && (*s)[i] >= 9)
+			(*s)[i] = ' ';
+		if ((*s)[i] != ' ' && !((*s)[i] <= 13 && (*s)[i] >= 9))
+			ischar = 0;
 		i++;
 	}
-	return (s);
+	return(ischar);
 }

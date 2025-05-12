@@ -194,5 +194,5 @@ char	**ft_export(char **argv, char **envp, unsigned char *status)
 		}
 		ar++;
 	}
-	return (envp);
+	return (*status = 0, envp);
 }

@@ -48,6 +48,7 @@ char *rm_quotes_expand(char *str, char **envp, unsigned char *status)
 			if (var)
 				ptr = ft_strjoinf(ptr,var); // need to free var since it isn't saved in the envp, and will get updated each time we call ft_getenv with "?"
 			i++;
+			free(var);
 		}
 		else if (str[i] == '$' && q != '\'' && (ft_isalpha(str[i + 1]) || str[i + 1] == '_'))
 		{

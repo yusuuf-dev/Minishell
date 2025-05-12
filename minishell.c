@@ -2,8 +2,11 @@
 
 static int     exit_minishell(char **envp, char *p, int status, char *msg);
 
+//volatile sig_atomic_t child_exists = 0;
 void    signal_handler(int signum)
 {
+   // if (child_exists)
+   //     {return;}
 	(void)signum;
     rl_replace_line("", 0);
     write(1, "\n", 1);
@@ -68,7 +71,7 @@ int main(int ac, char **av, char **envp)
 			free(p);
 			return (0);
 		}
-        if (p[0])
+        if (!ft_isspace_to_space(&p) && p[0])
         {
             add_history(p);
             i = found_pipe(p);

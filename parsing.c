@@ -84,18 +84,32 @@ char	*ft_getenv(char *s, char **envp, unsigned char *status)
 }
 
 static char     **ft_execute_cmd(char *path, char **av, char **envp)
-{
+{ // I need to add the status here too, so I can get the status of I run a local program (not in the PATH)
     int     pid;
 
+	__sighandler_t old_handler = signal(SIGINT, SIG_IGN);
+	if (old_handler == SIG_ERR)
+	{
+		perror("signal ");
+		exit (-1);
+	}
     pid = fork();
+	if (pid == -1)
+	{
+		perror("");
+		exit (-1);
+	}
     if (pid == 0)
         execve(path,av,envp);
     else if (pid > 0)
+	{
         waitpid(pid,NULL,0);
+		signal(SIGINT, old_handler);
+	}
     return (envp);
 }
 
-static  int is_execute_file(char **rdl_args, char **env)
+static  int is_execute_file(char **rdl_args, char **env, unsigned char *status)
 {
 	int is_a_file = 0;
 
@@ -103,7 +117,7 @@ static  int is_execute_file(char **rdl_args, char **env)
     {    return (0);}
 	is_a_file = open(rdl_args[0], O_DIRECTORY);
 	if (is_a_file != -1)
-		{return (close(is_a_file), ft_putstr("minishell: ", 2), ft_putstr(rdl_args[0], 2), ft_putstr(": Is a directory\n", 2), 126);} // need to set the status to 126;
+		{return (*status = 126, close(is_a_file), ft_putstr("minishell: ", 2), ft_putstr(rdl_args[0], 2), ft_putstr(": Is a directory\n", 2), 1);} // need to set the status to 126;
     if (access(rdl_args[0],F_OK) == -1)
     {
         perror("minishell");
@@ -153,7 +167,7 @@ char	**parsing(char **p, char **envp, int *s_exit, unsigned char *status)
 		env_paths = ft_split(env,':');
     rdl_args = c_split(*p,' ', envp, status);
 	
-	if (is_execute_file(rdl_args,envp))
+	if (is_execute_file(rdl_args, envp, status))
 		return (free_all(rdl_args), free_all(env_paths), envp);
 	if (ft_built_in_cmd(rdl_args, &envp, env_paths, status, s_exit))
 		(void)*p;
@@ -170,6 +184,7 @@ char	**parsing(char **p, char **envp, int *s_exit, unsigned char *status)
 		ft_putstr("minishell: command not found: ", 2);
 		ft_putstr(rdl_args[0], 2);
 		ft_putstr("\n", 2);
+		*status = 127;
 	}
 	return (free_all(rdl_args), free_all(env_paths), envp);
 }
@@ -225,6 +240,13 @@ int	execute_command(char *path, char **rdl_args, char **envp)
 	int	child_pid = 0;
 	int	child_info = 0;
 
+	//child_exists = 1;
+	__sighandler_t old_handler = signal(SIGINT, SIG_IGN);
+	if (old_handler == SIG_ERR)
+	{
+		perror("signal ");
+		exit (-1);
+	}
 	child_pid = fork();
 	if (child_pid < 0)
 	{
@@ -233,6 +255,7 @@ int	execute_command(char *path, char **rdl_args, char **envp)
 	}
 	if (!child_pid)
 	{
+		//child_exists = 0;
 		if (execve(path, rdl_args, envp))
 		{
 			perror("execve");
@@ -243,6 +266,8 @@ int	execute_command(char *path, char **rdl_args, char **envp)
 	else
 	{
 		wait(&child_info); // check for error
+		signal(SIGINT, old_handler);
+		//child_exists = 0;*/
 		//printf("child waiting status in excute_command: %d\n",waitpid(child_pid, &child_info, 0));
 	}
 	if (WIFEXITED(child_info))
