@@ -34,7 +34,7 @@ static char *c_strjoinf(char *s1, char c)
 	return (ptr);
 }
 
-static char *c_expand(char *str, char **envp)
+static char *c_expand(char *str, char **envp, unsigned char *status)
 {
 	size_t	i = 0;
 	size_t	len = 0;
@@ -52,8 +52,8 @@ static char *c_expand(char *str, char **envp)
 			len = 0;
 			while (str[i + len] && ft_isalnum(str[i + 1]))
 				len++;
-			key = ft_strldup(&str[i],len);
-			var = ft_getenv(key,envp);
+			key = ft_strldup(&str[i], len);
+			var = ft_getenv(key, envp, status);
 			if (var)
 				ptr = ft_strjoinf(ptr,var);
 			free(key);
@@ -69,7 +69,7 @@ static char *c_expand(char *str, char **envp)
 	return(ptr);
 }
 
-int     ft_isheredoc(char *p, char **envp)
+int     ft_isheredoc(char *p, char **envp, unsigned char *status)
 {
     char    *tmp;
     char    *dl;
@@ -79,7 +79,7 @@ int     ft_isheredoc(char *p, char **envp)
 
   //  while (found_heredoc(*p))
 //{
-	if (!(p[2]) || ( p[2] == '<' || p[2] == '>'))
+	if (!(p[2]) && ( p[2] == '<' || p[2] == '>'))
 		{return(ft_putstr("minishell: syntax error near unexpected token `newline'\n", 2), -1);}
 		dl = heredoc_delimiter(p,&isquote);
 		if (!dl)
@@ -98,7 +98,7 @@ int     ft_isheredoc(char *p, char **envp)
 				break;
 			}
 			if (!isquote && tmp[0])
-				tmp = c_expand(tmp,envp);
+				tmp = c_expand(tmp, envp, status);
 			c_putstr_fd(fd,tmp);
 			free(tmp);
 		}

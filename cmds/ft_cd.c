@@ -1,18 +1,6 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   ft_cd.c                                            :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: asoufian <asoufian@student.1337.ma>        +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/10 15:05:34 by asoufian          #+#    #+#             */
-/*   Updated: 2025/04/21 09:34:24 by asoufian         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "../minishell.h"
 
-char	*update_env_pwd(char **pwd_variable, char ***envp, int *status);
+char	*update_env_pwd(char **pwd_variable, char ***envp, unsigned char *status);
 int		search_cdpath_var(char **argv, char ***envp, char **pwd_variable);
 
 int     ft_cd(char **argv, char ***envp)
@@ -21,7 +9,7 @@ int     ft_cd(char **argv, char ***envp)
 	char	*p = NULL;
 	char	*t = NULL;
 	int		f = 0;
-	int		status;	// this does nothing yet
+	unsigned char	status;	// this does nothing yet
 
 
 	if (argv[1] && argv[2] != NULL) // if we have more than 1 argument, the program returns error
@@ -38,9 +26,9 @@ int     ft_cd(char **argv, char ***envp)
 	pwd_variable[1] = ft_strjoin("OLDPWD=", p);
 	free(p);
 	if (argv[1] && argv[1][0] == '-' && ft_check_spaces(&argv[1][1]))
-		argv[1] = ft_getenv("OLDPWD", *envp);	
+		argv[1] = ft_getenv("OLDPWD", *envp, NULL);	
 	else if (!argv[1] || ft_check_spaces(argv[1])) // || (argv[1][0] == '~' && !argv[1][1])): I don't need this here cuz the '~' gets handled in the parsing part
-		argv[1] = ft_getenv("HOME", *envp);
+		argv[1] = ft_getenv("HOME", *envp, NULL);
 	else if (argv[1][0] != '/' && argv[1][0] != '.')	
 		f = search_cdpath_var(argv, envp, pwd_variable);
 	if (argv[1] == NULL && (t == NULL || ft_check_spaces(t)))
@@ -65,7 +53,7 @@ int	search_cdpath_var(char **argv, char ***envp, char **pwd_variable)
 	size_t	i = 0;
 
 	(void)pwd_variable;
-	cdpath = ft_getenv("CDPATH", *envp);
+	cdpath = ft_getenv("CDPATH", *envp, NULL);
 	if (!cdpath)
 		return (0);
 	paths = ft_split(cdpath, ':');
@@ -83,7 +71,7 @@ int	search_cdpath_var(char **argv, char ***envp, char **pwd_variable)
 	return (0);
 }
 
-char	*update_env_pwd(char **pwd_variable, char ***envp, int *status)
+char	*update_env_pwd(char **pwd_variable, char ***envp, unsigned char *status)
 {
 	char	*p = NULL;
 

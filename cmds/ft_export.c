@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   ft_export.c                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: asoufian <asoufian@student.1337.ma>        +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/10 15:18:54 by asoufian          #+#    #+#             */
-/*   Updated: 2025/04/11 11:41:51 by asoufian         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "../minishell.h"
 
 static  int    valid_var(char *s)
@@ -166,7 +154,7 @@ static char	**ft_duplicate_add_s(char **dup, char *s)
 	free_all(dup);
 	return (p);
 }
-char	**ft_export(char **argv, char **envp, int *status)
+char	**ft_export(char **argv, char **envp, unsigned char *status)
 {
 	size_t	ar = 1;
 

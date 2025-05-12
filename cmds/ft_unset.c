@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   ft_unset.c                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: asoufian <asoufian@student.1337.ma>        +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/11 09:02:38 by asoufian          #+#    #+#             */
-/*   Updated: 2025/04/11 10:58:33 by asoufian         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "../minishell.h"
 
 int	ft_find(char **s, char *find, size_t *index)
@@ -29,7 +17,7 @@ int	ft_find(char **s, char *find, size_t *index)
 	return (0);
 }
 
-char	**ft_unset(char **argv, char **envp, int *status)
+char	**ft_unset(char **argv, char **envp, unsigned char *status)
 {
 	char	**p = NULL;
 	size_t	i = 0;

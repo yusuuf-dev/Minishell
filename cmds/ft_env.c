@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   ft_env.c                                           :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: asoufian <asoufian@student.1337.ma>        +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/11 11:00:03 by asoufian          #+#    #+#             */
-/*   Updated: 2025/04/13 11:29:06 by asoufian         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "../minishell.h"
 
 int	ft_env(char **argv, char **envp, char **envp_paths)
@@ -18,7 +6,7 @@ int	ft_env(char **argv, char **envp, char **envp_paths)
 //	size_t	size = 0;
 	size_t	ar = 1;
 	char	*path;
-	int	status = 0;
+	unsigned char		status = 0;
 	char	**new_envp = NULL;
 	char	**new_arg = NULL;
 	int	child_pid;

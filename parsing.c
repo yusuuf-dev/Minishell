@@ -18,7 +18,7 @@
 // }
 
 int	execute_command(char *path, char **rdl_args, char **envp);
-static int	ft_built_in_cmd(char **rdl_args, char ***envp, char **env_paths, int *status, int *s_exit);
+static int	ft_built_in_cmd(char **rdl_args, char ***envp, char **env_paths, unsigned char *status, int *s_exit);
 
 int     c_strncmp(const char *s1, const char *s2)
 {
@@ -36,6 +36,18 @@ int     c_strncmp(const char *s1, const char *s2)
     return (s1[i] - s2[i]);
 }
 
+static void ft_strcpy(char *dest, char *src)
+{
+	size_t	i = 0;
+
+	while(src[i])
+	{
+		dest[i] = src[i];
+		i++;
+	}
+	dest[i] = 0;
+}
+
 static char	*ft_itoa(int n)
 {
 	char	*s = ft_calloc(17);
@@ -49,10 +61,9 @@ static char	*ft_itoa(int n)
 		i--;
 		n = n / 10;
 	}
-	ft_strcmp(s, (s + i + 1));
+	ft_strcpy(s, (s + i + 1));
 	return (s);
 }
-
 char	*ft_getenv(char *s, char **envp, unsigned char *status)
 {
 	size_t	i = 0;
@@ -137,10 +148,10 @@ char	**parsing(char **p, char **envp, int *s_exit, unsigned char *status)
 	if(parse_redirection(p, status, envp)) // this also removes spaces;
 	 	return (envp);
 	//*p = convert_env_var(*p, envp);
-	env = ft_getenv("PATH", envp);
+	env = ft_getenv("PATH", envp, status);
 	if (env)
 		env_paths = ft_split(env,':');
-    rdl_args = c_split(*p,' ', envp);
+    rdl_args = c_split(*p,' ', envp, status);
 	
 	if (is_execute_file(rdl_args,envp))
 		return (free_all(rdl_args), free_all(env_paths), envp);
@@ -163,7 +174,7 @@ char	**parsing(char **p, char **envp, int *s_exit, unsigned char *status)
 	return (free_all(rdl_args), free_all(env_paths), envp);
 }
 
-static int	ft_built_in_cmd(char **rdl_args, char ***envp, char **env_paths, int *status, int *s_exit)
+static int	ft_built_in_cmd(char **rdl_args, char ***envp, char **env_paths, unsigned char *status, int *s_exit)
 {
 	char  **cmds = NULL;
 	int   i;
@@ -187,7 +198,7 @@ static int	ft_built_in_cmd(char **rdl_args, char ***envp, char **env_paths, int 
 	else if (i == 12)
 		*envp = ft_export(rdl_args, *envp, status);
 	else if (i == 13)
-		*status = ft_echo(rdl_args);
+		*status = ft_echo(rdl_args, *envp);
 	else if (i == 14)
 		*status = ft_env(rdl_args, *envp, env_paths);
 	else if (i == 15)
