@@ -77,10 +77,11 @@ char	**split_q(char *str, char c, char **envp, unsigned char *status)
 			i++;
 		}
 		ptr[j] = ft_substr(str,st,i);
-		if (c != '|')
-			ptr[j] = rm_quotes_expand(ptr[j],envp,status);	
-		if (!ptr[j++])
+		if (!ptr[j])
 			return(free_all(ptr));
+		if (c != '|')
+			ptr[j] = rm_quotes_expand(ptr[j],envp,status);
+		j++;
 		q = 0;
 	}
 	ptr[j] = NULL;
