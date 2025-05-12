@@ -1,6 +1,6 @@
 #include "../minishell.h"
 
-int ft_pipes(char **piped_cmds, char **p, int *status, int *is_a_pipe)
+int ft_pipes(char **piped_cmds, char **p, unsigned char *status, int *is_a_pipe)
 {
     int	    child_info = 0;
     int     pos = 0;

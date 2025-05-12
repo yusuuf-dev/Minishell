@@ -45,9 +45,8 @@ char *rm_quotes_expand(char *str, char **envp)
 		else if (str[i] == '$' && q != '\'' && str[i + 1] == '?')
 		{
 			var = ft_getenv("?",envp);
-			if (var)
-				ptr = ft_strjoinf(ptr,var);
-			i++;
+			ptr = ft_strjoinf(ptr,var);
+			i += ft_strlen(var);
 		}
 		else if (str[i] == '$' && q != '\'' && (ft_isalpha(str[i + 1]) || str[i + 1] == '_'))
 		{
