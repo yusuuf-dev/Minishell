@@ -198,7 +198,7 @@ static int	ft_built_in_cmd(char **rdl_args, char ***envp, char **env_paths, unsi
 	else if (i == 12)
 		*envp = ft_export(rdl_args, *envp, status);
 	else if (i == 13)
-		*status = ft_echo(rdl_args, *envp);
+		*status = ft_echo(rdl_args);
 	else if (i == 14)
 		*status = ft_env(rdl_args, *envp, env_paths);
 	else if (i == 15)
