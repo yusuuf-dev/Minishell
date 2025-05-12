@@ -74,7 +74,7 @@ int main(int ac, char **av, char **envp)
             i = found_pipe(p);
             if (i == 1)
             {
-                segments = c_split(p, '|',envp);
+                segments = c_split(p, '|',envp, &status);
                 if (!segments)
                     return(exit_minishell(envp, p, 1, "failed malloc\n"));//protect malloc
                 free(p);
