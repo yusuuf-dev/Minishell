@@ -3,11 +3,11 @@
 static int     exit_minishell(char **envp, char *p, int status, char *msg);
 
 //volatile sig_atomic_t child_exists = 0;
+unsigned char status = 0;
 void    signal_handler(int signum)
 {
-   // if (child_exists)
-   //     {return;}
 	(void)signum;
+    status = 130;
     rl_replace_line("", 0);
     write(1, "\n", 1);
     rl_on_new_line();
@@ -43,7 +43,7 @@ int main(int ac, char **av, char **envp)
 	struct sigaction C_slash;
     struct sigaction C_c;
 	int	s_exit = 0;
-    unsigned char status = 0;
+    
     int is_a_pipe = 0;
     int fd0, fd1, fd2;
     int i;

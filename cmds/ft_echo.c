@@ -12,15 +12,27 @@
 
 #include "../minishell.h"
 
-int     ft_echo( char **p, char **envp)
+static int nl_parm(char *s)
+{
+    size_t i;
+
+    if (s[0] != '-')
+        return(0);
+    i = 1;
+    while(s[i])
+    {
+        if (s[i] != 'n')
+            return(0);
+        i++;
+    }
+    return(1);
+}
+
+int     ft_echo( char **p)
 {
 	size_t	i = 1;
 
-	(void)envp;
-
-    if (!p[i])
-    	return(0);
-    while (p[i] && ft_strcmp("-n", p[i]))
+    while (p[i] && nl_parm(p[i]))
         i++;
     while (p[i])
     {
@@ -29,10 +41,9 @@ int     ft_echo( char **p, char **envp)
             printf(" ");
         i++;
     }
-    if(!ft_strcmp("-n", p[1]))
+    if(!p[1] || !nl_parm(p[1]))
 	{
     	printf("\n");
 	}
 	return (0);
 }
-

@@ -31,7 +31,7 @@ void    *ft_calloc(size_t n);
 char	**parsing(char **p, char **envp, int *s_exit, unsigned char *status);
 //char	*ft_remove_isspace(char *s);
 
-int     ft_echo(char **p, char **envp);
+int     ft_echo(char **p);
 int     ft_pwd(char	**argv, char **envp);
 int     ft_cd(char **argv, char ***envp);
 char	**ft_export(char **argv, char **envp, unsigned char *status);

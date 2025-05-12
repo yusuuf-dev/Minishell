@@ -161,7 +161,8 @@ SIGNLAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAS
 PIPE,
 https://docs.google.com/spreadsheets/u/0/d/1uJHQu0VPsjjBkR4hxOeCMEt3AOM1Hp_SmUzPFhAH-nA/htmlview?lsrp=1
 
-234, 238, 272, 273, 294, 296, 298, 305, 306, 311, 312, 313, 314 (segfault), 327, 328, 330, 
+export: 234, 238, 272, 273, 294, 296, 298, 305, 306, 311, 312, 313, 314 (segfault), 327, 328, 330, 
+cd: 440, 
 
 
 
