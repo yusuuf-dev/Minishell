@@ -12,10 +12,10 @@
 
 #include "../minishell.h"
 
-static int only_parm(char *s)
+static ssize_t only_parm(char *s)
 {
     size_t  i;
-    int     status;
+    ssize_t     status;
 
     i = 0;
     status = 0;
@@ -48,10 +48,10 @@ static int only_parm(char *s)
     return(1);
 }
 
-static size_t skip_parm(char *s)
+static ssize_t skip_parm(char *s)
 {
-    size_t  i;
-    size_t  j;
+    ssize_t  i;
+    ssize_t  j;
 
     i = 0;
     while (s[i])
@@ -95,20 +95,21 @@ static char	*ft_substrf(char *s, int st, int ed)
 int     ft_echo( char **p)
 {
 	size_t	i;
-    size_t  status;
+    ssize_t  status;
 
     i = 1;
     status = 0;
     while (p[i])
     {
-        if (only_parm(p[i]) == -1)
+        status = only_parm(p[i]);
+        if (status == -1)
             break;
-        else if (only_parm(p[i]))
+        else if (status == 1)
             i++;
         else 
         {
             status = skip_parm(p[i]);
-            if (status > 0)
+            if (status > 1)
             {
                 p[i] = ft_substrf(p[i],status,ft_strlen(p[i]));
                 break;
@@ -124,7 +125,7 @@ int     ft_echo( char **p)
             printf(" ");
         i++;
     }
-    if(!p[1] || status == 0)
+    if(!p[1] || status < 1)
 	{
     	printf("\n");
 	}
