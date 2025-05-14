@@ -12,28 +12,111 @@
 
 #include "../minishell.h"
 
-static int nl_parm(char *s)
+static int only_parm(char *s)
 {
-    size_t i;
+    size_t  i;
+    int     status;
 
-    if (s[0] != '-')
-        return(0);
-    i = 1;
-    while(s[i])
+    i = 0;
+    status = 0;
+    while (s[i])
     {
-        if (s[i] != 'n')
+        if (s[i] == ' ' || (s[i] >= 9 && s[i] <= 13))
+            i++;
+        else if (s[i] == '-' && s[i + 1] == 'n')
+        {
+            i++;
+            while (s[i] == 'n')
+                i++;
+            if (s[i] && s[i] != ' ' && !(s[i] >= 9 && s[i] <= 13))
+            {
+                if (status == 0)
+                    return (-1);
+                else
+                    return(0);
+            }
+            else
+                status = 1;    
+        }
+        else
+        {
+            if (status == 0)
+                return (1);
             return(0);
-        i++;
+        }
     }
     return(1);
 }
 
+static size_t skip_parm(char *s)
+{
+    size_t  i;
+    size_t  j;
+
+    i = 0;
+    while (s[i])
+    {
+        if(s[i] == ' ' || (s[i] >= 9 && s[i] <= 13))
+            i++;
+        else if (s[i] == '-' && s[i + 1] == 'n')
+        {
+            j = 1;
+            while(s[i + j] == 'n')
+                j++;
+            if (s[i + j] == ' ' || (s[i + j] >= 9 && s[i + j] <= 13))
+                i +=j;
+            else
+                return(i); 
+        }
+        else
+            return(i);
+    }
+    return(1);
+}
+
+static char	*ft_substrf(char *s, int st, int ed)
+{
+	char	*str;
+	int	i;
+
+	i = 0;
+	str = malloc((ed - st + 1) * sizeof(char));
+	if (!str)
+		return (NULL);
+	while (st < ed)
+	{
+		str[i++] = s[st++];
+	}
+	str[i] = '\0';
+    free(s);
+	return (str);
+}
+
 int     ft_echo( char **p)
 {
-	size_t	i = 1;
+	size_t	i;
+    size_t  status;
 
-    while (p[i] && nl_parm(p[i]))
-        i++;
+    i = 1;
+    status = 0;
+    while (p[i])
+    {
+        if (only_parm(p[i]) == -1)
+            break;
+        else if (only_parm(p[i]))
+            i++;
+        else 
+        {
+            status = skip_parm(p[i]);
+            if (status > 0)
+            {
+                p[i] = ft_substrf(p[i],status,ft_strlen(p[i]));
+                break;
+            }
+            else
+                break;
+        }
+    }
     while (p[i])
     {
         printf("%s",p[i]);
@@ -41,7 +124,7 @@ int     ft_echo( char **p)
             printf(" ");
         i++;
     }
-    if(!p[1] || !nl_parm(p[1]))
+    if(!p[1] || status == 0)
 	{
     	printf("\n");
 	}
