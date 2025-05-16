@@ -81,7 +81,8 @@ char	**split_q(char *str, char c, char **envp, unsigned char *status)
 			return(free_all(ptr));
 		if (c != '|')
 			ptr[j] = rm_quotes_expand(ptr[j],envp,status);
-		j++;
+		if (ptr[j])
+			j++;
 		q = 0;
 	}
 	ptr[j] = NULL;
