@@ -43,8 +43,10 @@ int	ft_exit(char **argv, char **envp)
 
 	if (!argv[1])
 		return (0);
+	if (!ft_valid_int(argv[1]))
+		return (ft_putstr("minishell: exit: ", 2), ft_putstr(argv[1], 2), ft_putstr(": numeric argument required\n", 2), 2);
 	if (argv[2] != NULL)
-		return (ft_putstr("too many arguments\n", 2), 2);
+		return (ft_putstr("exit\nminishell: exit: too many arguments\n", 2), 1);
 	
 	if (ft_valid_int(argv[1]))
 	{

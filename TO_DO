@@ -158,15 +158,60 @@ make a struct that should include atleast : (for now)
 
 
 SIGNLAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAS
-PIPE,
+PIPE, the exit status is wrong, 
+probably need to make the pipe forks 2 child and write and read from the pipe simultaneously, cuz if the program only write to the pipe and it reaches the max PIPE_CAPACITY
+it will hang, meaning It's waiting for the pipe to be read so the buffer will get freed ???.
+bugged:  echo hola | cat | cat | cat | cat | cat | grep hola ???
+
+echo "something to do yeah" | grep test
+echo "something to do yeah" | grep yeah | wc -l
+echo "something to do yeah" | grep yeah
+echo "something to do yeah" | grep yeah | wc -l
+echo "something to do yeah" | grep yeah
+echo "something to do yeah" | grep test
+echo "something to do yeah" | grep yeah | wc -l
+
 https://docs.google.com/spreadsheets/u/0/d/1uJHQu0VPsjjBkR4hxOeCMEt3AOM1Hp_SmUzPFhAH-nA/htmlview?lsrp=1
 
-export: 234, 238, 272, 273, 294, 296, 298, 305, 306, 311, 312, 313, 314 (segfault), 327, 328, 330, 
+export: *234, 238, 272, *273, 294(youssef), 296, 298, 305(youssef ?), 306, 311, 312, 313, 314 (segfault), 327, 328, 330, 
 cd: 440, 
 
 
+script:
+-skipped:
+'export HO#LA', cuz I use the # as a delimiter when I want to split the commands using 'tr'
+'export ""', dunno how this gets parsed
+'export HOLA=bon\;jour' : sepcial charactere "\;"
+'export HOLA=bon!jour' : special charactere "!"
+313 so far;
+'export HOLA=bonjour BYE=casse-toi#echo $?#echo $HOLA et $BYE#echo $?#export $HOLA=bonjour#echo $?#env | grep bonjour#echo $?#export | grep bonjour#echo $?'
+when I run the above line there's a difference in which the bash and minishell sorts the bonjour and HOLA env var in env, maybe It's fine ?
+Need to change ALL calls to the printf function in the minishell to ft_putstr or write  
 
 
+exec 1<&- :x
+
+exit 234 2342 56456 : this shouldn't exit
+exit fff 2342 56456 : this should exit
+
+exit 222 ffff 56456 : this shouldn't exit
+
+pwd shenanigans, use a char *p to store the pwd, instead of calling getcwd each time ? 
+
+try send SIGINT signal by Ctr + c, while running another program in minishell, such as (find, ping....)
+
+remember to use unlink in heredoc
+
+If I run a minishell within minishell (calling minishell by another minishell) and used a command such as (ls,....) something that requires fork and execve,
+will the first minishell also get woken up (meaning exiting the wait status) cuz the ran command 'ls' will send a SIGCHILD to that second one.????
+
+
+
+
+if (pfd[1] != STDOUT_FILENO) {
+ dup2(pfd[1], STDOUT_FILENO);
+ close(pfd[1]);
+}
 
 
 

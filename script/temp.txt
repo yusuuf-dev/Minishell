@@ -1,0 +1,8 @@
+minishell : export HOLA=" -n bonjour "
+minishell : echo $?
+0
+minishell : echo $HOLA
+ -n bonjour 
+minishell : echo $?
+0
+minishell : exit

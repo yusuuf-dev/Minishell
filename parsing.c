@@ -20,7 +20,7 @@
 int	execute_command(char *path, char **rdl_args, char **envp);
 static int	ft_built_in_cmd(char **rdl_args, char ***envp, char **env_paths, unsigned char *status, int *s_exit);
 
-int     c_strncmp(const char *s1, const char *s2)
+static int     c_strncmp(const char *s1, const char *s2) // there's another copy of this in ft_export
 {
     size_t  i;
 
@@ -117,7 +117,7 @@ static  int is_execute_file(char **rdl_args, char **env, unsigned char *status)
 		return (1);
     if (!(rdl_args[0][0] == '.' || (ft_strchr(rdl_args[0], '/'))))// && rdl_args[0][ft_strlen(rdl_args[0] - 1)] != '/')))
     {    return (0);}
-	is_a_file = open(rdl_args[0], O_DIRECTORY);
+	is_a_file = open(rdl_args[0], O_DIRECTORY); // check for errno in case open fails for some reason, and return error ?
 	if (is_a_file != -1)
 		{return (*status = 126, close(is_a_file), ft_putstr("minishell: ", 2), ft_putstr(rdl_args[0], 2), ft_putstr(": Is a directory\n", 2), 1);} // need to set the status to 126;
     if (access(rdl_args[0],F_OK) == -1)
@@ -228,7 +228,8 @@ static int	ft_built_in_cmd(char **rdl_args, char ***envp, char **env_paths, unsi
 		//if (*status == 2)
 		//	*s_exit = 0;
 	//	else
-		*s_exit = 1;
+		if (*status != 1)
+			*s_exit = 1;
 	}
   	free_all(cmds);
 	if (i > 9)

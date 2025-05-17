@@ -12,38 +12,46 @@
 
 #include "../minishell.h"
 
-static int nl_parm(char *s)
+int     valid_parm(char *s)
 {
-    size_t i;
+    int     i;
 
-    if (s[0] != '-')
-        return(0);
-    i = 1;
-    while(s[i])
-    {
-        if (s[i] != 'n')
-            return(0);
+    i = 0;
+    if (s[i] != '-' || s[i + 1] != 'n')
+        return (0);
+    i++;
+    while (s[i] == 'n')
         i++;
-    }
+    if (s[i])
+        return(0);
     return(1);
 }
 
 int     ft_echo( char **p)
 {
-	size_t	i = 1;
+	size_t	i;
 
-    while (p[i] && nl_parm(p[i]))
-        i++;
+    i = 1;
     while (p[i])
     {
-        printf("%s",p[i]);
+        if (valid_parm(p[i]))
+            i++;
+        else
+            break;
+    }
+    while (p[i])
+    {
+        ft_putstr(p[i], 1);
+        //printf("%s",p[i]);
         if(p[i + 1])
-            printf(" ");
+            write(1, " ", 1);
+          //  printf(" ");
         i++;
     }
-    if(!p[1] || !nl_parm(p[1]))
+    if(!p[1] || !valid_parm(p[1]))
 	{
-    	printf("\n");
+        write(1, "\n", 1);
+    	//printf("\n");
 	}
 	return (0);
 }

@@ -95,7 +95,7 @@ int main(int ac, char **av, char **envp)
     }
     free_all(envp);
     //return (0);
-    exit(status);
+    return(status);
 }
 
 static int     exit_minishell(char **envp, char *p, int status, char *msg)
