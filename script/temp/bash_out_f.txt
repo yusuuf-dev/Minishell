@@ -1,0 +1,4 @@
+
+syntax error near unexpected token `|'
+`echo hola ||| cat'
+2

@@ -1,4 +1,0 @@
-export HOLA=" -n bonjour "
-echo $?
-echo $HOLA
-echo $?

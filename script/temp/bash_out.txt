@@ -1,0 +1,3 @@
+/bin/bash: line 1: syntax error near unexpected token `|'
+/bin/bash: line 1: `echo hola ||| cat'
+2

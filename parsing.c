@@ -17,8 +17,23 @@
 // 	return (NULL);
 // }
 
-int	execute_command(char *path, char **rdl_args, char **envp);
+int	execute_command(char *path, char **rdl_args, char **envp, int is_a_pipe);
 static int	ft_built_in_cmd(char **rdl_args, char ***envp, char **env_paths, unsigned char *status, int *s_exit);
+
+extern volatile sig_atomic_t f_sig;
+
+void    count_sigs(int signum)
+{
+    (void)signum;
+    f_sig = 2;
+}
+void    ignoring(int signum)
+{
+    (void)signum;
+  //  rl_replace_line("", 0);
+    //rl_on_new_line();
+    //rl_redisplay();
+}
 
 static int     c_strncmp(const char *s1, const char *s2) // there's another copy of this in ft_export
 {
@@ -83,33 +98,45 @@ char	*ft_getenv(char *s, char **envp, unsigned char *status)
 	return (NULL);
 }
 
-static char     **ft_execute_cmd(char *path, char **av, char **envp)
+static char     **ft_execute_cmd(char *path, char **av, char **envp, unsigned char *status, int is_a_pipe)
 { // I need to add the status here too, so I can get the status of I run a local program (not in the PATH)
-    int     pid;
-
-	__sighandler_t old_handler = signal(SIGINT, SIG_IGN);
-	if (old_handler == SIG_ERR)
-	{
-		perror("signal ");
-		exit (-1);
-	}
-    pid = fork();
+    int     pid = 0;
+	int		child_info = 0;
+	struct sigaction C_c_alt;
+	struct sigaction old_C_c;
+	sigemptyset(&(C_c_alt.sa_mask));
+	C_c_alt.sa_flags = SA_RESTART;
+    C_c_alt.sa_handler = count_sigs;
+	
+	if (!is_a_pipe)
+    	pid = fork();
 	if (pid == -1)
 	{
 		perror("");
 		exit (-1);
 	}
-    if (pid == 0)
-        execve(path,av,envp);
+    if (pid == 0 || is_a_pipe)
+	{
+		signal(SIGQUIT, SIG_DFL);
+        execve(path, av, envp);
+	}
     else if (pid > 0)
 	{
-        waitpid(pid,NULL,0);
-		signal(SIGINT, old_handler);
+		if (sigaction(SIGINT, &C_c_alt, &old_C_c) == -1)
+			;//return (perror(""), errno);
+
+        waitpid(pid, &child_info, 0);
+		if (sigaction(SIGINT, &old_C_c, NULL) == -1)
+			;//return (perror(""), errno);
+		if (f_sig == 2 && kill(0, SIGINT))
+			;//return (perror(""), errno);
 	}
+	if (WIFEXITED(child_info))
+		*status = WEXITSTATUS(child_info);
     return (envp);
 }
 
-static  int is_execute_file(char **rdl_args, char **env, unsigned char *status)
+static  int is_execute_file(char **rdl_args, char **env, unsigned char *status, int is_a_pipe)
 {
 	int is_a_file = 0;
 
@@ -126,7 +153,7 @@ static  int is_execute_file(char **rdl_args, char **env, unsigned char *status)
         return(1);
     }
     if (access(rdl_args[0],X_OK) == 0)
-        ft_execute_cmd(rdl_args[0],rdl_args,env);
+        ft_execute_cmd(rdl_args[0],rdl_args,env, status, is_a_pipe);
     else
         perror("minishell");
     return(1);
@@ -150,7 +177,7 @@ static void			ft_space(char *s)
 	}
 }
 
-char	**parsing(char **p, char **envp, int *s_exit, unsigned char *status)
+char	**parsing(char **p, char **envp, int *s_exit, unsigned char *status, int is_a_pipe)
 {
     char	*env;
     char	**env_paths = NULL;
@@ -169,7 +196,7 @@ char	**parsing(char **p, char **envp, int *s_exit, unsigned char *status)
 		env_paths = ft_split(env,':');
     rdl_args = c_split(*p,' ', envp, status);
 	
-	if (is_execute_file(rdl_args, envp, status))
+	if (is_execute_file(rdl_args, envp, status, is_a_pipe))
 		return (free_all(rdl_args), free_all(env_paths), envp);
 	if (ft_built_in_cmd(rdl_args, &envp, env_paths, status, s_exit))
 		(void)*p;
@@ -179,13 +206,13 @@ char	**parsing(char **p, char **envp, int *s_exit, unsigned char *status)
 		{
 			path = ft_strjoinf(ft_strjoin(env_paths[i], "/"),rdl_args[0]);
 			if (!access(path, F_OK) && !access(path, X_OK))
-				return (*status = execute_command(path, rdl_args, envp), free(path), free_all(rdl_args), free_all(env_paths), envp);
+				return (*status = execute_command(path, rdl_args, envp, is_a_pipe), free(path), free_all(rdl_args), free_all(env_paths), envp);
 			free(path);
 			i++;
 		}
-		ft_putstr("minishell: command not found: ", 2);
 		ft_putstr(rdl_args[0], 2);
-		ft_putstr("\n", 2);
+		ft_putstr(": command not found\n", 2);
+		//ft_putstr("\n", 2);
 		*status = 127;
 	}
 	return (free_all(rdl_args), free_all(env_paths), envp);
@@ -222,14 +249,14 @@ static int	ft_built_in_cmd(char **rdl_args, char ***envp, char **env_paths, unsi
 		*envp = ft_unset(rdl_args, *envp, status);
 	else if (i == 16)
 	{
-		*status = ft_exit(rdl_args, *envp);
+		*status = ft_exit(rdl_args, *envp, status, s_exit);
 		//if (*status)
 		//	*s_exit = *status;
 		//if (*status == 2)
 		//	*s_exit = 0;
 	//	else
-		if (*status != 1)
-			*s_exit = 1;
+		///if (*status != 1)
+		///	*s_exit = 1;
 	}
   	free_all(cmds);
 	if (i > 9)
@@ -238,42 +265,54 @@ static int	ft_built_in_cmd(char **rdl_args, char ***envp, char **env_paths, unsi
 		return (0);
 }
 
-int	execute_command(char *path, char **rdl_args, char **envp)
+int	execute_command(char *path, char **rdl_args, char **envp, int is_a_pipe)
 {
+	struct sigaction C_c_alt;
+	struct sigaction old_C_c;
+	sigemptyset(&(C_c_alt.sa_mask));
+	C_c_alt.sa_flags = 0;
+    C_c_alt.sa_handler = count_sigs;
+
 	int	child_pid = 0;
 	int	child_info = 0;
 
-	//child_exists = 1;
-	__sighandler_t old_handler = signal(SIGINT, SIG_IGN);
-	if (old_handler == SIG_ERR)
+	if (!is_a_pipe)
 	{
-		perror("signal ");
-		exit (-1);
+		if (sigaction(SIGINT, &C_c_alt, &old_C_c) == -1)
+			return (perror(""), errno);
+		child_pid = fork();
 	}
-	child_pid = fork();
 	if (child_pid < 0)
 	{
 		perror("fork");
 		exit(errno);
 	}
-	if (!child_pid)
+	if (!child_pid || is_a_pipe)
 	{
-		//child_exists = 0;
+		signal(SIGQUIT, SIG_DFL);
 		if (execve(path, rdl_args, envp))
 		{
 			perror("execve");
 			exit(errno);
 		}
-		exit(0);
 	}
 	else
 	{
-		wait(&child_info); // check for error
-		signal(SIGINT, old_handler);
-		//child_exists = 0;*/
-		//printf("child waiting status in excute_command: %d\n",waitpid(child_pid, &child_info, 0));
+		if (!is_a_pipe)
+		{
+			wait(&child_info);
+			if (sigaction(SIGINT, &old_C_c, NULL) == -1)
+				return (perror(""), errno);	
+			if (f_sig == 2 && kill(0, SIGINT))
+				return (perror(""), errno);
+
+		}
 	}
 	if (WIFEXITED(child_info))
 		return (WEXITSTATUS(child_info));
-	return (-1);
+	else if (WIFSIGNALED(child_info))
+		return ((child_info & 127) + 128);
+	//if (!is_a_pipe && WIFEXITED(child_info))
+	//	return (WEXITSTATUS(child_info));
+	return (200);
 }

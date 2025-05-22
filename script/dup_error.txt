@@ -1,0 +1,31 @@
+[?2004hminishell : ls
+[?2004l-1
+aye.txt
+bash_out_f.txt
+bash_out_t.txt
+bash_out.txt
+bash_test.sh
+bkp_inputs.txt
+current_command.txt
+dup_error.txt
++fileformat=unix
+file.txt
+inputs.txt
+list_of_exit.txt
+list_of_export.txt
+mini_out_f.txt
+mini_out_t.txt
+mini_out.txt
+mini_out_.txt
+minishell
+some_bash.txt
+some_file.txt
+some_place.txt
+some_thing.txt
+something.txt
+some_where.txt
+temp.txt
+test_file.txt
+testing_extract
+[?2004hminishell : exit
+[?2004l

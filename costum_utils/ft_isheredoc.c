@@ -77,8 +77,6 @@ int     ft_isheredoc(char *p, char **envp, unsigned char *status)
 	int		isquote = 0;
 
 
-  //  while (found_heredoc(*p))
-//{
 	if (!(p[2]) && ( p[2] == '<' || p[2] == '>'))
 		{return(ft_putstr("minishell: syntax error near unexpected token `newline'\n", 2), -1);}
 		dl = heredoc_delimiter(p,&isquote);
@@ -91,7 +89,7 @@ int     ft_isheredoc(char *p, char **envp, unsigned char *status)
 		{
 			tmp = readline("> ");
 			//if (!tmp)
-		//		break;
+			//	break;
 			if (!tmp || ft_strcmp(tmp,dl))
 			{
 				free(tmp);

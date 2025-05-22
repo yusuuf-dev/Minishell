@@ -125,22 +125,6 @@ PIPING:
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 echo $HOME-test 
 cat <<EOF <some_file.txt 
   the delimited should be 'EOF' but our minishell takes 'EOF>some_file.txt' as the delimited;
@@ -196,6 +180,9 @@ exit fff 2342 56456 : this should exit
 
 exit 222 ffff 56456 : this shouldn't exit
 
+exit "     
+ 00010"
+
 pwd shenanigans, use a char *p to store the pwd, instead of calling getcwd each time ? 
 
 try send SIGINT signal by Ctr + c, while running another program in minishell, such as (find, ping....)
@@ -214,6 +201,9 @@ if (pfd[1] != STDOUT_FILENO) {
 }
 
 
+WHY IS ERRNO 2 ????????????????????????????????????????????????????????????
+  the access function checks, if a file exits in the loop of PATH to execute a cmd
+trying spam-send SIGQUIT to minishell and see what happens.
 
 
 
@@ -232,7 +222,22 @@ if (pfd[1] != STDOUT_FILENO) {
 
 
 
+00001011
+11110100
+00001011
+
+11110011
+
+00001100
+11110011
+
+00001100
+
+11110100
 
 
+11110011
+11110100
 
-
+00001011
+00001100

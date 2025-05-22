@@ -1,3 +1,4 @@
+/* this is not needed anymore, I think*/
 static int ft_isdigit(int n)
 {
     if (n >= 48 && n <= 57)
