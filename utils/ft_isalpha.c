@@ -1,3 +1,6 @@
+
+
+
 #include "../minishell.h"
 
 int	ft_isalpha(int c)

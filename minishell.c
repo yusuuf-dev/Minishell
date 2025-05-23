@@ -32,25 +32,18 @@ static int reset_std_in_out_err(int fd0, int fd1, int fd2)
     return (0);
 }
 
-static int     exit_minishell(char **envp, char *p, int status, char *msg)
-{
-     free_all(envp);
-     free(p);
-     if (msg)
-         printf("%s",msg);
-     exit(status);
-}
 int main(int ac, char **av, char **envp)
 {
 	char *p = NULL;
     char **segments = NULL;
 	struct sigaction C_slash;
     struct sigaction C_c;
-	int	s_exit = 0;
+	// int	s_exit = 0;
     unsigned char status = 0;
     int is_a_pipe = 0;
     int fd0, fd1, fd2;
     int i;
+    t_data      *data;
 
 	(void)av; // maybe we can remove these two from the argument since we don't use them, the problem is wether the envp will work or not;
 	(void)ac; //
@@ -60,10 +53,12 @@ int main(int ac, char **av, char **envp)
     C_c.sa_flags = 0;
     C_slash.sa_handler = SIG_IGN;
     C_c.sa_handler = signal_handler;
-	envp = ft_duplicate(envp, 0);
     if (assign_std_in_out_err(&fd0, &fd1, &fd2))
-        {return (free_all(envp), 1);}
-	while (1 && !s_exit && !is_a_pipe)
+    {
+        return(1);
+    }
+    data = ft_setup(envp);
+	while (1 && !data->exit && !is_a_pipe)
     {
 		sigaction(SIGQUIT, &C_slash, NULL);
         sigaction(SIGINT, &C_c, NULL);
@@ -71,34 +66,30 @@ int main(int ac, char **av, char **envp)
 		if (!p)
 		{
 			printf("exit\n");
-			free_all(envp);
-			free(p);
-			return (0);
+			config_malloc(NULL,0);
 		}
-        if (!ft_isspace_to_space(&p) && p[0])
+        config_rdline(&p,data);
+        if (!ft_isspace_to_space(&data->p_rdl))
         {
-            add_history(p);
-            i = found_pipe(p);
+            add_history(data->p_rdl);
+            i = found_pipe(data->p_rdl);
             if (i == 1)
             {
-                segments = c_split(p, '|',envp,&status);
-                if (!segments)
-                    return(exit_minishell(envp, p, 1, "failed malloc\n"));//protect malloc
-                free(p);
+                segments = c_split(p, '|');
                 if (ft_pipes(segments, &p, &status, &is_a_pipe))
                     return (errno);
             }
-            else if (i == -1)
-                return(exit_minishell(envp, p, 1, "failed malloc\n"));//protect malloc
-            if (p)  // not great, this is done for when the piping is done so that the program wouldn't check for cmds;
-                envp = parsing(&p, envp, &s_exit, &status);
+            else if (i == 0)
+                parsing(data);
+            else
+            {
+                ft_putstr("Erorr Pipe\n",2);
+                config_malloc(NULL,1);
+            }
             if (reset_std_in_out_err(fd0, fd1, fd2))
-                return (free_all(envp), 1);
+                config_malloc(NULL,1);
         }
-        free(p);
     }
-    free_all(envp);
-    //return (0);
     exit(status);
 }
 

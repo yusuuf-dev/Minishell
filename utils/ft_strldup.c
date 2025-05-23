@@ -23,9 +23,9 @@ char    *ft_strldup(char *s, size_t     n)
                 return (NULL);
         len = ft_strlen(s);
         if (n <= len)
-                p = malloc(n + 1);
+                p = ft_malloc(n + 1);
         else
-                p = malloc(len + 1);
+                p = ft_malloc(len + 1);
         while (s[i] && i < n)
         {
                 p[i] = s[i];

@@ -7,9 +7,7 @@ static char *c_strjoinf(char *s1, char c)
 	char	*ptr;
 
 	len = ft_strlen(s1);
-	ptr = malloc((len + 2) * sizeof(char));
-	if (!ptr)
-		return(NULL);
+	ptr = ft_malloc((len + 2) * sizeof(char));
 	i = 0;
 	while (i < len)
 	{
@@ -18,7 +16,6 @@ static char *c_strjoinf(char *s1, char c)
 	}
 	ptr[i++] = c;
 	ptr[i] = 0;
-	free(s1);
 	return (ptr);
 }
 
@@ -58,7 +55,6 @@ char    *rm_quotes_expand(char *str, char **envp, unsigned char *status)
 			var = ft_getenv(key,envp,status);
 			if (var)
 				ptr = ft_strjoinf(ptr,var);
-			free(key);
 			i += len;
 		}
 		else
@@ -67,6 +63,5 @@ char    *rm_quotes_expand(char *str, char **envp, unsigned char *status)
 			i++;
 		}
 	}
-	free(str);
 	return(ptr);
 }

@@ -4,28 +4,39 @@ static int	ft_count_wd(char *s, char c)
 {
 	int	i;
 	int	count;
+	int f_wd;
     char q;
 
 	i = 0;
 	count = 0;
 	q = 0;
+	f_wd = 0;
 	while (s[i])
 	{
-		if (s[i] == '\"' || s[i] == '\'')
+		if (s[i] == c)
+		{
+			f_wd = 0;
+			i++;
+		}
+		else if (s[i] != c && !f_wd)
+		{
+			f_wd = 1;
+			count++;
+		}
+		else if (!q && (s[i] == '\'' || s[i] == '\"'))
 		{
 			q = s[i++];
-			if (s[i] != q)
-				count++;
-			while (s[i] != q)
+			while (s[i] && s[i] != q)
 				i++;
 			q = 0;
+			i++;
 		}
-		if (s[i] != c && (s[i + 1] == c || !s[i + 1]))
-			count++;
-		i++;
+		else
+			i++;
 	}
 	return (count);
 }
+
 
 static char	*ft_substr(char *s, int st, int ed)
 {
@@ -33,9 +44,7 @@ static char	*ft_substr(char *s, int st, int ed)
 	int	i;
 
 	i = 0;
-	str = malloc((ed - st + 1) * sizeof(char));
-	if (!str)
-		return (NULL);
+	str = ft_malloc((ed - st + 1) * sizeof(char));
 	while (st < ed)
 	{
 		str[i++] = s[st++];
@@ -44,7 +53,7 @@ static char	*ft_substr(char *s, int st, int ed)
 	return (str);
 }
 
-char	**split_q(char *str, char c, char **envp, unsigned char *status)
+char	**split_q(char *str, char c)
 {
 	char	**ptr;
 	size_t	i;
@@ -53,11 +62,8 @@ char	**split_q(char *str, char c, char **envp, unsigned char *status)
 	size_t	wd;
 	char q = 0;
 
-
 	wd = (size_t)ft_count_wd(str,c);
-	ptr = malloc((wd + 1) * sizeof(char*));
-	if(!ptr)
-		return(NULL);
+	ptr = ft_malloc((wd + 1) * sizeof(char*));
 	i = 0;
 	j = 0;
 	while (str[i] && j < wd)
@@ -77,12 +83,7 @@ char	**split_q(char *str, char c, char **envp, unsigned char *status)
 			i++;
 		}
 		ptr[j] = ft_substr(str,st,i);
-		if (!ptr[j])
-			return(free_all(ptr));
-		if (c != '|')
-			ptr[j] = rm_quotes_expand(ptr[j],envp,status);
-		if (ptr[j])
-			j++;
+		j++;
 		q = 0;
 	}
 	ptr[j] = NULL;
@@ -119,27 +120,19 @@ int  found_q(char *s)
 }
 
 
-
-char	**c_split(char *str, char c, char **envp, unsigned char *func_status)
+char	**c_split(char *str, char c)
 {
     char    **ptr;
 	int		status;
-	int		i;
 
-	i = 0;
 	status = found_q(str);
 	if (status == -1)
 		return (NULL);
 	else if (status == 1)
-		ptr = split_q(str,c,envp, func_status);
+		ptr = split_q(str,c);
     else
 	{
         ptr = ft_split(str,c);
-		while (ptr[i])
-		{
-			ptr[i] = rm_quotes_expand(ptr[i],envp, func_status);
-			i++;
-		}
 	}
     return(ptr);
 }

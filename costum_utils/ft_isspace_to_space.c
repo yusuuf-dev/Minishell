@@ -15,17 +15,15 @@
 int	 ft_isspace_to_space(char **s)
 {
 	size_t	i;
-	int		ischar;
 
 	i = 0;
-	ischar = 1;
 	while ((*s)[i])
 	{
-		if ((*s)[i] <= 13 && (*s)[i] >= 9)
-			(*s)[i] = ' ';
+		// if ((*s)[i] <= 13 && (*s)[i] >= 9)
+		// 	(*s)[i] = ' ';
 		if ((*s)[i] != ' ' && !((*s)[i] <= 13 && (*s)[i] >= 9))
-			ischar = 0;
+			return(0);
 		i++;
 	}
-	return(ischar);
+	return(1);
 }

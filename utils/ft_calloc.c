@@ -4,7 +4,7 @@ void    *ft_calloc(size_t n)
 {
     char    *p;
 
-    p = malloc(n);
+    p = ft_malloc(n);
     n--;
     while(n)
     {

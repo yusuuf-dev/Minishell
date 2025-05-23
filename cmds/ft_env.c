@@ -1,5 +1,5 @@
 #include "../minishell.h"
-
+ // make the function print the var only if it has '=' on it;
 int	ft_env(char **argv, char **envp, char **envp_paths)
 {
 	size_t	i = 0;
@@ -16,7 +16,13 @@ int	ft_env(char **argv, char **envp, char **envp_paths)
 	{
 		while (envp[i])
 		{
-			printf("%s\n", envp[i]);
+			if (ft_strchr(envp[i], '='))
+			{
+				write(1, envp[i], ft_strlen(envp[i]));
+				write(1, "\n", 1);
+				//printf("%s\n", envp[i]); // this used to not print the output to the desired stdout, maybe because printf stores the strings in a buffer, and then
+				// prints them once so that the printf func won't have to make multiple system calls.
+			}
 			i++;
 		}
 		return (0);
@@ -24,7 +30,7 @@ int	ft_env(char **argv, char **envp, char **envp_paths)
 	if (!ft_strchr(argv[ar], '='))
 	{
 		ft_putstr("Invalid argument\n", 2);
-//		printf("Invalid argument\n");
+		//printf("Invalid argument\n");
 		return (-1);
 	}
 	// NOT GOOD !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -61,8 +67,8 @@ int	ft_env(char **argv, char **envp, char **envp_paths)
 		}
 		wait(&child_info);
 	}
-	free_all(new_envp);
-	free_all(new_arg);
+	// free_all(new_envp);
+	// free_all(new_arg);
 	if (WIFEXITED(child_info))
 		return (WEXITSTATUS(child_info));
 	return (0);

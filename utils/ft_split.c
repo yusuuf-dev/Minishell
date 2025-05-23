@@ -34,9 +34,7 @@ static char	*ft_substr(char *s, int st, int ed)
 	int	i;
 
 	i = 0;
-	str = malloc((ed - st + 1) * sizeof(char));
-	if (!str)
-		return (NULL);
+	str = ft_malloc((ed - st + 1) * sizeof(char));
 	while (st < ed)
 	{
 		str[i++] = s[st++];
@@ -45,21 +43,6 @@ static char	*ft_substr(char *s, int st, int ed)
 	return (str);
 }
 
-char	**free_all(char **str)
-{
-	int	i;
-
-	if (!str)
-		return (NULL);
-	i = 0;
-	while (str[i])
-	{
-		free(str[i]);
-		i++;
-	}
-	free(str);
-	return(NULL);
-}
 
 char	**ft_split(char *str, char c)
 {
@@ -70,7 +53,7 @@ char	**ft_split(char *str, char c)
 	int	wd;
 
 	wd = ft_count_wd(str,c);
-	ptr = malloc((wd + 1) * sizeof(char*));
+	ptr = ft_malloc((wd + 1) * sizeof(char*));
 	if(!ptr)
 		return(NULL);
 	i = 0;
@@ -83,8 +66,7 @@ char	**ft_split(char *str, char c)
 		while (str[i] != c && str[i])
 			i++;
 		ptr[j] = ft_substr(str,st,i);
-		if (!ptr[j++])
-			return(free_all(ptr));
+		j++;
 	}
 	ptr[j] = NULL;
 	return (ptr);

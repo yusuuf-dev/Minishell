@@ -63,7 +63,7 @@ int ft_pipes(char **piped_cmds, char **p, unsigned char *status, int *is_a_pipe)
         pos = (piped_cmds[i + 1] && piped_cmds[i + 2]) ? 1 : 2; // this indicates wether the cmds is the last in the list by setting pos to 2.
         i++;
     }
-    free_all(piped_cmds);
+    // free_all(piped_cmds);
     *p = NULL;
     *is_a_pipe = 0;
     //return (WEXITSTATUS(child_info)); // returns the exit code of the last child ??

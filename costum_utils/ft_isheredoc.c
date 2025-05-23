@@ -19,9 +19,7 @@ static char *c_strjoinf(char *s1, char c)
 	char	*ptr;
 
 	len = ft_strlen(s1);
-	ptr = malloc((len + 2) * sizeof(char));
-	if (!ptr)
-		return(NULL);
+	ptr = ft_malloc((len + 2) * sizeof(char));
 	i = 0;
 	while (i < len)
 	{
@@ -30,7 +28,6 @@ static char *c_strjoinf(char *s1, char c)
 	}
 	ptr[i++] = c;
 	ptr[i] = 0;
-	free(s1);
 	return (ptr);
 }
 
@@ -56,7 +53,6 @@ static char *c_expand(char *str, char **envp, unsigned char *status)
 			var = ft_getenv(key, envp, status);
 			if (var)
 				ptr = ft_strjoinf(ptr,var);
-			free(key);
 			i += len;
 		}
 		else
@@ -65,7 +61,6 @@ static char *c_expand(char *str, char **envp, unsigned char *status)
 			i++;
 		}
 	}
-	free(str);
 	return(ptr);
 }
 
@@ -82,8 +77,6 @@ int     ft_isheredoc(char *p, char **envp, unsigned char *status)
 	if (!(p[2]) && ( p[2] == '<' || p[2] == '>'))
 		{return(ft_putstr("minishell: syntax error near unexpected token `newline'\n", 2), -1);}
 		dl = heredoc_delimiter(p,&isquote);
-		if (!dl)
-			return(-1); // failed malloc protection
 		fd = open("/tmp/tmp.txt", O_RDWR | O_CREAT | O_TRUNC , 0777);
 		if (fd < 0)
 			return (perror(""), 0);
@@ -94,13 +87,11 @@ int     ft_isheredoc(char *p, char **envp, unsigned char *status)
 		//		break;
 			if (!tmp || ft_strcmp(tmp,dl))
 			{
-				free(tmp);
 				break;
 			}
 			if (!isquote && tmp[0])
 				tmp = c_expand(tmp, envp, status);
 			c_putstr_fd(fd,tmp);
-			free(tmp);
 		}
 		free(dl);
 		close(fd);

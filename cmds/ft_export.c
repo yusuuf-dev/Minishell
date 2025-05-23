@@ -151,7 +151,6 @@ static char	**ft_duplicate_add_s(char **dup, char *s)
 	while(p[i])
 		i++;
 	p[i] = ft_strdup(s);
-	free_all(dup);
 	return (p);
 }
 char	**ft_export(char **argv, char **envp, unsigned char *status)

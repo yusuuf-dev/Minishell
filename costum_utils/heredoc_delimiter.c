@@ -29,9 +29,7 @@ char    *heredoc_delimiter(char *s ,int *isquote)
         i++;
     }
 
-    delimiter = malloc((i - st + 1) * sizeof(char));
-    if (!delimiter)
-        return (NULL);
+    delimiter = ft_malloc((i - st + 1) * sizeof(char));
     while (st + j < i)
     {
         delimiter[j] = s[st + j];
@@ -50,7 +48,6 @@ char    *heredoc_delimiter(char *s ,int *isquote)
     delimiter = rm_quotes(delimiter);
     if (!delimiter)
         return (NULL);
-    free(tmp);    
     return(delimiter);
 }
    
