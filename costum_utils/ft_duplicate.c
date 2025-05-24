@@ -11,7 +11,7 @@ char	**ft_duplicate(char	**s, size_t add_size)
 		size++;
 	p = ft_calloc(sizeof(char *) * (size + 1 + add_size));
 	if (!p)
-		exit (-1);
+		return (NULL);
 	while (s[i])
 	{
 		p[i] = ft_strdup(s[i]);

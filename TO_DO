@@ -145,6 +145,7 @@ SIGNLAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAS
 PIPE, the exit status is wrong, 
 probably need to make the pipe forks 2 child and write and read from the pipe simultaneously, cuz if the program only write to the pipe and it reaches the max PIPE_CAPACITY
 it will hang, meaning It's waiting for the pipe to be read so the buffer will get freed ???.
+free the memory that's left in the child !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 bugged:  echo hola | cat | cat | cat | cat | cat | grep hola ???
 
 echo "something to do yeah" | grep test
@@ -188,6 +189,9 @@ pwd shenanigans, use a char *p to store the pwd, instead of calling getcwd each 
 try send SIGINT signal by Ctr + c, while running another program in minishell, such as (find, ping....)
 
 remember to use unlink in heredoc
+  to make the heredoc exit with Ctr^c
+  we need to fork and restart the signal handler to it's DFL
+  function: searchs for heredoc in entered cmd, fork, restore SIGINT to SIG_DFL, done ?
 
 If I run a minishell within minishell (calling minishell by another minishell) and used a command such as (ls,....) something that requires fork and execve,
 will the first minishell also get woken up (meaning exiting the wait status) cuz the ran command 'ls' will send a SIGCHILD to that second one.????
@@ -203,7 +207,7 @@ if (pfd[1] != STDOUT_FILENO) {
 
 WHY IS ERRNO 2 ????????????????????????????????????????????????????????????
   the access function checks, if a file exits in the loop of PATH to execute a cmd
-trying spam-send SIGQUIT to minishell and see what happens.
+try spam-send SIGQUIT to minishell and see what happens.
 
 
 

@@ -14,6 +14,31 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
+typedef struct s_lstm
+{
+    void            *p;
+    struct s_lstm   *next;
+} t_lstm;
+
+typedef struct s_data
+{
+    char    *p_rdl;
+    char    **rdl_args;
+    char    **envp;
+    char    **env_paths;
+    unsigned char     status;
+    int     exit;
+    int     is_a_pipe;
+    int fd0, fd1, fd2;
+    char    **segments;
+    struct sigaction C_slash;
+    struct sigaction C_c;
+    struct sigaction C_c_alt;
+//	struct sigaction old_C_c;
+
+}t_data;
+
+
 //extern volatile sig_atomic_t child_exists;
 int     costum_atoi(char *s, unsigned char *status, int fd);
 size_t	ft_strlen(char *s);
@@ -28,7 +53,8 @@ char    *ft_strldup(char *s, size_t     n);
 void    *ft_calloc(size_t n);
 
 //int     minishell(int ac, char **av);
-char	**parsing(char **p, char **envp, int *s_exit, unsigned char *status, int is_a_pipe);
+//char	**parsing(char **p, char **envp, int *s_exit, unsigned char *status, int is_a_pipe);
+char	**parsing(t_data *data);
 //char	*ft_remove_isspace(char *s);
 
 int     ft_echo(char **p);
@@ -60,7 +86,12 @@ int	    ft_isalnum(int c);
 int	    c_atoi(char *s, long *rslt);
 int	    parse_redirection(char **full_str, unsigned char *status, char **envp);
 int     costum_atoi(char *nptr, unsigned char *status, int fd);
-int     ft_pipes(char **piped_cmds, char **p, unsigned char *status, int *is_a_pipe);
-int	 ft_isspace_to_space(char **s);
+//int     ft_pipes(char **piped_cmds, char **p, unsigned char *status, int *is_a_pipe, t_data *data);
+int     ft_pipes(t_data *data);
+int	    ft_isspace_to_space(char **s);
+void    signal_handler(int signum);
+void    count_sigs(int signum);
+void    *ft_memset(void *ptr, int c, size_t n);
+void     ft_setup(t_data *data, char **envp);
 
 #endif

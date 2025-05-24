@@ -6,7 +6,8 @@ SRC = minishell.c parsing.c ./utils/ft_calloc.c ./costum_utils/ft_putstr.c ./cos
 ./utils/ft_strncmp.c ./utils/ft_strchr.c ./costum_utils/ft_strjoinf.c ./cmds/ft_echo.c ./cmds/ft_pwd.c ./cmds/ft_cd.c ./cmds/ft_export.c ./cmds/ft_unset.c \
 ./cmds/ft_env.c ./costum_utils/ft_isspace_to_space.c ./cmds/ft_exit.c ./costum_utils/c_split.c ./costum_utils/custom_atoi.c \
 ./costum_utils/heredoc_delimiter.c ./costum_utils/found_pipe.c ./costum_utils/ft_isheredoc.c ./costum_utils/rm_quotes_expand.c \
-./costum_utils/rm_quotes.c ./utils/ft_isalnum.c ./utils/ft_isalpha.c ./costum_utils/c_atoi.c ./costum_utils/ft_all_redirections.c ./costum_utils/ft_pipes.c
+./costum_utils/rm_quotes.c ./utils/ft_isalnum.c ./utils/ft_isalpha.c ./costum_utils/c_atoi.c ./costum_utils/ft_all_redirections.c ./costum_utils/ft_pipes.c \
+./costum_utils/signals_handler.c ./utils/ft_memset.c ./costum_utils/ft_setup.c
 
 OBJ = $(SRC:.c=.o)
 
