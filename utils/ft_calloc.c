@@ -14,3 +14,7 @@ void    *ft_calloc(size_t n)
     p[n] = 0;
     return (p);
 }
+// void *allocater(int type, int size, ...)
+// {
+
+// }

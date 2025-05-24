@@ -63,11 +63,11 @@ int	search_cdpath_var(char **argv, char ***envp, char **pwd_variable)
 			paths[i] = ft_strjoinf(paths[i], "/");
 		try_dir = ft_strjoin(paths[i], argv[1]);
 		if (!chdir(try_dir))
-			return (printf("%s\n", try_dir), free(try_dir), 1);
+			return (printf("%s\n", try_dir), free(try_dir), free_all(paths), 1);
 		free(try_dir);
 		i++;
 	}
-	// free_all(paths);
+	free_all(paths);
 	return (0);
 }
 

@@ -43,7 +43,8 @@ char    *rm_quotes_expand(char *str, char **envp, unsigned char *status)
 		{
 			var = ft_getenv("?",envp,status);
 			ptr = ft_strjoinf(ptr,var);
-			i += ft_strlen(var) + 1;
+			i += 2;
+			//i += ft_strlen(var) + 1;
 		}
 		else if (str[i] == '$' && q != '\'' && (ft_isalpha(str[i + 1]) || str[i + 1] == '_'))
 		{

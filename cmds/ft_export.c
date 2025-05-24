@@ -60,7 +60,10 @@ void	ft_putstr_quote(char *s)
 			write(1, &s[i], 1);
 		i++;
 	}
-	write(1, "\"\n", 2);
+	(found) ? write(1, "\"\n", 2) : write(1, "\n", 1);
+	/*if (found)
+		write(1, "\"", 1);*/
+	//write(1, quote, ft_strlen(quote));
 }
 
 static void print_the_envs(char **envp, int *sorted)
@@ -81,7 +84,7 @@ static void print_the_envs(char **envp, int *sorted)
 	}
 }
 
-/* this functions need to imitate the behaviour of export without any argument:
+/* this function needs to imitate the behaviour of export without any argument:
 	It addds 'X- Declare to ever env name
 	It sorts the variables in alphabetical order 
 	It prints them after applying the above steps*/
@@ -95,7 +98,7 @@ void	no_args(char **envp)
 		j++;
 	sorted = ft_calloc((j) * sizeof(int));
 	if (!sorted)
-		;// exit the program;
+		exit(-1);// exit the program;
 	while (envp[i])
 	{
 		j = smallest = 0;
@@ -113,6 +116,21 @@ void	no_args(char **envp)
 	print_the_envs(envp, sorted);
 	free(sorted);
 }
+static int	ftc_strncmp(const char *s1, const char *s2)
+{
+    size_t  i;
+
+    i = 0;
+    while(s1[i] && s1[i] != '=')
+    {
+        if (s1[i] - s2[i])
+            return (s1[i] - s2[i]);
+        i++;
+    }
+	if (!(s2[i]))
+		return (0);
+    return (s1[i] - s2[i]);
+}
 static int ft_var_exists(char *s, char **envp)
 {
 	size_t	i;
@@ -126,9 +144,12 @@ static int ft_var_exists(char *s, char **envp)
 	// if the exported variable exist in the environement file
 	while (envp[i])
 	{
-		if (!ft_strncmp(envp[i], s, size))
+		//if (!ft_strncmp(envp[i], s, size))
+		if (!ftc_strncmp(s, envp[i]))
 		{
 			s = ft_strchr(s, '=');
+			if (!s) // if the entered command doesn't include an '=' we shouldn't change the value that the var has;
+				return (0);
 			new = ft_strldup(envp[i], ft_strchr(envp[i], '=') - envp[i]);
 			new = ft_strjoinf(new, s);
 			free(envp[i]);
@@ -151,30 +172,30 @@ static char	**ft_duplicate_add_s(char **dup, char *s)
 	while(p[i])
 		i++;
 	p[i] = ft_strdup(s);
+	free_all(dup);
 	return (p);
 }
 char	**ft_export(char **argv, char **envp, unsigned char *status)
 {
 	size_t	ar = 1;
+	//int		valid = 0;
 
+	*status = 0;
 	if (!argv[ar])
-		return (no_args(envp), envp);
+		return (*status = 0, no_args(envp), envp);
 	while (argv[ar])
 	{ 
-		while (argv[ar] && (valid_var(argv[ar]) || !(ft_strchr(argv[ar], '='))))
+		while (argv[ar] && (valid_var(argv[ar])))
 		{
-			if (argv[ar] && valid_var(argv[ar])) // check for invalid variable name
-			{
-				print_error("minishell: export: `", argv[ar], "': not a valid identifier\n");
-				*status = 1;
-			}
+			print_error("minishell: export: `", argv[ar], "': not a valid identifier\n");
+			*status = 1;
 			ar++;
 		}
 		if (argv[ar] == NULL)
 			return (envp);		
-		if (ft_var_exists(argv[ar], envp))
+		if (ft_var_exists(argv[ar], envp)) // It has to have an equal '=' if we want to change the value of the given variable;
 		{
-			*status = 0;
+			//*status = 0;
 			envp = ft_duplicate_add_s(envp, argv[ar]); // copying the old variables and making space for the new one;
 			if (!envp) ///////////////// CHECK FOR OTHER MALLOCS !!!!!!!!!!!!!!!
 				return (*status = -1, NULL);

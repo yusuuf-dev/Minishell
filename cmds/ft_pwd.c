@@ -1,16 +1,5 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   ft_pwd.c                                           :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: asoufian <asoufian@student.1337.ma>        +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/10 15:00:27 by asoufian          #+#    #+#             */
-/*   Updated: 2025/04/21 10:06:59 by asoufian         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "../minishell.h"
+
 int     ft_pwd(char **argv, char **envp)
 {
     char    *p;
@@ -25,7 +14,9 @@ int     ft_pwd(char **argv, char **envp)
 		perror("pwd");
 		return (errno);
 	}
-    printf("%s\n", p);
+	ft_putstr(p, 1);
+	write(1, "\n", 1);
+    //printf("%s\n", p);
     free(p);
     return (0);
 }

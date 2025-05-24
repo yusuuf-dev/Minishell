@@ -7,7 +7,7 @@ int	c_atoi(char *s, long *rslt)
 
 	i = 0;
 	sign = 1;
-	while ((s[i] >= 9 && s[i] <= 13) || s[i] == 32) // I probably don't need this anymore since the split skips whitespaces
+	while ((s[i] > 8 && s[i] < 14) || s[i] == ' ') // I probably don't need this anymore since the split skips whitespaces
 		i++;
 	if (s[i] == '-')
 		sign = -1;
