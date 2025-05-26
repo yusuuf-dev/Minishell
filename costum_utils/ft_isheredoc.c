@@ -16,12 +16,12 @@ static char *c_strjoinf(char *s1, char c)
 {
 	size_t i;
 	size_t len;
-	char	*ptr;
+	char *ptr;
 
 	len = ft_strlen(s1);
 	ptr = malloc((len + 2) * sizeof(char));
 	if (!ptr)
-		return(NULL);
+		return (NULL);
 	i = 0;
 	while (i < len)
 	{
@@ -36,11 +36,11 @@ static char *c_strjoinf(char *s1, char c)
 
 static char *c_expand(char *str, char **envp, unsigned char *status)
 {
-	size_t	i = 0;
-	size_t	len = 0;
-	char	*ptr = NULL;
-	char	*key = NULL;
-	char	*var = NULL;
+	size_t i = 0;
+	size_t len = 0;
+	char *ptr = NULL;
+	char *key = NULL;
+	char *var = NULL;
 
 	if (!str)
 		return (NULL);
@@ -55,47 +55,45 @@ static char *c_expand(char *str, char **envp, unsigned char *status)
 			key = ft_strldup(&str[i], len);
 			var = ft_getenv(key, envp, status);
 			if (var)
-				ptr = ft_strjoinf(ptr,var);
+				ptr = ft_strjoinf(ptr, var);
 			free(key);
 			i += len;
 		}
 		else
 		{
-			ptr = c_strjoinf(ptr,str[i]);
+			ptr = c_strjoinf(ptr, str[i]);
 			i++;
 		}
 	}
 	free(str);
-	return(ptr);
+	return (ptr);
 }
 
-int     ft_isheredoc(char *ptr, char **envp, unsigned char *status) 
+
+
+int     ft_isheredoc(char *p, char **envp, unsigned char *status)
 {
     char    *tmp;
-    char    *dl; 
+    char    *dl;
 	int		fd;
 	int		isquote = 0;
-	char	*p;
+	int		i = 2;
 
-	p = ptr;
-	p = p+2;
-	while (*p == ' ')
-		p++;
-	if (!*p || *p == '<' || *p == '>')
-	{
-
-		return(ft_putstr("minishell: syntax error near unexpected token\n", 2), -1);
-
-	}
+	while (p[i] == ' ')
+		i++;
+	if (!p[i] || p[i] == ' ' || p[i] == '<' || p[i] == '>')
+		{return(ft_putstr("minishell: syntax error near unexpected token `newline'\n", 2), -1);}
 		dl = heredoc_delimiter(p,&isquote);
 		if (!dl)
-			return(-1);
+			return(-1); // failed malloc protection
 		fd = open("/tmp/tmp.txt", O_RDWR | O_CREAT | O_TRUNC , 0777);
 		if (fd < 0)
 			return (perror(""), 0);
 		while (1)
 		{
 			tmp = readline("> ");
+			//if (!tmp)
+			//	break;
 			if (!tmp || ft_strcmp(tmp,dl))
 			{
 				free(tmp);

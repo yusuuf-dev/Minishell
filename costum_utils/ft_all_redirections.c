@@ -316,7 +316,6 @@ int	parse_redirection(char **full_str, unsigned char *status, char **envp)
 		{
 			if ((ft_isheredoc((*full_str) + i, envp, status)))
                 return (1);
-			i += 2;
 		}
 		else if (!f_d && !f_s && (*full_str)[i] == '<')
 		{
