@@ -64,7 +64,7 @@ int main(int ac, char **av, char **envp)
     int is_a_pipe = 0;
     int fd0, fd1, fd2;
     int i;
-    t_data *data;
+//    t_data *data;
 
 	(void)av; // maybe we can remove these two from the argument since we don't use them, the problem is wether the envp will work or not;
 	(void)ac; //
@@ -78,7 +78,7 @@ int main(int ac, char **av, char **envp)
 	envp = ft_duplicate(envp, 0);
     if (assign_std_in_out_err(&fd0, &fd1, &fd2))
         {return (free_all(envp), 1);}
-    data = ft_setup(envp);
+    // data = ft_setup(envp);
 	while (1 && !s_exit && !is_a_pipe)
     {
 		sigaction(SIGQUIT, &C_slash, NULL);
@@ -97,14 +97,14 @@ int main(int ac, char **av, char **envp)
             rl_clear_history();
 			return (status);
 		}
-        config_rdline(&p,data);
+        // config_rdline(&p,data);
         if (!ft_isspace_to_space(&p) && p[0])
         {
             add_history(p);
             i = found_pipe(p);
             if (i == 1)
             {
-                segments = c_split(p, '|');
+                segments = c_split(p, '|',envp,&status);
                 if (!segments)
                     return(exit_minishell(envp, p, 1, "failed malloc\n"));//protect malloc
                 free(p);

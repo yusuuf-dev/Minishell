@@ -243,7 +243,7 @@ static int	open_file_redi(char *s, int *fd, int mode, int *end, char **envp, cha
 		append = 1;
 		begin += 1;
 	}
-	while (s[begin] == ' ' || s[begin] == '\t' || s[begin] == '\v' || s[begin] == '\f' || s[begin] == '\r')
+	while (s[begin] == ' ')
 		begin += 1;
 	// need to check if the file name is valid or not, also quotation make a difference !!
 	if (!(s[begin]) || s[begin] == '\n' || (s[begin] == '>' && !append) || (s[begin] == '>' && s[begin] == '>' && append) || s[begin] == '<') // need to check for whitespaces too maybe ?
@@ -258,7 +258,7 @@ static int	open_file_redi(char *s, int *fd, int mode, int *end, char **envp, cha
 		s = ft_strdup(&s[begin]);
 	*end += begin;
 	begin = 0;
-	while (s[begin] && (s[begin] == ' ' || s[begin] == '\t' || s[begin] == '\v' || s[begin] == '\f' || s[begin] == '\r'))
+	while (s[begin] && s[begin] == ' ')
 		begin += 1;
 	if (!(s[begin]) || s[begin] == '\n' || s[begin] == ' ') // whitespaces instead of space ?
 		return(ft_putstr("minishell: syntax error near unexpected token `newline'\n", 2), 1);
@@ -316,6 +316,7 @@ int	parse_redirection(char **full_str, unsigned char *status, char **envp)
 		{
 			if ((ft_isheredoc((*full_str) + i, envp, status)))
                 return (1);
+			i += 2;
 		}
 		else if (!f_d && !f_s && (*full_str)[i] == '<')
 		{

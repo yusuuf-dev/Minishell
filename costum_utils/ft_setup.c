@@ -37,7 +37,7 @@ void    config_rdline(char **p ,t_data *data)
     *p = NULL;
     data->p_rdl = new_p;
     ft_space(data->p_rdl); 
-    data->rdl_args = c_split(new_p,' ');
+    data->rdl_args = c_split(new_p,' ',data->envp,data->status);
     i = 0;
     while (data->rdl_args[i])
     {

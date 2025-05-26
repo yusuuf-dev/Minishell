@@ -69,27 +69,33 @@ static char *c_expand(char *str, char **envp, unsigned char *status)
 	return(ptr);
 }
 
-int     ft_isheredoc(char *p, char **envp, unsigned char *status)
+int     ft_isheredoc(char *ptr, char **envp, unsigned char *status) 
 {
     char    *tmp;
-    char    *dl;
+    char    *dl; 
 	int		fd;
 	int		isquote = 0;
+	char	*p;
 
+	p = ptr;
+	p = p+2;
+	while (*p == ' ')
+		p++;
+	if (!*p || *p == '<' || *p == '>')
+	{
 
-	if (!(p[2]) && ( p[2] == '<' || p[2] == '>'))
-		{return(ft_putstr("minishell: syntax error near unexpected token `newline'\n", 2), -1);}
+		return(ft_putstr("minishell: syntax error near unexpected token\n", 2), -1);
+
+	}
 		dl = heredoc_delimiter(p,&isquote);
 		if (!dl)
-			return(-1); // failed malloc protection
+			return(-1);
 		fd = open("/tmp/tmp.txt", O_RDWR | O_CREAT | O_TRUNC , 0777);
 		if (fd < 0)
 			return (perror(""), 0);
 		while (1)
 		{
 			tmp = readline("> ");
-			//if (!tmp)
-			//	break;
 			if (!tmp || ft_strcmp(tmp,dl))
 			{
 				free(tmp);

@@ -7,7 +7,7 @@ SRC = minishell.c parsing.c ./utils/ft_calloc.c ./costum_utils/ft_putstr.c ./cos
 ./cmds/ft_env.c ./costum_utils/ft_isspace_to_space.c ./cmds/ft_exit.c ./costum_utils/c_split.c ./costum_utils/custom_atoi.c \
 ./costum_utils/heredoc_delimiter.c ./costum_utils/found_pipe.c ./costum_utils/ft_isheredoc.c ./costum_utils/rm_quotes_expand.c \
 ./costum_utils/rm_quotes.c ./utils/ft_isalnum.c ./utils/ft_isalpha.c ./costum_utils/c_atoi.c ./costum_utils/ft_all_redirections.c ./costum_utils/ft_pipes.c \
-./costum_utils/ft_setup.c ./costum_utils/ft_malloc.c ./costum_utils/ft_redirection_output.c
+./costum_utils/ft_setup.c ./costum_utils/ft_malloc.c 
 
 OBJ = $(SRC:.c=.o)
 

@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   ft_split.c                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: asoufian <asoufian@student.1337.ma>        +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/14 09:18:43 by asoufian          #+#    #+#             */
-/*   Updated: 2025/04/14 09:18:43 by asoufian         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "../minishell.h"
 
 static int	ft_count_wd(char *s, char c)
@@ -34,7 +22,9 @@ static char	*ft_substr(char *s, int st, int ed)
 	int	i;
 
 	i = 0;
-	str = ft_malloc((ed - st + 1) * sizeof(char));
+	str = malloc((ed - st + 1) * sizeof(char));
+	if (!str)
+		return (NULL);
 	while (st < ed)
 	{
 		str[i++] = s[st++];
@@ -43,6 +33,21 @@ static char	*ft_substr(char *s, int st, int ed)
 	return (str);
 }
 
+char	**free_all(char **str)
+{
+	int	i;
+
+	if (!str)
+		return (NULL);
+	i = 0;
+	while (str[i])
+	{
+		free(str[i]);
+		i++;
+	}
+	free(str);
+	return(NULL);
+}
 
 char	**ft_split(char *str, char c)
 {
@@ -53,7 +58,7 @@ char	**ft_split(char *str, char c)
 	int	wd;
 
 	wd = ft_count_wd(str,c);
-	ptr = ft_malloc((wd + 1) * sizeof(char*));
+	ptr = malloc((wd + 1) * sizeof(char*));
 	if(!ptr)
 		return(NULL);
 	i = 0;
@@ -66,7 +71,8 @@ char	**ft_split(char *str, char c)
 		while (str[i] != c && str[i])
 			i++;
 		ptr[j] = ft_substr(str,st,i);
-		j++;
+		if (!ptr[j++])
+			return(free_all(ptr));
 	}
 	ptr[j] = NULL;
 	return (ptr);

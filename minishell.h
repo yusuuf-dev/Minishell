@@ -64,12 +64,13 @@ char	*ft_getenv(char *s, char **envp, unsigned char *status);
 int		ft_check_spaces(char *s); // this function returns 1 if the argument contains only (isspace) chars.
 void    ft_putstr(char *s, int fd);
 char    *convert_env_var(char *s,char **envp);
-char	**c_split(char *str, char c);
+char	**c_split(char *str, char c, char **envp, unsigned char *status);
+// char	**c_split(char *str, char c);
 //int     found_heredoc(char *s);
 char    *rm_quotes(char *str);
 int     found_q(char *s);
 int     found_pipe(char *line);
-int     ft_isheredoc(char *p, char **envp, unsigned char *status);
+int     ft_isheredoc(char *ptr, char **envp, unsigned char *status);
 char    *rm_quotes_expand(char *str, char **envp, unsigned char *status);
 char    *heredoc_delimiter(char *s ,int *isquote);
 int	    ft_isalpha(int c);

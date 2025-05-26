@@ -194,7 +194,7 @@ char	**parsing(char **p, char **envp, int *s_exit, unsigned char *status, int is
 	env = ft_getenv("PATH", envp, status);
 	if (env)
 		env_paths = ft_split(env,':');
-    rdl_args = c_split(*p,' ');
+    rdl_args = c_split(*p,' ',envp,status);
 	
 	if (is_execute_file(rdl_args, envp, status, is_a_pipe))
 		return (free_all(rdl_args), free_all(env_paths), envp);
