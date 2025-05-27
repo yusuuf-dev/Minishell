@@ -115,9 +115,16 @@ int main(int ac, char **av, char **envp)
                     return (errno);
             }
             else if (i == -1)
-                return (exit_minishell(envp, p, 1, "failed malloc\n")); // protect malloc
-            if (p)                                                      // not great, this is done for when the piping is done so that the program wouldn't check for cmds;
+            {
+                ft_putstr("minishell: syntax error near unexpected token `|'\n",2);
+                free(p);
+                continue;
+            }
+            else                           
+            {
+                printf("i am here \n");
                 envp = parsing(&p, envp, &s_exit, &status, is_a_pipe);
+            }
             if (reset_std_in_out_err(fd0, fd1, fd2))
                 return (free_all(envp), 1);
         }
