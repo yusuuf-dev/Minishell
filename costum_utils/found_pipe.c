@@ -58,7 +58,7 @@ int     check_valid_char(char *p)
     size_t  i = 0;
     char    q = 0;
     int     f = 0;
-    int     count = 0;
+
 
     while (p[i])
     {

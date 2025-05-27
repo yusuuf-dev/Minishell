@@ -82,7 +82,7 @@ int     ft_isheredoc(char *p, char **envp, unsigned char *status)
 	while (p[i] == ' ')
 		i++;
 	if (!p[i] || p[i] == ' ' || p[i] == '<' || p[i] == '>')
-		{return(ft_putstr("minishell: syntax error near unexpected token `newline'\n", 2), -1);}
+		{return(ft_putstr("minishell: syntax error\n", 2), -1);}
 		dl = heredoc_delimiter(p,&isquote);
 		if (!dl)
 			return(-1); // failed malloc protection

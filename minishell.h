@@ -83,4 +83,5 @@ t_data  *ft_setup(char **envp);
 void    *ft_malloc(size_t size);
 void    config_malloc(void *ptr, int isfailed); // use it only when end program pass NULL to free all thing and exit;
 void    config_rdline(char **p ,t_data *data);
+
 #endif

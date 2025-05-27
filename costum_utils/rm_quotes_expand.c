@@ -39,6 +39,13 @@ char    *rm_quotes_expand(char *str, char **envp, unsigned char *status)
 			q = 0;
 			i++;
 		}
+		else if (str[i] == '~' && q != '\'')
+		{
+			var = ft_getenv("HOME",envp,status);
+			if (var)
+				ptr = ft_strjoinf(ptr,var);
+			i += ft_strlen(var);
+		}
 		else if (str[i] == '$' && q != '\'' && str[i + 1] == '?')
 		{
 			var = ft_getenv("?",envp,status);

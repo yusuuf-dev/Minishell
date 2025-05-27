@@ -247,7 +247,7 @@ static int	open_file_redi(char *s, int *fd, int mode, int *end, char **envp, cha
 		begin += 1;
 	// need to check if the file name is valid or not, also quotation make a difference !!
 	if (!(s[begin]) || s[begin] == '\n' || (s[begin] == '>' && !append) || (s[begin] == '>' && s[begin] == '>' && append) || s[begin] == '<') // need to check for whitespaces too maybe ?
-		return(ft_putstr("minishell: syntax error near unexpected token `newline'\n", 2), 1);
+		return(ft_putstr("minishell: syntax error\n", 2), 1);
 	*end = expand_rm_quotes(&s[begin], envp, full_str, status);
 	if (*end == -1)
 		return (1);
@@ -261,7 +261,7 @@ static int	open_file_redi(char *s, int *fd, int mode, int *end, char **envp, cha
 	while (s[begin] && s[begin] == ' ')
 		begin += 1;
 	if (!(s[begin]) || s[begin] == '\n' || s[begin] == ' ') // whitespaces instead of space ?
-		return(ft_putstr("minishell: syntax error near unexpected token `newline'\n", 2), 1);
+		return(ft_putstr("minishell: syntax error\n", 2), 1);
 	if (open_assign_fd(s, fd, mode, append, &ret))
 		return (free(s), ret);
 	free(s);

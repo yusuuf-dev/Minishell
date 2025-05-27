@@ -67,7 +67,7 @@ int main(int ac, char **av, char **envp)
     //    t_data *data;
 
     if (ac != 1 || av[1])
-        return(ft_putstr("minishell doesn't require argements\n",2),1);
+        return (ft_putstr("minishell doesn't require argements\n", 2), 1);
 
     sigemptyset(&(C_slash.sa_mask));
     sigemptyset(&(C_c.sa_mask));
@@ -100,8 +100,7 @@ int main(int ac, char **av, char **envp)
             rl_clear_history();
             return (status);
         }
-        // config_rdline(&p,data);
-        if (!ft_isspace_to_space(&p) && p[0])
+        if (!ft_isspace_to_space(&p))
         {
             add_history(p);
             i = found_pipe(p);
@@ -116,15 +115,12 @@ int main(int ac, char **av, char **envp)
             }
             else if (i == -1)
             {
-                ft_putstr("minishell: syntax error near unexpected token `|'\n",2);
+                ft_putstr("minishell: syntax error\n", 2);
                 free(p);
                 continue;
             }
-            else                           
-            {
-                printf("i am here \n");
+            else
                 envp = parsing(&p, envp, &s_exit, &status, is_a_pipe);
-            }
             if (reset_std_in_out_err(fd0, fd1, fd2))
                 return (free_all(envp), 1);
         }
@@ -132,7 +128,6 @@ int main(int ac, char **av, char **envp)
     }
     rl_clear_history();
     free_all(envp);
-    // return (0);
     return (status);
 }
 
