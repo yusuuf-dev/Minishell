@@ -30,30 +30,31 @@ static int  fork_and_create_pipe(pipes_t *pipe_data);
 
 int ft_pipes(t_data *data)
 {
-    pipes_t *pipe_data = ft_calloc(sizeof(pipes_t));
+    pipes_t pipe_data; // = ft_calloc(sizeof(pipes_t));
 
-    free(data->p_rdl);
-    pipe_data->is_a_pipe = &(data->is_a_pipe);
-    pipe_data->piped_cmds = data->segments;
-    while (pipe_data->piped_cmds[pipe_data->i])
+    ft_memset(&pipe_data, 0, sizeof(pipes_t));
+    pipe_data.is_a_pipe = &(data->is_a_pipe);
+    pipe_data.piped_cmds = data->segments;
+    while (pipe_data.piped_cmds[pipe_data.i])
     {
-        if (fork_and_create_pipe(pipe_data))
+        if (fork_and_create_pipe(&pipe_data))
             return (perror(""), errno);
-        if (pipe_data->cpid == 0)
+        if (pipe_data.cpid == 0)
         {
-            if (redirecting_child_std(pipe_data, &(data->p_rdl)))
+            data->is_a_pipe = 1;
+            if (redirecting_child_std(&pipe_data, &(data->p_rdl)))
                 return (errno);
-            return (0);
+            return (free_all(data->segments), 0);
         }
         else
         {
-            if (redirecting_pipes(pipe_data))
+            if (redirecting_pipes(&pipe_data))
                 return (errno);
         }
     }
-    if (wait_children(pipe_data, &(data->status), data))
+    if (wait_children(&pipe_data, &(data->status), data))
         return (errno);
-    return (free_all(data->segments), *&(data->p_rdl) = NULL, data->is_a_pipe = 0, free(pipe_data), 0);
+    return (free_all(data->segments), free(data->p_rdl), *&(data->p_rdl) = NULL, 0);
 }
 
 /*check for errno in case the wait did fail for another reason other than that the process doesn't have anymore children to wait for*/
@@ -109,7 +110,8 @@ static int  redirecting_pipes(pipes_t *pipe_data)
 static int  redirecting_child_std(pipes_t *pipe_data, char **p)
 {
     signal(SIGQUIT, SIG_DFL);
-    *p = pipe_data->piped_cmds[pipe_data->i];
+    free(*p);
+    *p = ft_strdup(pipe_data->piped_cmds[pipe_data->i]);
     *(pipe_data->is_a_pipe) = 1;
     if (pipe_data->i == 0)
     {

@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-// char	*ft_getenv(char *s, char **envp)
+/*// char	*ft_getenv(char *s, char **envp)
 // {
 // 	size_t	i = 0;
 // 	size_t	len = 0;
@@ -15,15 +15,14 @@
 // 		i++;
 // 	}
 // 	return (NULL);
-// }
+// }*/
 
-//int	execute_command(char *path, char **rdl_args, char **envp, int is_a_pipe);
 int			execute_command(char *path, t_data *data);
 static int	ft_built_in_cmd(t_data *data);
 
 extern volatile sig_atomic_t f_sig;
 
-static void			ft_space(char *s)
+static void		ft_space(char *s)
 {
 	size_t	i = 0;
 	int		f_s = 0;
@@ -104,7 +103,6 @@ char	*ft_getenv(char *s, char **envp, unsigned char *status)
 	return (NULL);
 }
 
-//static char     **ft_execute_cmd(char *path, char **av, char **envp, unsigned char *status, int is_a_pipe
 static int	ft_execute_cmd(t_data *data)
 { // I need to add the status here too, so I can get the status of I run a local program (not in the PATH)
     int     pid = 0;
@@ -148,7 +146,7 @@ static  int executable(t_data *data)
 
 	if (!data->rdl_args[0])
 		return (1);
-    if (!(data->rdl_args[0][0] == '.' || (ft_strchr(data->rdl_args[0], '/'))))// && rdl_args[0][ft_strlen(rdl_args[0] - 1)] != '/')))
+    if (!(data->rdl_args[0][0] == '.' || (ft_strchr(data->rdl_args[0], '/'))))
     {    return (0);}
 	is_a_file = open(data->rdl_args[0], O_DIRECTORY); // check for errno in case open fails for some reason, and return error ?
 	if (is_a_file != -1)
@@ -164,8 +162,6 @@ static  int executable(t_data *data)
         perror("minishell");
     return(1);
 }
-
-
 char	**parsing(t_data *data)
 {
     char	*env;
@@ -175,11 +171,11 @@ char	**parsing(t_data *data)
     if (found_q(data->p_rdl) == -1) // check if the quotes are closed;
         {return (ft_putstr("Error unclosed quotes\n", 2), data->envp);}
 	ft_space(data->p_rdl); 
-	if(parse_redirection(&(data->p_rdl), &(data->status), data->envp)) // this also removes spaces;
+	if(parse_redirection(&(data->p_rdl), &(data->status), data->envp, data)) // this also removes spaces;
 	 	return (data->envp);
 	env = ft_getenv("PATH", data->envp, &(data->status));
 	if (env)
-		data->env_paths = ft_split(env,':');
+		data->env_paths = ft_split(env, ':');
     data->rdl_args = c_split(data->p_rdl,' ', data->envp, &(data->status));
 	
 	if (executable(data)) // next 
@@ -257,9 +253,11 @@ int	execute_command(char *path, t_data *data)
 	if (!child_pid || data->is_a_pipe)
 	{
 		signal(SIGQUIT, SIG_DFL);
-		execve(path, data->rdl_args, data->envp);
-		perror("execve");
-		exit(errno);
+		if (execve(path, data->rdl_args, data->envp))
+		{
+			perror("execve");
+			exit(errno);
+		}
 	}
 	else
 	{

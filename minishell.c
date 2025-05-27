@@ -18,6 +18,7 @@ static int assign_std_in_out_err(t_data *data)
         return (perror(""), 1);
     return (0);
 }
+
 static int reset_std_in_out_err(t_data *data)
 {
     if (dup2(data->fd0, 0) == -1)
@@ -26,63 +27,6 @@ static int reset_std_in_out_err(t_data *data)
         return (perror(""), 1);
     if (dup2(data->fd2, 2) == -1)
         return (perror(""), 1);       
-    return (0);
-}
-static int found_here_doc(char *s)
-{
-    size_t	i = 0;
-	int     f_d = 0;
-    int     f_s = 0;
-
-	while ((s)[i])
-	{
-		if ((s)[i] == '\'' && !f_d)
-			f_s = !f_s;
-        if ((s)[i] == '\"' && !f_s)
-            f_d = !f_d;
-		if (!f_d && !f_s && (s)[i] == '<' && (s)[i + 1] == '<')
-		{
-            return (1);
-		}
-		else
-			i++;
-	}
-	return (0);
-}
-
-static int here_doc_fork(char **p, unsigned char *status, t_data *data) // add is_pipe = 1; cuz it doesn't finish/
-{
-    pid_t   cpid;
-    int     child_status;
-
-    if (found_here_doc(*p))
-    {
-        if (sigaction(SIGINT, &(data->C_c_alt), NULL) == -1)
-            return (perror(""), errno);
-        cpid = fork();
-        if (cpid < 0)
-            return (perror(""), errno);
-        if (cpid == 0)
-        {
-            data->is_a_pipe = 1;
-            signal(SIGINT, SIG_DFL);
-            return (0);
-        }
-        else
-        {
-            waitpid(cpid, &child_status, 0);
-            if (WIFEXITED(child_status))
-                *status = (WEXITSTATUS(child_status));
-            else if (WIFSIGNALED(child_status))
-                *status = ((child_status & 127) + 128);
-            if (sigaction(SIGINT, &(data->C_c), NULL) == -1)
-				return (perror(""), errno);
-			if (f_sig == 2 && kill(0, SIGINT))
-				return (perror(""), errno);
-            free(*p);
-            *p = NULL;
-        }
-    }
     return (0);
 }
 
@@ -103,16 +47,17 @@ int main(int ac, char **av, char **envp)
 		data.p_rdl = readline("minishell : ");
         if (f_sig)
         {
-            data.status = 130;   
+            data.status = 130;
             f_sig = 0;
         }
 		if (!data.p_rdl) // C^d
-			return (ft_putstr("exit\n", 1), free_all(data.envp), free(data.p_rdl), rl_clear_history(), data.status);
+			return (ft_putstr("exit\n", 1), free_all(data.envp), free(data.p_rdl), rl_clear_history(), free_heredoc(&data, 1), data.status);
+        add_history(data.p_rdl);
         if (here_doc_fork(&(data.p_rdl), &(data.status), &data))
             return (errno);
         if (data.p_rdl && !ft_isspace_to_space(&(data.p_rdl)) && data.p_rdl[0])
         {
-            add_history(data.p_rdl);
+       //     add_history(data.p_rdl);
             i = found_pipe(data.p_rdl);
             if (i == 1)
             {
@@ -125,15 +70,13 @@ int main(int ac, char **av, char **envp)
             else if (i == -1)
                 return(exit_minishell(data.envp, data.p_rdl, 1, "failed malloc\n"));//protect malloc
             if (data.p_rdl)  // not great, this is done for when the piping is done so that the program wouldn't check for cmds;
-            data.envp = parsing(&data);
+                data.envp = parsing(&data);
             if (reset_std_in_out_err(&data))
                 return (free_all(data.envp), 1);
         }
         free(data.p_rdl);
     }
-    rl_clear_history();
-    free_all(data.envp);
-    return(data.status);
+    return(rl_clear_history(), free_all(data.envp), free_heredoc(&data, 0), data.status);
 }
 
 static int     exit_minishell(char **envp, char *p, int status, char *msg)

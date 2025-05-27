@@ -130,13 +130,13 @@ char	**c_split(char *str, char c, char **envp, unsigned char *func_status)
 	if (status == -1)
 		return (NULL);
 	else if (status == 1)
-		ptr = split_q(str,c,envp, func_status);
+		ptr = split_q(str, c, envp, func_status);
     else
 	{
-        ptr = ft_split(str,c);
+        ptr = ft_split(str, c);
 		while (ptr[i])
 		{
-			ptr[i] = rm_quotes_expand(ptr[i],envp, func_status);
+			ptr[i] = rm_quotes_expand(ptr[i], envp, func_status);
 			i++;
 		}
 	}

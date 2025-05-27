@@ -192,11 +192,14 @@ remember to use unlink in heredoc
   to make the heredoc exit with Ctr^c
   we need to fork and restart the signal handler to it's DFL
   function: searchs for heredoc in entered cmd, fork, restore SIGINT to SIG_DFL, done ?
-
+  echo aye | echo omsething | sort << EOF | echo nay ???????????????
+static function that frees the struct ?? / freeing(void *p); if (p) ; static void *ptr = p
 If I run a minishell within minishell (calling minishell by another minishell) and used a command such as (ls,....) something that requires fork and execve,
 will the first minishell also get woken up (meaning exiting the wait status) cuz the ran command 'ls' will send a SIGCHILD to that second one.????
 
-
+753_ cat << : should give an error
+757_ << $"hola"$"b" the heredoc should exit with holab
+758_ << $"$hola"$$"b" the heredoc should exit with $hola$$b
 
 
 if (pfd[1] != STDOUT_FILENO) {
