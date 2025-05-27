@@ -116,8 +116,7 @@ int main(int ac, char **av, char **envp)
             else if (i == -1)
             {
                 ft_putstr("minishell: syntax error\n", 2);
-                free(p);
-                continue;
+                status = 2;
             }
             else
                 envp = parsing(&p, envp, &s_exit, &status, is_a_pipe);
