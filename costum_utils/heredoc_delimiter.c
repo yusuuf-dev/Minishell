@@ -31,7 +31,12 @@ char *heredoc_delimiter(char *s, int *isquote)
         return (NULL);
     while (s[st] && st < i)
     {
-        if (!q && s[st] == '$' && s[st + 1] != '\"' && s[st + 1] != '\'')
+        if (!q && s[st] == '$' && s[st + 1] == '$')
+        {
+            delimiter[j++] = s[st++];
+            delimiter[j++] = s[st];
+        } 
+        else if (!q && s[st] == '$' && s[st + 1] != '\"' && s[st + 1] != '\'')
             delimiter[j++] = s[st];
         else if (!q && (s[st] == '\'' || s[st] == '\"'))
             q = s[st];
