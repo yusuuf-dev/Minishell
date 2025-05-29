@@ -1,6 +1,60 @@
 #include "../minishell.h"
 
+#include "../minishell.h"
+
 char    *heredoc_old_delimiter(char *s ,int *isquote, int *index_ret)
+{
+    size_t i = 0;
+    size_t st = 0;
+    size_t f = 0;
+    size_t j = 0;
+    char q = 0;
+    char *delimiter;
+
+    i = 2;
+    f = 0;
+    while (s[i] == ' ')
+        i++;
+    st = i;
+    while (s[i] && s[i] != ' ' && s[i] != '<' && s[i] != '>')
+    {
+        if (!q && (s[i] == '\'' || s[i] == '\"'))
+        {
+            q = s[i++];
+            *isquote = 1;
+        }
+        while (q && s[i] != q)
+            i++;
+        q = 0;
+        i++;
+    }
+    *index_ret = i;
+    delimiter = malloc((i - st + 1) * sizeof(char));
+    if (!delimiter)
+        return (NULL);
+    while (s[st] && st < i)
+    {
+        if (!q && s[st] == '$' && s[st + 1] == '$')
+        {
+            delimiter[j++] = s[st++];
+            delimiter[j++] = s[st];
+        } 
+        else if (!q && s[st] == '$' && s[st + 1] != '\"' && s[st + 1] != '\'')
+            delimiter[j++] = s[st];
+        else if (!q && (s[st] == '\'' || s[st] == '\"'))
+            q = s[st];
+        else if (q && s[st] == q)
+            q = 0;
+        else if (q)
+            delimiter[j++] = s[st];
+        else if (!q && s[st] != '$')
+            delimiter[j++] = s[st];
+        st++;
+    }
+    delimiter[j] = 0;
+    return (delimiter);
+}
+/*char    *heredoc_old_delimiter(char *s ,int *isquote, int *index_ret)
 {
     size_t i = 0;
     size_t st = 0;
@@ -45,7 +99,7 @@ char    *heredoc_old_delimiter(char *s ,int *isquote, int *index_ret)
         return (NULL);
     free(tmp);    
     return(delimiter);
-}
+}*/
 /*char    *heredoc_delimiter(char *s ,int *isquote)
 {
     size_t i = 0;

@@ -105,7 +105,7 @@ static char *create_file_name(void)
     char    *name = NULL;
     int     count = 0; // change this to long
     name = ft_strdup(og_name);
-    while (access(name, F_OK) == 0) // change this to long
+    while (access(name, F_OK) == 0 && count < 2147483647) // change this to long
     {
         free(name);
         counter = ft_itoa(count);

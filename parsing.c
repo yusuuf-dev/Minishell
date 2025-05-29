@@ -274,6 +274,7 @@ int	execute_command(char *path, t_data *data)
 		return (WEXITSTATUS(child_info));
 	else if (WIFSIGNALED(child_info))
 		return ((child_info & 127) + 128);
+		// return (WTERMSIG(status) + 128);
 	//if (!is_a_pipe && WIFEXITED(child_info))
 	//	return (WEXITSTATUS(child_info));
 	return (200);

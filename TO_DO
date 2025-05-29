@@ -202,6 +202,9 @@ will the first minishell also get woken up (meaning exiting the wait status) cuz
 758_ << $"$hola"$$"b" the heredoc should exit with $hola$$b
 
 
+note that we can use the global variable __environ instead of specifying the envp in each function;
+look into interactive mode in bash
+
 if (pfd[1] != STDOUT_FILENO) {
  dup2(pfd[1], STDOUT_FILENO);
  close(pfd[1]);

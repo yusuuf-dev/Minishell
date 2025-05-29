@@ -51,8 +51,9 @@ void    ft_setup(t_data *data, char **envp)
 {
   //  char    *env;
 
+    (void)envp;
     ft_memset(data, 0, sizeof(t_data));
-    data->envp = ft_duplicate(envp, 0);
+    data->envp = ft_duplicate(__environ, 0);
     if (!data->envp)
     {
         perror("");
