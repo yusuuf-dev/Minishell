@@ -20,16 +20,29 @@ typedef struct s_lstm
     struct s_lstm   *next;
 } t_lstm;
 
+typedef struct heredooc
+{
+    int         arg_num;
+    int         taken;
+    char        *file_name;
+    struct heredooc   *next;
+}t_heredoc;
+
 typedef struct s_data
 {
-    char    *p_rdl;
-    char    **rdl_args;
-    char    **envp;
-    char    **env_paths;
-    unsigned char     *status;
-    int     exit;
-    int     is_a_pipe;
-    
+    char              *p_rdl;
+    char              **rdl_args;
+    char              **envp;
+    char              **env_paths;
+    unsigned char     status;
+    int               exit;
+    int               is_a_pipe;
+    int               fd0, fd1, fd2;
+    char              **segments;
+    struct sigaction  C_slash;
+    struct sigaction  C_c;
+    struct sigaction  C_c_alt;
+    t_heredoc         *heredooc;
 }t_data;
 
 int     costum_atoi(char *s, unsigned char *status, int fd);
@@ -45,7 +58,7 @@ char    *ft_strldup(char *s, size_t     n);
 void    *ft_calloc(size_t n);
 
 //int     minishell(int ac, char **av);
-char	**parsing(char **p, char **envp, int *s_exit, unsigned char *status, int is_a_pipe);
+char	**parsing(t_data *data);
 //char	*ft_remove_isspace(char *s);
 
 int     ft_echo(char **p);
@@ -76,12 +89,19 @@ char    *heredoc_delimiter(char *s ,int *isquote);
 int	    ft_isalpha(int c);
 int	    ft_isalnum(int c);
 int	    c_atoi(char *s, long *rslt);
-int	    parse_redirection(char **full_str, unsigned char *status, char **envp);
+int	    parse_redirection(char **full_str, unsigned char *status, char **envp, t_data *data);
 int     costum_atoi(char *nptr, unsigned char *status, int fd);
-int     ft_pipes(char **piped_cmds, char **p, unsigned char *status, int *is_a_pipe);
-t_data  *ft_setup(char **envp);
+int     ft_pipes(t_data *data);
+void    ft_setup(t_data *data, char **envp);
 void    *ft_malloc(size_t size);
 void    config_malloc(void *ptr, int isfailed); // use it only when end program pass NULL to free all thing and exit;
 void    config_rdline(char **p ,t_data *data);
+void    *ft_memset(void *ptr, int c, size_t n);
+void    signal_handler(int signum);
+void    count_sigs(int signum);
+void    free_heredoc(t_data *data, int m_unlink);
+int     here_doc_fork(char **p, unsigned char *status, t_data *data);
+char    *heredoc_old_delimiter(char *s ,int *isquote, int *index_ret);
+int     check_syntax(char *p);
 
 #endif

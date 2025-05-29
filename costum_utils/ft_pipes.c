@@ -1,15 +1,6 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   ft_pipes.c                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: asoufian <asoufian@student.1337.ma>        +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/21 11:11:47 by asoufian          #+#    #+#             */
-/*   Updated: 2025/05/21 11:11:50 by asoufian         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
 #include "../minishell.h"
+
+extern volatile sig_atomic_t f_sig;
 
 typedef struct pipes
 {
@@ -23,37 +14,36 @@ typedef struct pipes
 
 static int  redirecting_child_std(pipes_t *pipe_data, char **p);
 static int  redirecting_pipes(pipes_t *pipe_data);
-static int  wait_children(pipes_t *pipe_data, unsigned char *status);
+static int  wait_children(pipes_t *pipe_data, unsigned char *status, t_data *data);
 static int  fork_and_create_pipe(pipes_t *pipe_data);
 
-int ft_pipes(char **piped_cmds, char **p, unsigned char *status, int *is_a_pipe)
+int ft_pipes(t_data *data)
 {
-    pipes_t *pipe_data = ft_calloc(sizeof(pipes_t));
-  //  __sighandler_t old_handler;
+    pipes_t pipe_data; // = ft_calloc(sizeof(pipes_t));
 
-    pipe_data->is_a_pipe = is_a_pipe;
-    pipe_data->piped_cmds = piped_cmds;
-    while (piped_cmds[pipe_data->i])
+    ft_memset(&pipe_data, 0, sizeof(pipes_t));
+    pipe_data.is_a_pipe = &(data->is_a_pipe);
+    pipe_data.piped_cmds = data->segments;
+    while (pipe_data.piped_cmds[pipe_data.i])
     {
-        if (fork_and_create_pipe(pipe_data))
+        if (fork_and_create_pipe(&pipe_data))
             return (perror(""), errno);
-        if (pipe_data->cpid == 0)
+        if (pipe_data.cpid == 0)
         {
-            if (redirecting_child_std(pipe_data, p))
+            data->is_a_pipe = 1;
+            if (redirecting_child_std(&pipe_data, &(data->p_rdl)))
                 return (errno);
-            return (0);
+            return (free_all(data->segments), 0);
         }
         else
         {
-         //   old_handler = signal(SIGINT, SIG_IGN);
-            if (redirecting_pipes(pipe_data))
+            if (redirecting_pipes(&pipe_data))
                 return (errno);
         }
     }
-    if (wait_children(pipe_data, status))
+    if (wait_children(&pipe_data, &(data->status), data))
         return (errno);
-  //  signal(SIGINT, old_handler);
-    return (free_all(piped_cmds), *p = NULL, *is_a_pipe = 0, free(pipe_data), 0);
+    return (free_all(data->segments), free(data->p_rdl), *&(data->p_rdl) = NULL, 0);
 }
 
 /*check for errno in case the wait did fail for another reason other than that the process doesn't have anymore children to wait for*/
@@ -68,29 +58,18 @@ static int  fork_and_create_pipe(pipes_t *pipe_data)
         return (perror(""), errno);
     return (0);
 }
-extern volatile sig_atomic_t f_sig;
 
-static void    count_sigs(int signum)
-{
-    (void)signum;
-    f_sig = 2;
-}
-
-static int  wait_children(pipes_t *pipe_data, unsigned char *status)
+static int  wait_children(pipes_t *pipe_data, unsigned char *status, t_data *data)
 {
     int     child_info;
-    struct sigaction C_c_alt;
-	struct sigaction old_C_c;
-	sigemptyset(&(C_c_alt.sa_mask));
-	C_c_alt.sa_flags = SA_RESTART;
-    C_c_alt.sa_handler = count_sigs;
     //__sighandler_t old_handler;
 
-    if (sigaction(SIGINT, &C_c_alt, &old_C_c) == -1)
+    if (sigaction(SIGINT, &(data->C_c_alt), NULL) == -1)
         return (perror(""), errno);
     child_info = 0;
     //old_handler = signal(SIGINT, SIG_IGN);
-    if ((close(pipe_data->old_pipe) == -1) || (waitpid(pipe_data->cpid, &child_info, 0) == -1))// the end of pipeline, we don't need the old_pipe anymore;
+    int i = 0;
+    if ((close(pipe_data->old_pipe) == -1) || ((i = waitpid(pipe_data->cpid, &child_info, 0)) == -1))// the end of pipeline, we don't need the old_pipe anymore;
         return (perror(""), errno);
     if (WIFEXITED(child_info))
         *status = (WEXITSTATUS(child_info));
@@ -100,7 +79,7 @@ static int  wait_children(pipes_t *pipe_data, unsigned char *status)
         ;
     if (errno != ECHILD)
         return (perror(""), errno);
-    if (sigaction(SIGINT, &old_C_c, NULL) == -1)
+    if (sigaction(SIGINT, &(data->C_c), NULL) == -1)
         return (perror(""), errno);
     if (f_sig == 2 && kill(0, SIGINT))
         return (perror(""), errno);
@@ -120,7 +99,8 @@ static int  redirecting_pipes(pipes_t *pipe_data)
 static int  redirecting_child_std(pipes_t *pipe_data, char **p)
 {
     signal(SIGQUIT, SIG_DFL);
-    *p = pipe_data->piped_cmds[pipe_data->i];
+    free(*p);
+    *p = ft_strdup(pipe_data->piped_cmds[pipe_data->i]);
     *(pipe_data->is_a_pipe) = 1;
     if (pipe_data->i == 0)
     {

@@ -1,6 +1,6 @@
 #include "../minishell.h"
 
-static void	ft_strlcpy(char *dst, const char *src, size_t size)
+/*static void	ft_strlcpy(char *dst, const char *src, size_t size)
 {
 	size_t	i;
 	size_t	j;
@@ -31,7 +31,7 @@ static void remove_spaces_in_beg(char *s)
 		i--;
 	if (i != (ft_strlen(s) - 1))
 		s[i + 1] = 0;
-}	
+}*/	
 static char	*ft_strr_isspace(char *s, size_t n) // this is like strchr, but looks for the first occuence of isspace'in s starting from s[n] and going backwards;
 {
 	if (!n || !s)
@@ -243,11 +243,11 @@ static int	open_file_redi(char *s, int *fd, int mode, int *end, char **envp, cha
 		append = 1;
 		begin += 1;
 	}
-	while (s[begin] == ' ')
+	while (s[begin] == ' ' || s[begin] == '\t' || s[begin] == '\v' || s[begin] == '\f' || s[begin] == '\r')
 		begin += 1;
 	// need to check if the file name is valid or not, also quotation make a difference !!
 	if (!(s[begin]) || s[begin] == '\n' || (s[begin] == '>' && !append) || (s[begin] == '>' && s[begin] == '>' && append) || s[begin] == '<') // need to check for whitespaces too maybe ?
-		return(ft_putstr("minishell: syntax error\n", 2), 1);
+		return(ft_putstr("minishell: syntax error near unexpected token `newline'\n", 2), 1);
 	*end = expand_rm_quotes(&s[begin], envp, full_str, status);
 	if (*end == -1)
 		return (1);
@@ -258,10 +258,10 @@ static int	open_file_redi(char *s, int *fd, int mode, int *end, char **envp, cha
 		s = ft_strdup(&s[begin]);
 	*end += begin;
 	begin = 0;
-	while (s[begin] && s[begin] == ' ')
+	while (s[begin] && (s[begin] == ' ' || s[begin] == '\t' || s[begin] == '\v' || s[begin] == '\f' || s[begin] == '\r'))
 		begin += 1;
 	if (!(s[begin]) || s[begin] == '\n' || s[begin] == ' ') // whitespaces instead of space ?
-		return(ft_putstr("minishell: syntax error\n", 2), 1);
+		return(ft_putstr("minishell: syntax error near unexpected token `newline'\n", 2), 1);
 	if (open_assign_fd(s, fd, mode, append, &ret))
 		return (free(s), ret);
 	free(s);
@@ -295,7 +295,60 @@ static int apply_redirection(size_t *i, unsigned char *status, int fd, char **en
     return (0);
 }
 
-int	parse_redirection(char **full_str, unsigned char *status, char **envp)
+static void remove_heredoc(char *s)
+{
+	size_t i = 0;
+    size_t st = 0;
+    size_t f = 0;
+    size_t j = 0;
+    char    q = 0;
+
+    i = 2;
+    f = 0;
+    while (s[i] == ' ' || (s[i] >= 9 && s[i] <= 13))
+        i++;
+    st = i;
+    while (s[i] && s[i] != ' ' && !(s[i] >= 9 && s[i] <= 13))
+    {
+        if (!q && (s[i] == '\'' || s[i] == '\"'))
+        {
+            q = s[i++];
+   //         *isquote = 1;
+        }
+        while(q && s[i] != q)
+            i++;
+        q = 0;
+        i++;
+    }
+	while (s[i])
+    {
+        s[f + j] = s[i];
+        j++;
+        i++;
+    }
+    s[f + j] = 0;
+}
+int found_here_doc(t_data *data, char *s)
+{
+	t_heredoc	*temp = data->heredooc;
+	int			fd;
+	while(temp->next && temp->arg_num)
+	{
+		temp = temp->next;
+	}
+
+	fd = open(temp->file_name, O_RDONLY);
+	if (fd < 0)
+		return (perror(""), errno);
+	if (dup2(fd, 0) < 0)
+		{return (close(fd), perror(""), errno);}
+	close(fd);
+	temp->arg_num = 1;
+	remove_heredoc(s);
+	return (0);
+}
+
+int	parse_redirection(char **full_str, unsigned char *status, char **envp, t_data *data)
 {
 	size_t	i = 0;
 	int     f_d = 0;
@@ -314,7 +367,7 @@ int	parse_redirection(char **full_str, unsigned char *status, char **envp)
 		}
 		else if (!f_d && !f_s && (*full_str)[i] == '<' && (*full_str)[i + 1] == '<')
 		{
-			if ((ft_isheredoc((*full_str) + i, envp, status)))
+			if ((found_here_doc(data, (*full_str) + i)))
                 return (1);
 		}
 		else if (!f_d && !f_s && (*full_str)[i] == '<')
@@ -325,7 +378,7 @@ int	parse_redirection(char **full_str, unsigned char *status, char **envp)
 		else
 			i++;
 	}
-	remove_spaces_in_beg(*full_str);
+	//remove_spaces_in_beg(*full_str); // not needed anymore cuz the split takes care of the spaces
 	return (0);
 }
 
