@@ -224,7 +224,7 @@ static int open_assign_fd(char *s, int *fd, int mode, int append, int *ret)
 	else if (!mode)
 		fd_file = open(s, O_RDONLY, 00644);
 	if (fd_file < 0)
-		return(temp = ft_strjoin("minishell: ", s), temp = ft_strjoinf(temp, " "), temp = ft_strjoinf(temp, strerror(errno)) , temp = ft_strjoinf(temp, "\n"), ft_putstr(temp, 2), free(temp), *ret = 1 , 1);
+		return(temp = ft_strjoin("minishell: ", s), temp = ft_strjoinf(temp, ": "), temp = ft_strjoinf(temp, strerror(errno)) , temp = ft_strjoinf(temp, "\n"), ft_putstr(temp, 2), free(temp), *ret = 1 , 1);
 	//	return (ft_putstr("minishell: ", 2), ft_putstr(s, 2), ft_putstr(": ", 2), perror(""), fflush(stderr), *ret = 1 , 1);
 	*fd = dup2(fd_file, *fd);
 	close(fd_file);

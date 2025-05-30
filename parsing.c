@@ -168,6 +168,7 @@ char	**parsing(t_data *data)
 {
     char	*env;
     char	*path;
+	char 	*msg = NULL;
     int		i = 0;
 	int		is_a_file = 0;
 
@@ -188,24 +189,44 @@ char	**parsing(t_data *data)
 	if (ft_built_in_cmd(data))
 		(void)data->p_rdl;
 	else
-	{
+	{	
 		while (env && data->env_paths[i])
 		{
 			path = ft_strjoinf(ft_strjoin(data->env_paths[i], "/"),data->rdl_args[0]);
-			if (!access(path, F_OK) && !access(path, X_OK))
+			if (!access(path, F_OK))
 			{
-				is_a_file = open(path, O_DIRECTORY);
-				if (is_a_file == -1) // check for errno
-					return (close(is_a_file), data->status = execute_command(path, data), free(path), free_all(data->rdl_args), free_all(data->env_paths), data->envp);
-				close(is_a_file);
+				if (!access(path, X_OK))
+				{
+					is_a_file = open(path, O_DIRECTORY);
+					if (is_a_file == -1) // check for errno
+						return (data->status = execute_command(path, data), free(path), free_all(data->rdl_args), free_all(data->env_paths), data->envp);
+					close(is_a_file);
+				}
+				else
+				{
+					if (!msg)
+					{
+						msg = ft_strjoin("minishell: ", path);
+						msg = ft_strjoinf(msg, ": Permission denied");
+						msg = ft_strjoinf(msg, "\n");
+					}
+					data->status = 126;
+				}
 			}
 			free(path);
 			i++;
 		}
-		ft_putstr(data->rdl_args[0], 2);
-		ft_putstr(": command not found\n", 2);
-		//ft_putstr("\n", 2);
-		data->status = 127;
+		if (data->status != 126)
+		{
+			ft_putstr(data->rdl_args[0], 2);
+			ft_putstr(": command not found\n", 2);
+			data->status = 127;
+		}
+		else
+		{
+			ft_putstr(msg, 2);
+			free(msg);
+		}
 	}
 	return (free_all(data->rdl_args), free_all(data->env_paths), data->envp);
 }
