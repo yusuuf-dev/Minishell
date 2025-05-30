@@ -215,7 +215,7 @@ static int expand_rm_quotes(char *str, char **envp, char **full_str, unsigned ch
 static int open_assign_fd(char *s, int *fd, int mode, int append, int *ret)
 {
 	int		fd_file = 0;
-
+	char	*temp;
 	//fd = open("/proc/sys/kernel/pid_max", (argc > 1) ? O_RDWR : O_RDONLY);
 	if (append)
 		fd_file = open(s, O_WRONLY|O_CREAT|O_APPEND, 00644);
@@ -224,7 +224,8 @@ static int open_assign_fd(char *s, int *fd, int mode, int append, int *ret)
 	else if (!mode)
 		fd_file = open(s, O_RDONLY, 00644);
 	if (fd_file < 0)
-		return (ft_putstr("minishell: ", 2), ft_putstr(s, 2), ft_putstr(": ", 2), perror(""), *ret = 1 , 1);
+		return(temp = ft_strjoin("minishell: ", s), temp = ft_strjoinf(temp, " "), temp = ft_strjoinf(temp, strerror(errno)) , temp = ft_strjoinf(temp, "\n"), ft_putstr(temp, 2), free(temp), *ret = 1 , 1);
+	//	return (ft_putstr("minishell: ", 2), ft_putstr(s, 2), ft_putstr(": ", 2), perror(""), fflush(stderr), *ret = 1 , 1);
 	*fd = dup2(fd_file, *fd);
 	close(fd_file);
 	if (*fd < 0)
@@ -247,7 +248,7 @@ static int	open_file_redi(char *s, int *fd, int mode, int *end, char **envp, cha
 		begin += 1;
 	// need to check if the file name is valid or not, also quotation make a difference !!
 	if (!(s[begin]) || s[begin] == '\n' || (s[begin] == '>' && !append) || (s[begin] == '>' && s[begin] == '>' && append) || s[begin] == '<') // need to check for whitespaces too maybe ?
-		return(ft_putstr("minishell: syntax error near unexpected token `newline'\n", 2), 1);
+		return(ft_putstr("minishell: syntax error near unexpected token `newline'\n", 2), 1); // we don't need this anymore since we have syntax_check function
 	*end = expand_rm_quotes(&s[begin], envp, full_str, status);
 	if (*end == -1)
 		return (1);
@@ -261,7 +262,7 @@ static int	open_file_redi(char *s, int *fd, int mode, int *end, char **envp, cha
 	while (s[begin] && (s[begin] == ' ' || s[begin] == '\t' || s[begin] == '\v' || s[begin] == '\f' || s[begin] == '\r'))
 		begin += 1;
 	if (!(s[begin]) || s[begin] == '\n' || s[begin] == ' ') // whitespaces instead of space ?
-		return(ft_putstr("minishell: syntax error near unexpected token `newline'\n", 2), 1);
+		return(ft_putstr("minishell: syntax error near unexpected token `newline'\n", 2), 1); // we don't need this either we have syntax_check for this
 	if (open_assign_fd(s, fd, mode, append, &ret))
 		return (free(s), ret);
 	free(s);
@@ -274,6 +275,7 @@ static int apply_redirection(size_t *i, unsigned char *status, int fd, char **en
 	int		dest; // this is in case we have a valid fd before the '>', I save the index of the num cuz I'll have to remove it from the string;   
 	int		f_mode; // free mode
 	int		end_file_name = 0;
+	char	*temp; // this is done cuz perror might be buffering the strings;
 
     dest = *i;
 	fd_input = parsing_input_fd((*full_str), i, &fd, &dest, status);
@@ -282,9 +284,11 @@ static int apply_redirection(size_t *i, unsigned char *status, int fd, char **en
 	else
 		f_mode = open_file_redi(&(*full_str)[*i + 1], &fd, 0, &end_file_name, envp, full_str, status);
 	if (f_mode == 1)
-		return (free(fd_input), *status = 2, 1);
+		return (free(fd_input), *status = 1, 1);
 	else if (f_mode == 2)
-		return(ft_putstr("minishell: ", 2), ft_putstr(fd_input, 2), ft_putstr(": ", 2), perror(""), free(fd_input), *status = 1, 2);
+		return(temp = ft_strjoin("minishell: ", fd_input), temp = ft_strjoinf(temp, strerror(errno)) , ft_putstr(temp, 2), free(fd_input), free(temp), *status = 1, 2);
+		//return(temp = ft_strjoin("minishell: ", fd_input), ft_strjoinf(temp, strerror(errno)) ,perror(temp), fflush(stderr), free(fd_input), free(temp), *status = 1, 2);
+		//return(ft_putstr("minishell: ", 2), ft_putstr(fd_input, 2), ft_putstr(": ", 2), perror(""), free(fd_input), *status = 1, 2);
 	free(fd_input);
 	if (end_file_name) // this indicates wether the file name is the last thing in the string or not
 		*i += end_file_name;

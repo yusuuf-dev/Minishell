@@ -50,9 +50,11 @@ char    *rm_quotes_expand(char *str, char **envp, unsigned char *status)
 			i += ft_strlen(var);
 			free(var);
 		}
+		else if (!q && str[i] == '$' && (str[i + 1] == '\'' || str[i + 1] == '\"'))
+			i++;
 		else if (str[i] == '$' && q != '\'' && str[i + 1] == '?')
 		{
-			var = ft_getenv("?",envp,status);
+			var = ft_getenv("?", envp, status);
 			ptr = ft_strjoinf(ptr,var);
 			//i += ft_strlen(var) + 1;
 			i += 2; // will this work fine ?, I think it should since we don't change the str itself.

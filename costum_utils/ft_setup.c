@@ -62,17 +62,18 @@ void    ft_setup(t_data *data, char **envp)
    /* env = ft_getenv("PATH", data->envp, &(data->status));
 	if (env)
 		data->env_paths = ft_split(env, ':');*/
+    
+    
     sigemptyset(&(data->C_slash.sa_mask));
-    sigemptyset(&(data->C_c.sa_mask));
     data->C_slash.sa_flags = 0; // change me to SA_RESTART
-    data->C_c.sa_flags = 0;
     data->C_slash.sa_handler = SIG_IGN;
-
+    sigemptyset(&(data->C_c.sa_mask));
+    data->C_c.sa_flags = SA_RESTART;
+    data->C_c.sa_handler = signal_handler;
 	sigemptyset(&(data->C_c_alt.sa_mask));
 	data->C_c_alt.sa_flags = SA_RESTART; // change me to SA_RESTARt
     data->C_c_alt.sa_handler = count_sigs;
    // C_slash.sa_handler = ignoree;
-    data->C_c.sa_handler = signal_handler;
     return ;
 
 }

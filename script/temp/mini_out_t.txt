@@ -1,2 +1,3 @@
-failed malloc
-1
+Minishell: syntax error
+2
+0

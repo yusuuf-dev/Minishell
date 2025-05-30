@@ -22,7 +22,7 @@ static int	ft_built_in_cmd(t_data *data);
 
 extern volatile sig_atomic_t f_sig;
 
-static void		ft_space(char *s)
+/*static void		ft_space(char *s)
 {
 	size_t	i = 0;
 	int		f_s = 0;
@@ -38,7 +38,7 @@ static void		ft_space(char *s)
 			s[i] = ' ';
 		i++;
 	}
-}
+}*/
 
 static int     c_strncmp(const char *s1, const char *s2) // there's another copy of this in ft_export
 {
@@ -120,12 +120,14 @@ static int	ft_execute_cmd(t_data *data)
 		signal(SIGQUIT, SIG_DFL);
 		execve(data->rdl_args[0], data->rdl_args, data->envp);
 		perror("");
+		// free allocated memory
 		exit (errno);
 	}
     else if (pid > 0)
 	{
-		if (sigaction(SIGINT, &(data->C_c_alt), NULL) == -1)
-			return (perror(""), errno);
+		sigaction(SIGINT, &(data->C_c_alt), NULL);
+/*		if (sigaction(SIGINT, &(data->C_c_alt), NULL) == -1)
+			return (perror(""), errno);*/
 
         waitpid(pid, &child_info, 0);
 		if (sigaction(SIGINT, &(data->C_c), NULL) == -1)
@@ -146,7 +148,7 @@ static  int executable(t_data *data)
 
 	if (!data->rdl_args[0])
 		return (1);
-    if (!(data->rdl_args[0][0] == '.' || (ft_strchr(data->rdl_args[0], '/'))))
+    if (!(ft_strchr(data->rdl_args[0], '/')))
     {    return (0);}
 	is_a_file = open(data->rdl_args[0], O_DIRECTORY); // check for errno in case open fails for some reason, and return error ?
 	if (is_a_file != -1)
@@ -154,28 +156,31 @@ static  int executable(t_data *data)
     if (access(data->rdl_args[0],F_OK) == -1)
     {
         perror("minishell");
-        return(errno);
+        return(data->status = 127, 127);
     }
     if (access(data->rdl_args[0],X_OK) == 0)
         return (ft_execute_cmd(data));
     else
         perror("minishell");
-    return(1);
+    return(data->status = 126, 1);
 }
 char	**parsing(t_data *data)
 {
     char	*env;
     char	*path;
     int		i = 0;
+	int		is_a_file = 0;
 
-    if (found_q(data->p_rdl) == -1) // check if the quotes are closed;
-        {return (ft_putstr("Error unclosed quotes\n", 2), data->envp);}
-	ft_space(data->p_rdl); 
+  //  if (found_q(data->p_rdl) == -1) // check if the quotes are closed;
+   //     {return (ft_putstr("Error unclosed quotes\n", 2), data->envp);}
+	//ft_space(data->p_rdl);
 	if(parse_redirection(&(data->p_rdl), &(data->status), data->envp, data)) // this also removes spaces;
 	 	return (data->envp);
 	env = ft_getenv("PATH", data->envp, &(data->status));
 	if (env)
 		data->env_paths = ft_split(env, ':');
+	else
+		data->env_paths = NULL; // In case we unset the PATH later, the pointer will be pointing to a non-valid memory (dangling pointer)
     data->rdl_args = c_split(data->p_rdl,' ', data->envp, &(data->status));
 	
 	if (executable(data)) // next 
@@ -188,7 +193,12 @@ char	**parsing(t_data *data)
 		{
 			path = ft_strjoinf(ft_strjoin(data->env_paths[i], "/"),data->rdl_args[0]);
 			if (!access(path, F_OK) && !access(path, X_OK))
-				return (data->status = execute_command(path, data), free(path), free_all(data->rdl_args), free_all(data->env_paths), data->envp);
+			{
+				is_a_file = open(path, O_DIRECTORY);
+				if (is_a_file == -1) // check for errno
+					return (close(is_a_file), data->status = execute_command(path, data), free(path), free_all(data->rdl_args), free_all(data->env_paths), data->envp);
+				close(is_a_file);
+			}
 			free(path);
 			i++;
 		}
@@ -240,7 +250,6 @@ int	execute_command(char *path, t_data *data)
 
 	if (!(data->is_a_pipe))
 	{
-		//if (sigaction(SIGINT, &(data->C_c_alt), &(data->old_C_c)) == -1)
 		if (sigaction(SIGINT, &(data->C_c_alt), NULL) == -1)
 			return (perror(""), errno);
 		child_pid = fork();
@@ -253,11 +262,10 @@ int	execute_command(char *path, t_data *data)
 	if (!child_pid || data->is_a_pipe)
 	{
 		signal(SIGQUIT, SIG_DFL);
-		if (execve(path, data->rdl_args, data->envp))
-		{
-			perror("execve");
-			exit(errno);
-		}
+		execve(path, data->rdl_args, data->envp);
+		perror("execve");
+		// free allocated memory
+		exit(errno);
 	}
 	else
 	{

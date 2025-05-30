@@ -197,13 +197,45 @@ static function that frees the struct ?? / freeing(void *p); if (p) ; static voi
 If I run a minishell within minishell (calling minishell by another minishell) and used a command such as (ls,....) something that requires fork and execve,
 will the first minishell also get woken up (meaning exiting the wait status) cuz the ran command 'ls' will send a SIGCHILD to that second one.????
 
+
+cat <minishell.h <<HERE <missing <<DOC | echo oi
+
+
+#invalid command, followed by empty variable, should clear the exit code
+doesntexist
+$EMPTY
+echo $?
+
+execute permission with sudo, the loop should keep going, 
+
+minishell : cat << jjj
+> jhjhjk
+> kjhjkhkj
+> '$USER'
+> jjj
+
+
+# Neither of these unsets should break the shell, and you should still be able to call `/bin/ls`
+unset USER
+unset PATH
+unset PWD
+/bin/ls
+
+
 753_ cat << : should give an error
 757_ << $"hola"$"b" the heredoc should exit with holab
 758_ << $"$hola"$$"b" the heredoc should exit with $hola$$b
 
+119/146
+121/146
 
 note that we can use the global variable __environ instead of specifying the envp in each function;
 look into interactive mode in bash
+
+read man of exit function
+maybe we don't need to check for error returns with signal/sigaction functions
+
+remember to remove the syntax checking inside : pipe/redirection parsing part, since we have check_syntax function that does that in the beginning
 
 if (pfd[1] != STDOUT_FILENO) {
  dup2(pfd[1], STDOUT_FILENO);

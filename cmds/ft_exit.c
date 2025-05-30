@@ -38,7 +38,6 @@ static int	ft_valid_int(char *s)
 }
 int	ft_exit(char **argv, char **envp, unsigned char *status, int *s_exit)
 {
-//	size_t	i = 0;
 	long	ret = 0;
 	unsigned char c;
 	(void)envp;
@@ -53,11 +52,9 @@ int	ft_exit(char **argv, char **envp, unsigned char *status, int *s_exit)
 	
 	if (ft_valid_int(argv[1]))
 	{
-		//ret = ft_atoi(argv[1], &ret);
 		if (c_atoi(argv[1], &ret) == -1)
 		{
-			printf("minishell: exit: %s: numeric argument required\n", argv[1]);
-			return (2);
+			return (ft_putstr("exit\n", 2), ft_putstr("minishell: exit: ", 2), ft_putstr(argv[1], 2), ft_putstr(": numeric argument required\n", 2), 2);
 		}
 		return(c = ret, c);
 	}

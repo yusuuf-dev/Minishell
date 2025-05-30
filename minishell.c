@@ -52,10 +52,13 @@ int main(int ac, char **av, char **envp)
         }
 		if (!data.p_rdl) // C^d
 			return (ft_putstr("exit\n", 1), free_all(data.envp), free(data.p_rdl), rl_clear_history(), free_heredoc(&data, 1), data.status);
-        add_history(data.p_rdl);
-        if (here_doc_fork(&(data.p_rdl), &(data.status), &data))
+        if (data.p_rdl[0])
+            add_history(data.p_rdl);
+        if (data.p_rdl[0] && check_syntax(data.p_rdl))
+            data.status = 2;
+        else if (data.p_rdl[0] && here_doc_fork(&(data.p_rdl), &(data.status), &data))
             return (errno);
-        if (data.p_rdl && !ft_isspace_to_space(&(data.p_rdl)) && data.p_rdl[0])
+        else if (data.p_rdl && data.p_rdl[0])
         {
        //     add_history(data.p_rdl);
             i = found_pipe(data.p_rdl);
@@ -71,7 +74,7 @@ int main(int ac, char **av, char **envp)
                 return(exit_minishell(data.envp, data.p_rdl, 1, "failed malloc\n"));//protect malloc
             if (data.p_rdl)  // not great, this is done for when the piping is done so that the program wouldn't check for cmds;
                 data.envp = parsing(&data);
-            if (reset_std_in_out_err(&data))
+            if (reset_std_in_out_err(&data)) // remember to close fd{0,1,2} 
                 return (free_all(data.envp), 1);
         }
         free(data.p_rdl);

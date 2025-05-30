@@ -87,6 +87,8 @@ static char	*ft_itoa(int n)
 	char	*s = ft_calloc(17);
 	int		i = 15;
 
+	if (!s)
+		exit (-1);
 	if (!n)
 		return (s[0] = '0', s);
 	while (n)
@@ -98,20 +100,42 @@ static char	*ft_itoa(int n)
 	ft_strcpy(s, (s + i + 1));
 	return (s);
 }
-static char *create_file_name(void)
+
+/*
+	checks wether the argument name; which is the name of a file, is already in the linked list of heredooc;
+	meaning it will be used to save the input of another heredoc therefore we need to use another name;
+*/
+static int name_reserved(char *name, t_data *data)
+{
+	t_heredoc	*temp = data->heredooc;
+	if (!temp)
+		return (0);
+	while (temp && temp->next)
+	{
+		if (ft_strcmp(temp->file_name, name))
+			return (1);
+		temp = temp->next;
+	}
+	if (ft_strcmp(temp->file_name, name))
+		return (1);
+	return (0);
+}
+static char *create_file_name(t_data *data)
 {
     char    *og_name = ".tmp.txt";
     char    *counter = NULL;
     char    *name = NULL;
     int     count = 0; // change this to long
     name = ft_strdup(og_name);
-    while (access(name, F_OK) == 0 && count < 2147483647) // change this to long
+    while ((access(name, F_OK) == 0) || ((name_reserved(name, data)) == 1)) // change this to long
     {
         free(name);
         counter = ft_itoa(count);
         name = ft_strjoin(og_name, counter);
         free(counter);
         count++;
+		if (count == 2147483647)
+			return (unlink(name), name);
     }
     return (name);
 }
@@ -130,7 +154,7 @@ int     ft_new_isheredoc(char *p, char **envp, unsigned char *status, t_data *da
 	dl = heredoc_old_delimiter(p, &isquote, &index_ret);
 	if (!dl)
 		return(-1); // failed malloc protection
-	fd = open(file_name, O_RDWR | O_CREAT | O_TRUNC , 0666); // change perms
+	fd = open(file_name, O_RDWR | O_CREAT | O_TRUNC , 0600); // change perms
 	if (fd < 0)
 		return (perror(""), 0);
 	while (1)
@@ -176,7 +200,7 @@ int create_file_heredoc(char *p, t_data *data)
 {
     t_heredoc *new = ft_calloc(sizeof(t_heredoc));
     t_heredoc   *temp = data->heredooc;
-    new->file_name = create_file_name();
+    new->file_name = create_file_name(data);
     int     ret = 0;
 
     (void)p;
@@ -207,6 +231,11 @@ static int found_here_doc(char **p, t_data *data)
     int     child_status;
 	while ((s)[i])
 	{
+		if (found > HEREDOC_MAX)
+		{
+			ft_putstr("minishell: maximum here-document count exceeded\n", 2);
+			exit(2); // free allocated memory
+		}
 		if ((s)[i] == '\'' && !f_d)
 			f_s = !f_s;
         if ((s)[i] == '\"' && !f_s)

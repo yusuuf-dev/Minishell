@@ -1,0 +1,15 @@
+a_file
+cmds
+costum_utils
+execve_fail
+Makefile
+minishell
+minishell.c
+minishell.h
+minishell.o
+old
+parsing.c
+parsing.o
+script
+TO_DO
+utils

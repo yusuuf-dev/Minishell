@@ -1,3 +1,6 @@
 minishell : echo hola ||| cat
-failed malloc
-1
+Minishell: syntax error
+minishell : echo $?
+2
+minishell : exit
+0
