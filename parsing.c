@@ -146,7 +146,7 @@ static  int executable(t_data *data)
 
 	if (!data->rdl_args[0])
 		return (1);
-    if (!(data->rdl_args[0][0] == '.' || (ft_strchr(data->rdl_args[0], '/'))))
+	if (!(ft_strchr(data->rdl_args[0], '/')))
     {    return (0);}
 	is_a_file = open(data->rdl_args[0], O_DIRECTORY); // check for errno in case open fails for some reason, and return error ?
 	if (is_a_file != -1)
@@ -167,6 +167,7 @@ char	**parsing(t_data *data)
     char	*env;
     char	*path;
     int		i = 0;
+	int		is_a_file = 0;
 
     if (found_q(data->p_rdl) == -1) // check if the quotes are closed;
         {return (ft_putstr("Error unclosed quotes\n", 2), data->envp);}
@@ -184,14 +185,27 @@ char	**parsing(t_data *data)
 		(void)data->p_rdl;
 	else
 	{
-		while (env && data->env_paths[i])
-		{
-			path = ft_strjoinf(ft_strjoin(data->env_paths[i], "/"),data->rdl_args[0]);
-			if (!access(path, F_OK) && !access(path, X_OK))
-				return (data->status = execute_command(path, data), free(path), free_all(data->rdl_args), free_all(data->env_paths), data->envp);
-			free(path);
-			i++;
-		}
+        while (env && data->env_paths[i])
+        {
+            path = ft_strjoinf(ft_strjoin(data->env_paths[i], "/"),data->rdl_args[0]);
+            if (!access(path, F_OK) && !access(path, X_OK))
+            {
+                is_a_file = open(path, O_DIRECTORY);
+                if (is_a_file == -1) // check for errno
+                    return (close(is_a_file), data->status = execute_command(path, data), free(path), free_all(data->rdl_args), free_all(data->env_paths), data->envp);
+                close(is_a_file);
+            }
+            free(path);
+            i++;
+        }
+		// while (env && data->env_paths[i])
+		// {
+		// 	path = ft_strjoinf(ft_strjoin(data->env_paths[i], "/"),data->rdl_args[0]);
+		// 	if (!access(path, F_OK) && !access(path, X_OK))
+		// 		return (data->status = execute_command(path, data), free(path), free_all(data->rdl_args), free_all(data->env_paths), data->envp);
+		// 	free(path);
+		// 	i++;
+		// }
 		ft_putstr(data->rdl_args[0], 2);
 		ft_putstr(": command not found\n", 2);
 		//ft_putstr("\n", 2);

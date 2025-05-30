@@ -80,8 +80,10 @@ int     check_syntax(char *p)
             return(1);
         else if (!q && p[i] == '<' && p[i + 1] == '<' && check_next(p,i,1))
             return(1);    
-        else if (!q && (p[i] == '>' || p[i] == '<') && check_next(p,i,0))
+        else if (!q && p[i] == '>' && p[i + 1] != '>' && check_next(p,i,0))
             return(1);
+        else if (!q && p[i] == '<' && p[i + 1] != '<' && check_next(p,i,0))
+            return(1);    
         i++;
     }
     return(0);
