@@ -184,7 +184,7 @@ static char	*ft_substr(char *s, int st, int ed)
 	return (str);
 }
 
-char	**split_q(char *str, char c, char **envp, unsigned char *status)
+char	**c_split(char *str, char c, char **envp, unsigned char *func_status)
 {
 	char	**ptr;
 	size_t	i;
@@ -220,7 +220,7 @@ char	**split_q(char *str, char c, char **envp, unsigned char *status)
 		if (!ptr[j])
 			return(free_all(ptr));
 		if (c != '|')
-			ptr[j] = rm_quotes_expand(ptr[j],envp,status);
+			ptr[j] = rm_quotes_expand(ptr[j],envp,func_status);
 		if(ptr[j])
 			j++;
 		q = 0;
@@ -256,30 +256,4 @@ int  found_q(char *s)
 	else if(found == 0)
 		return(0);
     return(1);
-}
-
-
-
-char	**c_split(char *str, char c, char **envp, unsigned char *func_status)
-{
-    char    **ptr;
-	int		status;
-	int		i;
-
-	i = 0;
-	status = found_q(str);
-	if (status == -1)
-		return (NULL);
-	else if (status == 1)
-		ptr = split_q(str,c,envp, func_status);
-    else
-	{
-        ptr = ft_split(str,c);
-		while (ptr[i])
-		{
-			ptr[i] = rm_quotes_expand(ptr[i],envp, func_status);
-			i++;
-		}
-	}
-    return(ptr);
 }
