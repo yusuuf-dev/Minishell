@@ -251,16 +251,27 @@ try spam-send SIGQUIT to minishell and see what happens.
 
 
 
+96 in 42 minishell tester
+151 error the redirection doesn't get applied:
+  ls|cat Makefile|cat<<asd>out
+261 in unset PATH 2_correction.sh:
+  It seems that bash tries to execute the file if the PATH is unset ???
 
+ maybe we should move the syntax checking into the parsing part ?
+>| echo sure
 
+redirection :
+  >> "$H"OM"E"
 
-
-
-
-
-
-
-
+31/05/2025
+🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁
+🏁                                    RESULT                                    🏁
+🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁
+             TOTAL TEST COUNT: 941  TESTS PASSED: 836  LEAKING: 0 
+                     STD_OUT: 82  STD_ERR: 35  EXIT_CODE: 46  
+                         TOTAL FAILED AND PASSED CASES:
+                                     ❌ 163   
+                                     ✅ 2660   
 
 
 

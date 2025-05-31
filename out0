@@ -1,0 +1,25 @@
+total 79904
+drwxr-xr-x  9 asoufian 2024_rabat     4096 May 31 18:24 .
+drwx------ 44 asoufian 2024_rabat     4096 May 31 18:20 ..
+-rw-r--r--  1 asoufian 2024_rabat       57 May 31 17:52 bash_outp
+drwxr-xr-x  2 asoufian 2024_rabat     4096 May 31 18:18 cmds
+drwxr-xr-x  2 asoufian 2024_rabat     4096 May 31 18:19 costum_utils
+-rw-r--r--  1 asoufian 2024_rabat     4877 May 29 14:30 execve_fail
+drwxr-xr-x  8 asoufian 2024_rabat     4096 May 30 19:24 .git
+-rw-r--r--  1 asoufian 2024_rabat 81562859 May 30 17:39 heredoc_output
+-rw-r--r--  1 asoufian 2024_rabat        2 May 31 14:51 input_test
+-rw-r--r--  1 asoufian 2024_rabat     1385 May 31 14:17 Makefile
+-rw-r--r--  1 asoufian 2024_rabat       56 May 31 17:52 mini_outp
+-rwxr-xr-x  1 asoufian 2024_rabat   118904 May 31 18:19 minishell
+-rw-r--r--  1 asoufian 2024_rabat     6375 May 31 15:06 minishell.c
+-rw-r--r--  1 asoufian 2024_rabat     3933 May 31 14:45 minishell.h
+-rw-r--r--  1 asoufian 2024_rabat    12256 May 31 18:18 minishell.o
+drwxr-xr-x  4 asoufian 2024_rabat     4096 May 31 13:17 old
+-rw-r--r--  1 asoufian 2024_rabat     1820 May 31 18:24 out
+-rw-r--r--  1 asoufian 2024_rabat        0 May 31 18:25 out0
+-rw-r--r--  1 asoufian 2024_rabat     7191 May 30 19:22 parsing.c
+-rw-r--r--  1 asoufian 2024_rabat    18784 May 31 18:18 parsing.o
+drwxr-xr-x  6 asoufian 2024_rabat     4096 May 31 15:08 script
+-rw-r--r--  1 asoufian 2024_rabat     9663 May 31 18:23 TO_DO
+drwxr-xr-x  2 asoufian 2024_rabat     4096 May 31 18:18 utils
+drwxr-xr-x  2 asoufian 2024_rabat       27 May  9 11:19 .vscode

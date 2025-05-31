@@ -44,14 +44,29 @@ int main(int ac, char **av, char **envp)
     {
 		sigaction(SIGQUIT, &(data.C_slash), NULL);
         sigaction(SIGINT, &(data.C_c), NULL);
-		data.p_rdl = readline("minishell : ");
+        if (isatty(STDIN_FILENO))
+		    data.p_rdl = readline("minishell : ");
+	    else
+	    {
+		    char *line;
+		    line = get_next_line(STDIN_FILENO);
+            if (line && line[ft_strlen(line) - 1] == '\n')
+                line[ft_strlen(line) - 1] = 0;
+		    data.p_rdl = line;
+		  //  free(line);
+          //  printf("readline_out: %s\n", data.p_rdl);
+	    }
         if (f_sig)
         {
             data.status = 130;
             f_sig = 0;
         }
 		if (!data.p_rdl) // C^d
-			return (ft_putstr("exit\n", 1), free_all(data.envp), free(data.p_rdl), rl_clear_history(), free_heredoc(&data, 1), data.status);
+        {
+            if (isatty(STDIN_FILENO))
+                ft_putstr("exit\n", 1); 
+			return (free_all(data.envp), free(data.p_rdl), rl_clear_history(), free_heredoc(&data, 1), data.status);
+        }
         if (data.p_rdl[0])
             add_history(data.p_rdl);
         if (data.p_rdl[0] && check_syntax(data.p_rdl))
@@ -76,6 +91,16 @@ int main(int ac, char **av, char **envp)
                 data.envp = parsing(&data);
             if (reset_std_in_out_err(&data)) // remember to close fd{0,1,2} 
                 return (free_all(data.envp), 1);
+            /*
+            int fd_tty;
+            errno = 0;
+            fd_tty = open("/dev/tty", O_RDWR);
+            if (fd_tty == -1)
+                perror("open error ");
+            ft_putstr("something to do\n", fd_tty);
+            printf("ttyslot ret: %d\n", ttyslot());
+            printf("ttyname: %s\n", ttyname(fd_tty));
+            (void)fd_tty;*/
         }
         free(data.p_rdl);
     }

@@ -108,5 +108,7 @@ void     ft_setup(t_data *data, char **envp);
 int     here_doc_fork(char **p, unsigned char *status, t_data *data);
 void    free_heredoc(t_data *data, int m_unlink);
 int     check_syntax(char *p);
+char	*get_next_line(int fd);
+char	*ft_substr_c(char *s, unsigned int start, size_t len);;
 
 #endif

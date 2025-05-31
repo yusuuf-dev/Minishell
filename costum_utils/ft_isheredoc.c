@@ -6,6 +6,8 @@ static void c_putstr_fd(int fd, char *s)
 {
 	size_t i = 0;
 
+	if (!s)
+		return;
 	while (s[i])
 	{
 		write(fd, &s[i], 1);
@@ -52,7 +54,7 @@ static char *c_expand(char *str, char **envp, unsigned char *status)
 		{
 			i++;
 			len = 0;
-			while (str[i + len] && ft_isalnum(str[i + 1]))
+			while (str[i + len] && ft_isalnum(str[i + len]))
 				len++;
 			key = ft_strldup(&str[i], len);
 			var = ft_getenv(key, envp, status);
