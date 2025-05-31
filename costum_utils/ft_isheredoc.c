@@ -87,6 +87,8 @@ static char	*ft_itoa(int n)
 	char	*s = ft_calloc(17);
 	int		i = 15;
 
+	if (!s)
+		exit (-1);
 	if (!n)
 		return (s[0] = '0', s);
 	while (n)
@@ -98,20 +100,42 @@ static char	*ft_itoa(int n)
 	ft_strcpy(s, (s + i + 1));
 	return (s);
 }
-static char *create_file_name(void)
+
+/*
+	checks wether the argument name; which is the name of a file, is already in the linked list of heredooc;
+	meaning it will be used to save the input of another heredoc therefore we need to use another name;
+*/
+static int name_reserved(char *name, t_data *data)
+{
+	t_heredoc	*temp = data->heredooc;
+	if (!temp)
+		return (0);
+	while (temp && temp->next)
+	{
+		if (ft_strcmp(temp->file_name, name))
+			return (1);
+		temp = temp->next;
+	}
+	if (ft_strcmp(temp->file_name, name))
+		return (1);
+	return (0);
+}
+static char *create_file_name(t_data *data)
 {
     char    *og_name = ".tmp.txt";
     char    *counter = NULL;
     char    *name = NULL;
     int     count = 0; // change this to long
     name = ft_strdup(og_name);
-    while (access(name, F_OK) == 0) // change this to long
+    while ((access(name, F_OK) == 0) || ((name_reserved(name, data)) == 1)) // change this to long
     {
         free(name);
         counter = ft_itoa(count);
         name = ft_strjoin(og_name, counter);
         free(counter);
         count++;
+		if (count == 2147483647)
+			return (unlink(name), name);
     }
     return (name);
 }
@@ -130,7 +154,7 @@ int     ft_new_isheredoc(char *p, char **envp, unsigned char *status, t_data *da
 	dl = heredoc_old_delimiter(p, &isquote, &index_ret);
 	if (!dl)
 		return(-1); // failed malloc protection
-	fd = open(file_name, O_RDWR | O_CREAT | O_TRUNC , 0666); // change perms
+	fd = open(file_name, O_RDWR | O_CREAT | O_TRUNC , 0600); // change perms
 	if (fd < 0)
 		return (perror(""), 0);
 	while (1)
@@ -176,7 +200,7 @@ int create_file_heredoc(char *p, t_data *data)
 {
     t_heredoc *new = ft_calloc(sizeof(t_heredoc));
     t_heredoc   *temp = data->heredooc;
-    new->file_name = create_file_name();
+    new->file_name = create_file_name(data);
     int     ret = 0;
 
     (void)p;
@@ -207,6 +231,11 @@ static int found_here_doc(char **p, t_data *data)
     int     child_status;
 	while ((s)[i])
 	{
+		if (found > HEREDOC_MAX)
+		{
+			ft_putstr("minishell: maximum here-document count exceeded\n", 2);
+			exit(2); // free allocated memory
+		}
 		if ((s)[i] == '\'' && !f_d)
 			f_s = !f_s;
         if ((s)[i] == '\"' && !f_s)
@@ -285,120 +314,58 @@ int here_doc_fork(char **p, unsigned char *status, t_data *data) // add is_pipe 
     }
     return (0);
 }
+/*int     ft_isheredoc(char *p, char **envp, unsigned char *status, t_data *data)
+{
+    char    *tmp;
+    char    *dl;
+	int		fd;
+	int		isquote = 0;
+//	int 	temp_fd_1 = -1;
 
-// #include "../minishell.h"
-
-// static void c_putstr_fd(int fd, char *s)
-// {
-// 	size_t i = 0;
-
-// 	while (s[i])
-// 	{
-// 		write(fd, &s[i], 1);
-// 		i++;
-// 	}
-// 	write(fd, "\n", 1);
-// }
-
-// static char *c_strjoinf(char *s1, char c)
-// {
-// 	size_t i;
-// 	size_t len;
-// 	char *ptr;
-
-// 	len = ft_strlen(s1);
-// 	ptr = malloc((len + 2) * sizeof(char));
-// 	if (!ptr)
-// 		return (NULL);
-// 	i = 0;
-// 	while (i < len)
-// 	{
-// 		ptr[i] = s1[i];
-// 		i++;
-// 	}
-// 	ptr[i++] = c;
-// 	ptr[i] = 0;
-// 	free(s1);
-// 	return (ptr);
-// }
-
-// static char *c_expand(char *str, char **envp, unsigned char *status)
-// {
-// 	size_t i = 0;
-// 	size_t len = 0;
-// 	char *ptr = NULL;
-// 	char *key = NULL;
-// 	char *var = NULL;
-
-// 	if (!str)
-// 		return (NULL);
-// 	while (str[i])
-// 	{
-// 		if (str[i] == '$' && (str[i + 1] == '_' || ft_isalpha(str[i + 1])))
-// 		{
-// 			i++;
-// 			len = 0;
-// 			while (str[i + len] && ft_isalnum(str[i + 1]))
-// 				len++;
-// 			key = ft_strldup(&str[i], len);
-// 			var = ft_getenv(key, envp, status);
-// 			if (var)
-// 				ptr = ft_strjoinf(ptr, var);
-// 			free(key);
-// 			i += len;
-// 		}
-// 		else
-// 		{
-// 			ptr = c_strjoinf(ptr, str[i]);
-// 			i++;
-// 		}
-// 	}
-// 	free(str);
-// 	return (ptr);
-// }
-
-
-
-// int     ft_isheredoc(char *p, char **envp, unsigned char *status)
-// {
-//     char    *tmp;
-//     char    *dl;
-// 	int		fd;
-// 	int		isquote = 0;
-// 	int		i = 2;
-
-// 	while (p[i] == ' ')
-// 		i++;
-// 	if (!p[i] || p[i] == ' ' || p[i] == '<' || p[i] == '>')
-// 		{return(ft_putstr("minishell: syntax error\n", 2), -1);}
-// 		dl = heredoc_delimiter(p,&isquote);
-// 		if (!dl)
-// 			return(-1); // failed malloc protection
-// 		fd = open("/tmp/tmp.txt", O_RDWR | O_CREAT | O_TRUNC , 0777);
-// 		if (fd < 0)
-// 			return (perror(""), 0);
-// 		while (1)
-// 		{
-// 			tmp = readline("> ");
-// 			//if (!tmp)
-// 			//	break;
-// 			if (!tmp || ft_strcmp(tmp,dl))
-// 			{
-// 				free(tmp);
-// 				break;
-// 			}
-// 			if (!isquote && tmp[0])
-// 				tmp = c_expand(tmp, envp, status);
-// 			c_putstr_fd(fd,tmp);
-// 			free(tmp);
-// 		}
-// 		free(dl);
-// 		close(fd);
-// 		fd = open("/tmp/tmp.txt", O_RDWR, 0777);
-// 		if (fd < 0)
-// 			return (perror(""), errno);
-// 		if (dup2(fd, 0) < 0)
-// 			return (close(fd), perror(""), errno);
-// 		close(fd);
-// 		return(0);
-// }
+	(void)data;
+	if (!(p[2]) && (p[2] == '<' || p[2] == '>'))
+		{return(ft_putstr("minishell: syntax error near unexpected token `newline'\n", 2), -1);}
+		dl = heredoc_delimiter(p,&isquote);
+		if (!dl)
+			return(-1); // failed malloc protection
+		// I might need to save STDIN, STDOUT before I execute readline, and later restart them.
+		fd = open("/tmp/tmp.txt", O_RDWR | O_CREAT | O_TRUNC , 0777); // change perms
+		if (fd < 0)
+			return (perror(""), 0);
+		if (!isatty(0))
+		{
+			dup2(data->fd0, 0);
+		}
+		if (!isatty(1))
+		{
+			temp_fd_1 = dup(1);
+			dup2(data->fd1, 1);
+		}
+		while (1)
+		{
+			tmp = readline("> ");
+			if (!tmp || ft_strcmp(tmp, dl))
+			{
+				free(tmp);
+				break;
+			}
+			if (!isquote && tmp[0])
+				tmp = c_expand(tmp, envp, status);
+			c_putstr_fd(fd, tmp);
+			free(tmp);
+		}
+		free(dl);
+		close(fd);
+		fd = open("/tmp/tmp.txt", O_RDWR, 0777);
+		if (fd < 0)
+			return (perror(""), errno);
+		if (dup2(fd, 0) < 0)
+			{return (close(fd), perror(""), errno);}
+		if (temp_fd_1 != -1 && dup2(temp_fd_1, 1) < 0)
+		{
+			return (close(temp_fd_1), perror(""), errno);
+		}
+		close(fd);
+		// unlink
+		return(0);
+}*/
