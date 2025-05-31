@@ -14,6 +14,8 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
+#define HEREDOC_MAX 16
+
 typedef struct s_lstm
 {
     void            *p;
