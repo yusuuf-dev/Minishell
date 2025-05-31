@@ -52,14 +52,14 @@ static char *c_expand(char *str, char **envp, unsigned char *status)
 		{
 			i++;
 			len = 0;
-			while (str[i + len] && ft_isalnum(str[i + 1]))
+			while (str[i + len] && ft_isalnum(str[i + len]))
 				len++;
-			key = ft_strldup(&str[i], len - 1);
+			key = ft_strldup(&str[i], len);
 			var = ft_getenv(key, envp, status);
 			if (var)
 				ptr = ft_strjoinf(ptr,var);
 			free(key);
-			i += len - 1;
+			i += len;
 		}
 		else
 		{
