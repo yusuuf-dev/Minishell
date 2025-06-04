@@ -271,7 +271,21 @@ redirection :
                      STD_OUT: 82  STD_ERR: 35  EXIT_CODE: 46  
                          TOTAL FAILED AND PASSED CASES:
                                      ❌ 163   
-                                     ✅ 2660   
+                                     ✅ 2660  
+                                    ❌ 203   
+                                     ✅ 262
+
+🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁
+🏁                                    RESULT                                    🏁
+🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁
+             TOTAL TEST COUNT: 941  TESTS PASSED: 858  LEAKING: 0 
+                     STD_OUT: 62  STD_ERR: 22  EXIT_CODE: 27  
+                         TOTAL FAILED AND PASSED CASES:
+                                     ❌ 111   
+                                     ✅ 2712   
+
+this doesn.t work correctely >> ls|cat Makefile|cat<<asd>out
+but this works               >> ls|cat Makefile|cat<<asd >out
 
 
 

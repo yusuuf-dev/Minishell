@@ -37,6 +37,7 @@ int main(int ac, char **av, char **envp)
 
 	(void)av; // maybe we can remove these two from the argument since we don't use them, the problem is wether the envp will work or not;
 	(void)ac; //
+  //  __environ;
     ft_setup(&data, envp);
     if (assign_std_in_out_err(&data))
         {return (free_all(envp), errno);}
@@ -53,18 +54,16 @@ int main(int ac, char **av, char **envp)
             if (line && line[ft_strlen(line) - 1] == '\n')
                 line[ft_strlen(line) - 1] = 0;
 		    data.p_rdl = line;
-		  //  free(line);
-          //  printf("readline_out: %s\n", data.p_rdl);
 	    }
         if (f_sig)
         {
             data.status = 130;
-            f_sig = 0;
-        }
+            f_sig = 0; // could this cause a data race ? , what if we sent SIGINT just as the proram was about to change the f_sig value ? I'm guessing it should work 
+        }               // fine since I used an atomic var 
 		if (!data.p_rdl) // C^d
         {
             if (isatty(STDIN_FILENO))
-                ft_putstr("exit\n", 1); 
+                ft_putstr("exit\n", 1);
 			return (free_all(data.envp), free(data.p_rdl), rl_clear_history(), free_heredoc(&data, 1), data.status);
         }
         if (data.p_rdl[0])

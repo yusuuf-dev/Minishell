@@ -8,7 +8,7 @@
 
 int main(void)
 {
-	int fd = open("../file.txt", O_RDONLY);
+	int fd = open("file.txt", O_RDONLY);
 
 	if (fd == -1)
 		return ("Error while opening the file\n", -1);
@@ -24,13 +24,15 @@ int main(void)
 		int read_out = read(fd, s, 10);
 		s[read_out] = 0;
 		printf("the read from the child: %s\n", s);
+		sleep (30);
 		return (0);
 	}
 	else // parent
 	{
+		printf("child_pid: %d, parent_pid: %d\n", cpid, getpid());
 		wait(NULL);
 		int read_out = read(fd, p, 10);
-		p[read_out] = 0;
+		p[read_out] = '\0';
 		printf("the read from the parent: %s\n", p);
 	}
 	return (0);

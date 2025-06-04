@@ -1,6 +1,6 @@
 #include "../minishell.h"
 # ifndef BUFFER_SIZE
-#  define BUFFER_SIZE 5
+#  define BUFFER_SIZE 1
 # endif 
 static void	free_null(char **p)
 {
@@ -46,6 +46,7 @@ static char	*return_line_update_stash(char *o_stash, char **stash)
 char	*get_next_line(int fd)
 {
 	static char	*stash;
+	//char *stash = NULL;
 	ssize_t		rd;
 	char		*o_stash;
 

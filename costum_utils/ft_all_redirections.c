@@ -44,7 +44,6 @@ static char	*ft_strr_isspace(char *s, size_t n) // this is like strchr, but look
 	}
 	return (NULL);
 }
-
 static char	*ft_str_isspace(char *s)
 {
 	size_t	i = 0;
@@ -57,6 +56,29 @@ static char	*ft_str_isspace(char *s)
 		i++;
 	}
 	return (NULL);
+}
+static void move_remaining(char *s, int src, int dst)
+{
+	while (s[src])
+	{
+		s[dst] = s[src];
+		src++;
+		dst++;
+	}
+	s[dst] = 0;
+}
+static  char    *c_strpbrk(char *s)
+{
+    size_t  i;
+
+    i =  0;
+    while(s[i])
+    {
+        if (!ft_isalnum(s[i]) && s[i] != '_') 
+            return (&s[i]);
+        i++;
+    }
+    return (&s[i]);
 }
 static void ft_remove_extra_junk(char *dest, char *src, size_t n)
 {
@@ -90,51 +112,27 @@ static void ft_remove_extra_junk(char *dest, char *src, size_t n)
 		dest[0] = 0;
 
 }
-static void move_remaining(char *s, int src, int dst)
+static char *parsing_input_fd(char *s, size_t i, int *fd, int *dest)
 {
-	while (s[src])
-	{
-		s[dst] = s[src];
-		src++;
-		dst++;
-	}
-	s[dst] = 0;
-}
+	char			*fd_input;
+	unsigned char	status;
 
-
-static  char    *c_strpbrk(char *s)
-{
-    size_t  i;
-
-    i =  0;
-    while(s[i])
-    {
-        if (!ft_isalnum(s[i]) && s[i] != '_') 
-            return (&s[i]);
-        i++;
-    }
-    return (&s[i]);
-}
-
-static char *parsing_input_fd(char *s, size_t *i, int *fd, int *dest, unsigned char *status)
-{
-	char	*fd_input = NULL;
-
-	if (ft_strr_isspace(s, *i))
-		fd_input = ft_strldup((ft_strr_isspace(s, *i) + 1), &s[*i] - (ft_strr_isspace(s, *i) + 1));
-	else if (*i > 0)
-		fd_input = ft_strldup(s, *i);
+	fd_input = NULL;
+	status = 0;
+	if (ft_strr_isspace(s, i))
+		fd_input = ft_strldup((ft_strr_isspace(s, i) + 1), &s[i] - (ft_strr_isspace(s, i) + 1));
+	else if (i > 0)
+		fd_input = ft_strldup(s, i);
 	else
 		fd_input = NULL;
 	if (fd_input && fd_input[0] && fd_input[0] != '>' && fd_input[0] != '<')
 	{
-		*fd = costum_atoi(fd_input, status, *fd); // handle INT_MAX and if the fd contains a char
-		if (*status != 2)
+		*fd = costum_atoi(fd_input, &status, *fd); // handle INT_MAX and if the fd contains a char
+		if (status != 2)
 			*dest = 0; // this is in case the redi is the first thing in the command but we have a valid fd and we want to remove it;
-		if (ft_strr_isspace(s, *i) && *status != 2)
-			*dest = ((ft_strr_isspace(s, *i) + 1) - s);
-		*status = 0; // reset the status, this is critical, cuz if we have more than one redirection in a cmd and one of them is invalid, the nextone
-	}					// will also be Invalid no matter what cuz we didn't reset *status flag to 0.	
+		if (ft_strr_isspace(s, i) && status != 2)
+			*dest = ((ft_strr_isspace(s, i) + 1) - s);
+	}
 	return (fd_input);
 }
 
@@ -239,6 +237,7 @@ static int	open_file_redi(char *s, int *fd, int mode, int *end, char **envp, cha
 	int		begin = 0;
 	int		ret = 0;
 	int		old_i = s - (*full_str);
+	
 	if (s && s[begin] == '>')
 	{
 		append = 1;
@@ -246,9 +245,6 @@ static int	open_file_redi(char *s, int *fd, int mode, int *end, char **envp, cha
 	}
 	while (s[begin] == ' ' || s[begin] == '\t' || s[begin] == '\v' || s[begin] == '\f' || s[begin] == '\r')
 		begin += 1;
-	// need to check if the file name is valid or not, also quotation make a difference !!
-	if (!(s[begin]) || s[begin] == '\n' || (s[begin] == '>' && !append) || (s[begin] == '>' && s[begin] == '>' && append) || s[begin] == '<') // need to check for whitespaces too maybe ?
-		return(ft_putstr("minishell: syntax error near unexpected token `newline'\n", 2), 1); // we don't need this anymore since we have syntax_check function
 	*end = expand_rm_quotes(&s[begin], envp, full_str, status);
 	if (*end == -1)
 		return (1);
@@ -258,11 +254,6 @@ static int	open_file_redi(char *s, int *fd, int mode, int *end, char **envp, cha
 	else
 		s = ft_strdup(&s[begin]);
 	*end += begin;
-	begin = 0;
-	while (s[begin] && (s[begin] == ' ' || s[begin] == '\t' || s[begin] == '\v' || s[begin] == '\f' || s[begin] == '\r'))
-		begin += 1;
-	if (!(s[begin]) || s[begin] == '\n' || s[begin] == ' ') // whitespaces instead of space ?
-		return(ft_putstr("minishell: syntax error near unexpected token `newline'\n", 2), 1); // we don't need this either we have syntax_check for this
 	if (open_assign_fd(s, fd, mode, append, &ret))
 		return (free(s), ret);
 	free(s);
@@ -278,17 +269,15 @@ static int apply_redirection(size_t *i, unsigned char *status, int fd, char **en
 	char	*temp; // this is done cuz perror might be buffering the strings;
 
     dest = *i;
-	fd_input = parsing_input_fd((*full_str), i, &fd, &dest, status);
+	fd_input = parsing_input_fd((*full_str), *i, &fd, &dest);//, status);
 	if ((*full_str)[*i] == '>')
 		f_mode = open_file_redi(&(*full_str)[*i + 1], &fd, 1, &end_file_name, envp, full_str, status);
 	else
 		f_mode = open_file_redi(&(*full_str)[*i + 1], &fd, 0, &end_file_name, envp, full_str, status);
 	if (f_mode == 1)
 		return (free(fd_input), *status = 1, 1);
-	else if (f_mode == 2)
+	if (f_mode == 2)
 		return(temp = ft_strjoin("minishell: ", fd_input), temp = ft_strjoinf(temp, strerror(errno)) , ft_putstr(temp, 2), free(fd_input), free(temp), *status = 1, 2);
-		//return(temp = ft_strjoin("minishell: ", fd_input), ft_strjoinf(temp, strerror(errno)) ,perror(temp), fflush(stderr), free(fd_input), free(temp), *status = 1, 2);
-		//return(ft_putstr("minishell: ", 2), ft_putstr(fd_input, 2), ft_putstr(": ", 2), perror(""), free(fd_input), *status = 1, 2);
 	free(fd_input);
 	if (end_file_name) // this indicates wether the file name is the last thing in the string or not
 		*i += end_file_name;
@@ -324,7 +313,7 @@ static void remove_heredoc(char *s)
         q = 0;
         i++;
     }
-	while (s[i])
+	while (s[i]) // ft_strcpy
     {
         s[f + j] = s[i];
         j++;
