@@ -1,6 +1,7 @@
 #ifndef MINISHELL_H
 #define MINISHELL_H
 
+#define BUFFER_SIZE 1
 #define HEREDOC_MAX 16
 #include <readline/readline.h>
 #include <readline/history.h>
@@ -96,7 +97,8 @@ char    *heredoc_old_delimiter(char *s ,int *isquote, int *index_ret);
 int	    ft_isalpha(int c);
 int	    ft_isalnum(int c);
 int	    c_atoi(char *s, long *rslt);
-int	    parse_redirection(char **full_str, unsigned char *status, char **envp, t_data *data);
+//int	parse_redirection(char **full_str, unsigned char *status, char **envp, t_data *data);
+int	    parse_redirection(char **full_str, t_data *data);
 int     costum_atoi(char *nptr, unsigned char *status, int fd);
 //int     ft_pipes(char **piped_cmds, char **p, unsigned char *status, int *is_a_pipe, t_data *data);
 int     ft_pipes(t_data *data);

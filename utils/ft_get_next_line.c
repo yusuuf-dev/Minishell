@@ -1,7 +1,4 @@
 #include "../minishell.h"
-# ifndef BUFFER_SIZE
-#  define BUFFER_SIZE 1
-# endif 
 static void	free_null(char **p)
 {
 	if (p && *p)

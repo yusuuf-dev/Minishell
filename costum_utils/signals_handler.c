@@ -5,6 +5,7 @@ volatile sig_atomic_t f_sig = 0;
 void    signal_handler(int signum)
 {
 	(void)signum;
+    static int f_sig;
   //  status = 130;
   //  write(1, "here\n", 5);
     if (f_sig != 2)

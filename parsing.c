@@ -175,7 +175,8 @@ char	**parsing(t_data *data)
   //  if (found_q(data->p_rdl) == -1) // check if the quotes are closed;
    //     {return (ft_putstr("Error unclosed quotes\n", 2), data->envp);}
 	//ft_space(data->p_rdl);
-	if(parse_redirection(&(data->p_rdl), &(data->status), data->envp, data)) // this also removes spaces;
+	//if(parse_redirection(&(data->p_rdl), &(data->status), data->envp, data)) // this also removes spaces;
+	if(parse_redirection(&(data->p_rdl), data))
 	 	return (data->envp);
 	env = ft_getenv("PATH", data->envp, &(data->status));
 	if (env)

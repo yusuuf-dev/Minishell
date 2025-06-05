@@ -249,7 +249,7 @@ try spam-send SIGQUIT to minishell and see what happens.
 
 
 
-
+handle SIGINT in heredoc, cancel the promot by setting a condition check for errno after the readline (it returns an errno);
 
 96 in 42 minishell tester
 151 error the redirection doesn't get applied:
