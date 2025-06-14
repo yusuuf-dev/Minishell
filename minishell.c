@@ -1,4 +1,7 @@
 #include "minishell.h"
+#include <stdio.h>
+#include <readline/readline.h>
+#include <readline/history.h>
 
 extern volatile sig_atomic_t f_sig;
 static int     exit_minishell(char **envp, char *p, int status, char *msg);

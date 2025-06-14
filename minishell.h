@@ -1,12 +1,12 @@
 #ifndef MINISHELL_H
 #define MINISHELL_H
 
+#include <stdio.h>
 #include <readline/readline.h>
 #include <readline/history.h>
 #include <signal.h>
 #include <unistd.h>
 #include <stdlib.h>
-#include <stdio.h>
 #include <string.h>
 #include <sys/wait.h>
 #include <sys/types.h>
@@ -14,6 +14,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
+#define BUFFER_SIZE 1
 #define HEREDOC_MAX 16
 
 typedef struct s_lstm
@@ -91,7 +92,7 @@ char    *heredoc_delimiter(char *s ,int *isquote);
 int	    ft_isalpha(int c);
 int	    ft_isalnum(int c);
 int	    c_atoi(char *s, long *rslt);
-int	    parse_redirection(char **full_str, unsigned char *status, char **envp, t_data *data);
+int	    parse_redirection(char **full_str, t_data *data);
 int     costum_atoi(char *nptr, unsigned char *status, int fd);
 int     ft_pipes(t_data *data);
 void    ft_setup(t_data *data, char **envp);
@@ -105,5 +106,7 @@ void    free_heredoc(t_data *data, int m_unlink);
 int     here_doc_fork(char **p, unsigned char *status, t_data *data);
 char    *heredoc_old_delimiter(char *s ,int *isquote, int *index_ret);
 int     check_syntax(char *p);
+char	*get_next_line(int fd);
+char	*ft_substr_c(char *s, unsigned int start, size_t len);
 
 #endif

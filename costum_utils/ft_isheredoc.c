@@ -6,6 +6,8 @@ static void c_putstr_fd(int fd, char *s)
 {
 	size_t i = 0;
 
+	if (!s)
+		return;
 	while (s[i])
 	{
 		write(fd, &s[i], 1);
@@ -159,7 +161,17 @@ int     ft_new_isheredoc(char *p, char **envp, unsigned char *status, t_data *da
 		return (perror(""), 0);
 	while (1)
 	{
-		tmp = readline("> ");
+		if (isatty(STDIN_FILENO))
+		    tmp = readline("> ");
+	    else
+	    {
+		    char *line;
+		    line = get_next_line(STDIN_FILENO);
+            if (line && line[ft_strlen(line) - 1] == '\n')
+                line[ft_strlen(line) - 1] = 0;
+		    tmp = line;
+	    }
+		//tmp = readline("> ");
 		if (!tmp || ft_strcmp(tmp, dl))
 		{
 			free(tmp);
@@ -170,6 +182,7 @@ int     ft_new_isheredoc(char *p, char **envp, unsigned char *status, t_data *da
 		c_putstr_fd(fd, tmp);
 		free(tmp);
 	}
+//	sleep(30);
 	free(dl);
 	close(fd);
 	return(index_ret);
@@ -297,6 +310,7 @@ static int found_here_doc(char **p, t_data *data)
             data->heredooc = NULL;
             free(*p);
             *p = NULL;
+		//	sleep(30);
             return (0);
         }
     }

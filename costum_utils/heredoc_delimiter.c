@@ -4,13 +4,11 @@ char    *heredoc_old_delimiter(char *s ,int *isquote, int *index_ret)
 {
     size_t i = 0;
     size_t st = 0;
-    size_t f = 0;
     size_t j = 0;
     char q = 0;
     char *delimiter;
 
     i = 2;
-    f = 0;
     while (s[i] == ' ')
         i++;
     st = i;
