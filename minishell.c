@@ -32,7 +32,6 @@ static int reset_std_in_out_err(t_data *data)
 
 int main(int ac, char **av, char **envp)
 {
-    int i;
     t_data data;
 
 	(void)av; // maybe we can remove these two from the argument since we don't use them, the problem is wether the envp will work or not;
@@ -74,9 +73,7 @@ int main(int ac, char **av, char **envp)
             return (errno);
         else if (data.p_rdl && data.p_rdl[0])
         {
-       //     add_history(data.p_rdl);
-            i = found_pipe(data.p_rdl);
-            if (i == 1)
+            if (found_pipe(data.p_rdl))
             {
                 data.segments = c_split(data.p_rdl, '|', data.envp, &(data.status));
                 if (!data.segments)
@@ -84,8 +81,6 @@ int main(int ac, char **av, char **envp)
                 if (ft_pipes(&data))
                     return (errno);
             }
-            else if (i == -1)
-                return(exit_minishell(data.envp, data.p_rdl, 1, "failed malloc\n"));//protect malloc
             if (data.p_rdl)  // not great, this is done for when the piping is done so that the program wouldn't check for cmds;
                 data.envp = parsing(&data);
             if (reset_std_in_out_err(&data)) // remember to close fd{0,1,2} 
