@@ -42,22 +42,13 @@ char    *rm_quotes_expand(char *str, char **envp, unsigned char *status)
 			q = 0;
 			i++;
 		}
-		/*else if (str[i] == '~' && q != '\'')
-		{
-			var = ft_getenv("HOME", envp, status);
-			if (var)
-				ptr = ft_strjoinf(ptr,var);
-			i += ft_strlen(var);
-			free(var);
-		}*/
 		else if (!q && str[i] == '$' && (str[i + 1] == '\'' || str[i + 1] == '\"'))
 			i++;
 		else if (str[i] == '$' && q != '\'' && str[i + 1] == '?')
 		{
 			var = ft_getenv("?", envp, status);
 			ptr = ft_strjoinf(ptr,var);
-			//i += ft_strlen(var) + 1;
-			i += 2; // will this work fine ?, I think it should since we don't change the str itself.
+			i += 2;
 			free(var);
 		}
 		else if (str[i] == '$' && q != '\'' && (ft_isalpha(str[i + 1]) || str[i + 1] == '_'))
@@ -79,9 +70,45 @@ char    *rm_quotes_expand(char *str, char **envp, unsigned char *status)
 			i++;
 		}
 	}
-	free(str);
+	//free(str);
 	return(ptr);
 }
+
+// char    *rm_quotes_expand(char *str, char **envp, unsigned char *status)
+// {
+// 	char	q;
+// 	char 	key;
+// 	char 	var;
+// 	char	ptr;
+// 	size_t	len;
+// 	size_t	i;
+
+// 	i = 0;
+// 	q = 0;
+// 	while (str[i])
+// 	{
+// 		if (!q && (str[i] == '\'' || str[i] == '\"'))
+// 			q = str[i];
+// 		else if (str[i] == '$' && q != '\'' && (ft_isalpha(str[i + 1]) || str[i + 1] == '_'))
+// 		{
+// 			i++;
+// 			len = 0;
+// 			while (ft_isalnum(str[i + len]))
+// 				len++;
+// 			key = ft_strldup(&str[i],len);
+// 			var = ft_getenv(key,envp,status);
+// 			if (var)
+// 				ptr = ft_strjoinf(ptr,var);
+// 			free(key);
+// 			i += len;
+// 		}
+// 		else
+// 			ptr = c_strjoinf(ptr.str[i]);
+// 		i++;
+// 	}
+// 	free(str);
+// 	return (ptr);
+// }
 
 // #include "../minishell.h"
 

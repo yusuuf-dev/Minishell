@@ -34,6 +34,7 @@ typedef struct heredooc
 typedef struct s_data
 {
     char              *p_rdl;
+    char              *dup_rdl;
     char              **rdl_args;
     char              **envp;
     char              **env_paths;

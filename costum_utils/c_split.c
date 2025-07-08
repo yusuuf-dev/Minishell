@@ -93,20 +93,26 @@ static char		**core_function(char *str, char c, size_t i, size_t j)
 char	**c_split(char *str, char c, char **envp, unsigned char *func_status)
 {
 	char	**ptr;
-	size_t	i;
+	// size_t	i;
 
+	// ptr = core_function(str,c,0,0);
+	// if (!ptr)
+	// 	return (NULL);
+	// if ( c != '|')
+	// {
+	// 	i = 0;
+	// 	while (ptr[i])
+	// 	{
+	// 		ptr[i] = rm_quotes_expand(ptr[i],envp,func_status);
+	// 		i++;
+ 	// 	}
+	// }
+	str = rm_quotes_expand(str,envp,func_status);
+	if (!str)
+		return (NULL);
 	ptr = core_function(str,c,0,0);
 	if (!ptr)
 		return (NULL);
-	if ( c != '|')
-	{
-		i = 0;
-		while (ptr[i])
-		{
-			ptr[i] = rm_quotes_expand(ptr[i],envp,func_status);
-			i++;
- 		}
-	}
 	return (ptr);
 }
 
