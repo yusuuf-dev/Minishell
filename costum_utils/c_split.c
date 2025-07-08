@@ -116,6 +116,23 @@ char	**c_split(char *str, char c, char **envp, unsigned char *func_status)
 	return (ptr);
 }
 
+char	**c_split_02(char *str, char c, char **envp, unsigned char *func_status)
+{
+	char	**ptr;
+	size_t	i;
+
+	ptr = core_function(str,c,0,0);
+	if (!ptr)
+		return (NULL);
+	i = 0;
+	while (ptr[i])
+	{
+		ptr[i] = rm_quotes_expand(ptr[i],envp,func_status);
+		i++;
+ 	}
+	return (ptr);
+}
+
 
 // char	**c_split(char *str, char c, char **envp, unsigned char *func_status)
 // {

@@ -183,6 +183,7 @@ char	**parsing(t_data *data)
 		data->env_paths = ft_split(env, ':');
 	else
 		data->env_paths = NULL; // In case we unset the PATH later, the pointer will be pointing to a non-valid memory (dangling pointer)
+	data->dup_rdl = ft_strdup(data->p_rdl);
     data->rdl_args = c_split(data->p_rdl,' ', data->envp, &(data->status));
 	
 	if (executable(data)) // next 
@@ -250,7 +251,10 @@ static int	ft_built_in_cmd(t_data *data)
 	else if (i == 11)
 		data->status = ft_cd(data->rdl_args, &(data->envp));
 	else if (i == 12)
-		data->envp = ft_export(data->rdl_args, data->envp, &(data->status));
+	{
+		data->envp = ft_new_export(data);
+		//data->envp = ft_export(data->rdl_args, data->envp, &(data->status));
+	}
 	else if (i == 13)
 		data->status = ft_echo(data->rdl_args);
 	else if (i == 14)

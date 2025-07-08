@@ -204,3 +204,32 @@ char	**ft_export(char **argv, char **envp, unsigned char *status)
 	}
 	return (envp);
 }
+
+char **ft_new_export(t_data *data)
+{
+	size_t	ar = 1;
+
+	data->rdl_args = c_split_02(data->dup_rdl,' ',data->envp,&data->status);
+	if (!data->rdl_args[ar])
+		return (data->status = 0, no_args(data->envp), data->envp);
+	while (data->rdl_args[ar])
+	{ 
+		while (data->rdl_args[ar] && (valid_var(data->rdl_args[ar])))
+		{
+			print_error("minishell: export: `", data->rdl_args[ar], "': not a valid identifier\n");
+			data->status = 1;
+			ar++;
+		}
+		if (data->rdl_args[ar] == NULL)
+			return (data->envp);		
+		if (ft_var_exists(data->rdl_args[ar], data->envp)) // It has to have an equal '=' if we want to change the value of the given variable;
+		{
+			//*status = 0;
+			data->envp = ft_duplicate_add_s(data->envp, data->rdl_args[ar]); // copying the old variables and making space for the new one;
+			if (!data->envp) ///////////////// CHECK FOR OTHER MALLOCS !!!!!!!!!!!!!!!
+				return (data->status = -1, NULL);
+		}
+		ar++;
+	}
+	return (data->envp);
+}

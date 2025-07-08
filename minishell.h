@@ -69,6 +69,7 @@ int     ft_echo(char **p);
 int     ft_pwd(char	**argv, char **envp);
 int     ft_cd(char **argv, char ***envp);
 char	**ft_export(char **argv, char **envp, unsigned char *status);
+char    **ft_new_export(t_data *data); // new export just to parse only data i didn't change original one because we call other place ft_export to chane vars
 char	**ft_unset(char **argv, char **envp, unsigned char *status);
 int     ft_env(char **argv, char **envp, char **envp_paths);
 int	    ft_exit(char **argv, char **envp, unsigned char *status, int *s_exit);
@@ -109,5 +110,6 @@ char    *heredoc_old_delimiter(char *s ,int *isquote, int *index_ret);
 int     check_syntax(char *p);
 char	*get_next_line(int fd);
 char	*ft_substr_c(char *s, unsigned int start, size_t len);
+char	**c_split_02(char *str, char c, char **envp, unsigned char *func_status);
 
 #endif
