@@ -64,7 +64,7 @@ static size_t	skip_quotes(char *str, char c, size_t i)
 	return (i);	
 }
 
-static char		**core_function(char *str, char c, size_t i, size_t j)
+static char		**core_function_02(char *str, char c, size_t i, size_t j)
 {
 	char	**ptr;
 	size_t	st;
@@ -90,10 +90,38 @@ static char		**core_function(char *str, char c, size_t i, size_t j)
 	return (ptr);
 }
 
+static char		**core_function(char *str, char c, size_t i, size_t j)
+{
+	char	**ptr;
+	size_t	st;
+	size_t	wd;
+
+	wd = ft_count_wd(str,c);
+	ptr = malloc((wd + 1) * sizeof(char*));
+	if(!ptr)
+		return(NULL);
+	while (str[i] && j < wd)
+	{
+		while (str[i] == c)
+			i++;
+		st = i;
+		i = skip_quotes(str,c,i);
+		ptr[j] = ft_substr(str,st,i);
+		if (!ptr[j])
+			return(free_all(ptr));
+		if(ptr[j])
+			j++;				
+	}
+	ptr[j] = NULL;
+	return (ptr);
+
+
+}
+
 char	**c_split(char *str, char c, char **envp, unsigned char *func_status)
 {
 	char	**ptr;
-	// size_t	i;
+	size_t	i;
 
 	// ptr = core_function(str,c,0,0);
 	// if (!ptr)
@@ -107,12 +135,18 @@ char	**c_split(char *str, char c, char **envp, unsigned char *func_status)
 	// 		i++;
  	// 	}
 	// }
-	str = rm_quotes_expand(str,envp,func_status);
+	str = expand(str,envp,func_status);
 	if (!str)
 		return (NULL);
 	ptr = core_function(str,c,0,0);
 	if (!ptr)
 		return (NULL);
+	i = 0;
+	while (ptr[i])
+	{
+		ptr[i] = rm_quotes(ptr[i]); // check return if NULL becaus ewe did malloc inside this function
+		i++;
+	}
 	return (ptr);
 }
 
@@ -121,7 +155,7 @@ char	**c_split_02(char *str, char c, char **envp, unsigned char *func_status)
 	char	**ptr;
 	size_t	i;
 
-	ptr = core_function(str,c,0,0);
+	ptr = core_function_02(str,c,0,0);
 	if (!ptr)
 		return (NULL);
 	i = 0;

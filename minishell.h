@@ -111,5 +111,6 @@ int     check_syntax(char *p);
 char	*get_next_line(int fd);
 char	*ft_substr_c(char *s, unsigned int start, size_t len);
 char	**c_split_02(char *str, char c, char **envp, unsigned char *func_status);
+char    *expand(char *str, char **envp, unsigned char *status);
 
 #endif
