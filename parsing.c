@@ -146,7 +146,7 @@ static  int executable(t_data *data)
 {
 	int is_a_file = 0;
 
-	if (!data->rdl_args[0])
+	if (!data->rdl_args || !data->rdl_args[0])
 		return (1);
     if (!(ft_strchr(data->rdl_args[0], '/')))
     {    return (0);}

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strldup.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: asoufian <asoufian@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: yoel-you <yoel-you@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/14 09:12:29 by asoufian          #+#    #+#             */
-/*   Updated: 2025/04/14 09:12:41 by asoufian         ###   ########.fr       */
+/*   Updated: 2025/07/09 12:30:14 by yoel-you         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,9 +23,9 @@ char    *ft_strldup(char *s, size_t     n)
                 return (NULL);
         len = ft_strlen(s);
         if (n <= len)
-                p = ft_malloc(n + 1);
+                p = malloc(n + 1);
         else
-                p = ft_malloc(len + 1);
+                p = malloc(len + 1);
         while (s[i] && i < n)
         {
                 p[i] = s[i];

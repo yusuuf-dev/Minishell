@@ -22,7 +22,7 @@ char *rm_quotes(char *str)
 			q = 0;
 		i++;
 	}
-	ptr = ft_malloc((j + 1) * sizeof(char));
+	ptr = malloc((j + 1) * sizeof(char));
 	if (!ptr)
 		return (NULL);
 	i = 0;
