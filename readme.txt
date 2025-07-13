@@ -53,3 +53,23 @@ drwxr-xr-x 2 yoel-you 2024_rabat   4096 Jul  9 17:31 costum_utils
 drwxr-xr-x 2 yoel-you 2024_rabat   4096 Jul  9 16:58 utils
 minishell : "$a"
           ls         -l         : command not found
+
+
+slove this :
+export a="1       '        2  3'"
+		
+		
+minishell : export a="hell'o"
+minishell : echo $a
+Segmentation fault (core dumped)
+
+13/07/2025
+
+fix echo $jjjj test fixed (done)
+
+jjjj dosn't exist
+
+
+fix this : fixed (done)
+minishell : echo '$jjjj         heloo'"$dsfsdvsdv" $HOME
+$jjjj heloo /home/yoel-youOME

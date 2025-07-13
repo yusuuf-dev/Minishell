@@ -104,17 +104,17 @@ static int  redirecting_child_std(pipes_t *pipe_data, char **p)
     *(pipe_data->is_a_pipe) = 1;
     if (pipe_data->i == 0)
     {
-        if (dup2(pipe_data->pipefd[1], 1) == -1 || close(pipe_data->pipefd[0]) == -1)
+        if (dup2(pipe_data->pipefd[1], 1) == -1 || close(pipe_data->pipefd[0]) == -1 || close(pipe_data->pipefd[1]) == -1)
             return (perror(""), errno);
     }
     else if (pipe_data->piped_cmds[pipe_data->i + 1])
     {
-        if (dup2(pipe_data->old_pipe, 0) == -1 || dup2(pipe_data->pipefd[1], 1) == -1 || close(pipe_data->pipefd[0]) == -1)
+        if (dup2(pipe_data->old_pipe, 0) == -1 || dup2(pipe_data->pipefd[1], 1) == -1 || close(pipe_data->pipefd[0]) == -1 || close(pipe_data->pipefd[1]) == -1 || close(pipe_data->old_pipe) == -1)
             return (perror(""), errno);
     }
     else
     {
-        if (dup2(pipe_data->old_pipe, 0))
+        if (dup2(pipe_data->old_pipe, 0) || close(pipe_data->old_pipe) == -1)
             return (perror(""), errno);
     }
     return (0);

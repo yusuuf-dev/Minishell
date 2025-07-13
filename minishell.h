@@ -16,6 +16,7 @@
 
 #define BUFFER_SIZE 1
 #define HEREDOC_MAX 16
+#define SPLIT_MARKER '\001'
 
 typedef struct s_lstm
 {
@@ -112,5 +113,7 @@ char	*get_next_line(int fd);
 char	*ft_substr_c(char *s, unsigned int start, size_t len);
 char	**c_split_02(char *str, char c, char **envp, unsigned char *func_status);
 char    *expand(char *str, char **envp, unsigned char *status);
+
+void    custom_split(char *str, t_data *data);
 
 #endif

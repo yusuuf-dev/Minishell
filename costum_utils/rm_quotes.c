@@ -44,3 +44,21 @@ char *rm_quotes(char *str)
 	ptr[j] = '\0';
 	return(ptr);
 }
+
+// char *rm_quotes_02(char *str)
+// {
+// 	size_t	i;
+// 	size_t	j;
+// 	char	*ptr;
+// 	char	q;
+
+// 	i = 0;
+// 	j = 0;
+// 	q = 0;
+// 	i = 0;
+// 	while (str[i])
+// 	{
+// 		if (i = )
+// 	}
+	
+// }

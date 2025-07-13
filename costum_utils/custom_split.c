@@ -1,0 +1,146 @@
+#include "../minishell.h"
+
+static char *charjoin(char *s1, char c)
+{
+	size_t i;
+	size_t len;
+	char	*ptr;
+
+	len = ft_strlen(s1);
+	ptr = malloc((len + 2) * sizeof(char));
+	if (!ptr)
+		return(NULL);
+	i = 0;
+	while (i < len)
+	{
+		ptr[i] = s1[i];
+		i++;
+	}
+	ptr[i++] = c;
+	ptr[i] = 0;
+	return (ptr);
+}
+
+static void add_ptr(char **ptr, t_data *data)
+{
+    int     i;
+    int     j;
+    char    **ptrs;
+
+    if (*ptr == NULL)
+        return;
+    i = 0;
+    while (data->rdl_args && data->rdl_args[i])
+        i++;
+    ptrs = malloc((i + 2) * sizeof(char *));
+    j = 0;
+    while (j < i)
+    {
+        ptrs[j] = data->rdl_args[j];
+        j++;
+    }
+    ptrs[j++] = ft_strdup(*ptr);
+    ptrs[j] = NULL;
+    if (data->rdl_args)
+    {
+        free(data->rdl_args);
+        data->rdl_args = ptrs;
+    }
+    else
+        data->rdl_args = ptrs;
+    free(*ptr);
+    *ptr = NULL;
+}
+
+static char  *expand_join(char *str, t_data *data,size_t *index, size_t *expand)
+{
+    char       *new_str;
+    char       *key;
+    char       *var;
+    size_t     i;
+    size_t     len;
+
+    len = 0;
+    i = *index + 1;
+    while (str[i + len] && ft_isalnum(str[i + len]))
+        len++;
+    key = ft_strldup(str + i,len);
+    var = ft_getenv(key,data->envp,&data->status);
+    if (var)
+    {
+        new_str = ft_strjoin(ft_strldup(str,*index),var);
+        new_str = ft_strjoin(new_str,ft_strldup(str + i + len,ft_strlen(str + i)));
+        *expand += ft_strlen(var) + 1;
+    }
+    else
+    {
+        new_str = ft_strjoin(ft_strldup(str,*index),ft_strldup(str + i + len,ft_strlen(str + i + len)));
+    }
+    (*index)--;
+    return (new_str);
+}
+
+void    get_argements(char *str,char *checker, t_data *data)
+{
+    char    *ptr;
+    size_t  i;
+    char    q;
+
+    q = 0;
+    i = 0;
+    ptr = NULL;
+    while (str[i])
+    {
+        if (checker[i] == '0' && !q && (str[i] == '\"' || str[i] == '\''))
+            q = str[i];
+        else if (checker[i] == '0' && q && str[i] == q)
+            q = 0;
+        else
+            ptr = charjoin(ptr,str[i]);
+        i++;
+        if (ptr && !q && (str[i] == ' ' || !str[i]))
+        {
+            add_ptr(&ptr,data);
+            while (str[i] == ' ')
+                i++;
+        }
+    }
+}
+
+void    custom_split(char *str, t_data *data)
+{
+    char        *checker;
+    char        *expand;
+    size_t      is_exp;
+    size_t      len;
+    size_t      i;
+    char        q;
+
+    q = 0;
+    i = 0;
+    len = 0;
+    is_exp = 0;
+    expand = NULL;
+    checker = NULL;
+    while (str[i])
+    {
+        if (!is_exp &&!q && str[i] == '\'')
+            q = str[i];
+        else if (!is_exp && q && str[i] == q)
+            q = 0;
+        else if (!q && str[i] == '$' && (ft_isalpha(str[i + 1]) || str[i + 1] == '_'))
+            str = expand_join(str,data,&i,&is_exp);
+        else
+        {
+            expand = charjoin(expand,str[i]);
+            if (is_exp)
+                checker =  charjoin(checker,'1');
+            else
+                checker =  charjoin(checker,'0');
+        }
+        i++;
+        if (is_exp)
+            is_exp--;
+    }
+    get_argements(expand,checker,data);
+}

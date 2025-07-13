@@ -40,11 +40,11 @@ SRC = minishell.c parsing.c ./utils/ft_calloc.c ./costum_utils/ft_putstr.c ./cos
 ./cmds/ft_env.c ./costum_utils/ft_isspace_to_space.c ./cmds/ft_exit.c ./costum_utils/c_split.c ./costum_utils/custom_atoi.c \
 ./costum_utils/heredoc_delimiter.c ./costum_utils/found_pipe.c ./costum_utils/ft_isheredoc.c ./costum_utils/rm_quotes_expand.c \
 ./costum_utils/rm_quotes.c ./utils/ft_isalnum.c ./utils/ft_isalpha.c ./costum_utils/c_atoi.c ./costum_utils/ft_all_redirections.c ./costum_utils/ft_pipes.c \
-./costum_utils/ft_setup.c ./costum_utils/ft_malloc.c ./utils/ft_memset.c ./costum_utils/signals_handler.c ./costum_utils/check_syntax.c ./utils/ft_substr.c ./utils/ft_get_next_line.c
+./costum_utils/ft_setup.c ./costum_utils/ft_malloc.c ./utils/ft_memset.c ./costum_utils/signals_handler.c ./costum_utils/check_syntax.c ./utils/ft_substr.c ./utils/ft_get_next_line.c \
+./costum_utils/custom_split.c
 
 OBJ = $(SRC:.c=.o)
 
-# أضف هنا مسارات include و lib لـ readline (تأكد المسار حسب جهازك)
 READLINE_INCLUDE = -I/usr/local/opt/readline/include
 READLINE_LIB = -L/usr/local/opt/readline/lib -lreadline
 
