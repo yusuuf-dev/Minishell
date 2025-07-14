@@ -31,6 +31,16 @@ typedef struct heredooc
     struct heredooc   *next;
 }t_heredoc;
 
+typedef struct pipes
+{
+    int     i;
+    pid_t   cpid;
+    int     pipefd[2];
+    int     old_pipe;
+    char    **piped_cmds;
+    int     *is_a_pipe;
+} pipes_t;
+
 typedef struct s_data
 {
     char              *p_rdl;
@@ -42,9 +52,10 @@ typedef struct s_data
     int               is_a_pipe;
     int               fd0, fd1, fd2;
     char              **segments;
-    struct sigaction  C_slash;
-    struct sigaction  C_c;
-    struct sigaction  C_c_alt;
+    struct sigaction    S_SIG_IGN; 
+    struct sigaction    SIG_INT;
+    struct sigaction    OLD_SIG_QUIT;
+    struct sigaction    OLD_SIG_INT;
     t_heredoc         *heredooc;
 //	struct sigaction old_C_c;
 
@@ -103,8 +114,13 @@ int     costum_atoi(char *nptr, unsigned char *status, int fd);
 //int     ft_pipes(char **piped_cmds, char **p, unsigned char *status, int *is_a_pipe, t_data *data);
 int     ft_pipes(t_data *data);
 int	    ft_isspace_to_space(char **s);
+/******************* SIGNAL SHENANIGANS **********************/
 void    signal_handler(int signum);
+int     signal_fun(int n);
 void    count_sigs(int signum);
+void    signal_handler_quit(int signum);
+int     signal_quit_fun(int n);
+/*************************************************************/
 void    *ft_memset(void *ptr, int c, size_t n);
 void     ft_setup(t_data *data, char **envp);
 int     here_doc_fork(char **p, unsigned char *status, t_data *data);

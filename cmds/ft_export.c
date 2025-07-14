@@ -178,7 +178,7 @@ static char	**ft_duplicate_add_s(char **dup, char *s)
 	char **p;
 	size_t		i = 0;
 
-	p = ft_duplicate(dup, 1);
+	p = ft_duplicate(dup, 1); // change this so that It doesn't duplicate all the env var, and their value, just move them to the new array;
 	if (!p) ///////////////// CHECK FOR OTHER MALLOCS !!!!!!!!!!!!!!!
 		return (NULL);
 	while(p[i])

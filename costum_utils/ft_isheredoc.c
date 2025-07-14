@@ -264,8 +264,6 @@ static int found_here_doc(char **p, t_data *data)
 	}
     if (found)
     {
-        if (sigaction(SIGINT, &(data->C_c_alt), NULL) == -1)
-            return (perror(""), errno);
         cpid = fork();
         if (cpid < 0)
             return (perror(""), errno);
@@ -297,15 +295,22 @@ static int found_here_doc(char **p, t_data *data)
         }
         else
         {
+			if (sigaction(SIGINT, &(data->S_SIG_IGN), NULL) == -1)
+				return (perror(""), errno);
             waitpid(cpid, &child_status, 0);
+			if (sigaction(SIGINT, &(data->SIG_INT), NULL) == -1)
+				return (perror(""), errno);
             if (WIFEXITED(child_status))
                 data->status = (WEXITSTATUS(child_status));
             else if (WIFSIGNALED(child_status))
+			{
                 data->status = ((child_status & 127) + 128);
-            if (sigaction(SIGINT, &(data->C_c), NULL) == -1)
-                return (perror(""), errno);
-            if (f_sig == 2 && kill(0, SIGINT))
-                return (perror(""), errno);
+				if (!data->is_a_pipe && data->status == 130)
+				{
+					write(1, "\n", 1);
+					signal_fun(2);
+				}
+			}
             free_heredoc(data, 1);
             data->heredooc = NULL;
             free(*p);

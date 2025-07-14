@@ -1,12 +1,10 @@
 #include "minishell.h"
 
-extern volatile sig_atomic_t f_sig;
 static int     exit_minishell(char **envp, char *p, int status, char *msg);
-
-//volatile sig_atomic_t child_exists = 0;
 
 static int assign_std_in_out_err(t_data *data)
 {
+    // there's a problem when we close std in/out/err when we use exec and run the minishell; (the fd 0, 1, 2 opens even thou we closed them in bash)
     data->fd0 = dup(0);
     if (data->fd0 == -1)
         return (perror(""), 1);
@@ -43,8 +41,10 @@ int main(int ac, char **av, char **envp)
         {return (free_all(envp), errno);}
 	while (!(data.exit) && !(data.is_a_pipe))
     {
-		sigaction(SIGQUIT, &(data.C_slash), NULL);
-        sigaction(SIGINT, &(data.C_c), NULL);
+        if (sigaction(SIGINT, &(data.SIG_INT), NULL) == -1) // remember to remove all the if condition on sigaction
+            return (perror (""), ernno);                    // check the man for possible errors
+		if (sigaction(SIGQUIT, &(data.S_SIG_IGN), NULL) == -1)
+            return (perror (""), ernno);
         if (isatty(STDIN_FILENO))
 		    data.p_rdl = readline("minishell : ");
 	    else
@@ -55,11 +55,11 @@ int main(int ac, char **av, char **envp)
                 line[ft_strlen(line) - 1] = 0;
 		    data.p_rdl = line;
 	    }
-        if (f_sig)
+        if (signal_fun(-1))
         {
             data.status = 130;
-            f_sig = 0; // could this cause a data race ? , what if we sent SIGINT just as the proram was about to change the f_sig value ? I'm guessing it should work 
-        }               // fine since I used an atomic var 
+            signal_fun(0);
+        }
 		if (!data.p_rdl) // C^d
         {
             if (isatty(STDIN_FILENO))
@@ -103,7 +103,7 @@ int main(int ac, char **av, char **envp)
         }
         free(data.p_rdl);
     }
-    return(rl_clear_history(), free_all(data.envp), free_heredoc(&data, 0), data.status);
+    return(rl_clear_history(), free_all(data.envp), free_heredoc(&data, 0), data.status); // close all fds of assign_std_in_out_err
 }
 
 static int     exit_minishell(char **envp, char *p, int status, char *msg)

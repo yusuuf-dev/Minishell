@@ -16,6 +16,6 @@ char	**ft_duplicate(char	**s, size_t add_size)
 	{
 		p[i] = ft_strdup(s[i]);
 		i++;
-	}	
+	}
 	return (p);
 }

@@ -1,4 +1,4 @@
-CC = cc
+CC = @clang-12
 FLAGS = -Werror -Wextra -Wall
 NAME = minishell
 SRC = minishell.c parsing.c ./utils/ft_calloc.c ./costum_utils/ft_putstr.c ./costum_utils/ft_check_spaces.c \

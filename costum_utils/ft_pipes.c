@@ -11,18 +11,6 @@
 /* ************************************************************************** */
 #include "../minishell.h"
 
-extern volatile sig_atomic_t f_sig;
-
-typedef struct pipes
-{
-    int     i;
-    pid_t   cpid;
-    int     pipefd[2];
-    int     old_pipe;
-    char    **piped_cmds;
-    int     *is_a_pipe;
-} pipes_t;
-
 static int  redirecting_child_std(pipes_t *pipe_data, char **p);
 static int  redirecting_pipes(pipes_t *pipe_data);
 static int  wait_children(pipes_t *pipe_data, unsigned char *status, t_data *data);
@@ -61,13 +49,20 @@ int ft_pipes(t_data *data)
     ft_memset(&pipe_data, 0, sizeof(pipes_t));
     pipe_data.is_a_pipe = &(data->is_a_pipe);
     pipe_data.piped_cmds = data->segments;
+    if (sigaction(SIGINT, &(data->S_SIG_IGN), NULL))
+        return (perror(""), errno);
     while (pipe_data.piped_cmds[pipe_data.i])
     {
         if (fork_and_create_pipe(&pipe_data, data))
             return (perror(""), errno);
         if (pipe_data.cpid == 0)
         {
-            data->is_a_pipe = 1;
+            data->is_a_pipe = 1; // this to indicate later in the program that this process is a cmd from the pipeline
+            /* reseting old signal handler*/
+            if (sigaction(SIGINT, &(data->OLD_SIG_INT), NULL))
+                return (perror(""), errno);
+            if (sigaction(SIGQUIT, &(data->OLD_SIG_QUIT), NULL))
+                return (perror(""), errno);
             if (redirecting_child_std(&pipe_data, &(data->p_rdl)))
                 return (errno);
             return (free_all(data->segments), 0);
@@ -88,9 +83,8 @@ int ft_pipes(t_data *data)
 
 static int  fork_and_create_pipe(pipes_t *pipe_data, t_data *data)
 {
+    (void)data;
     if (pipe(pipe_data->pipefd) == -1)
-        return (perror(""), errno);
-    if (sigaction(SIGINT, &(data->C_c_alt), NULL) == -1)
         return (perror(""), errno);
     pipe_data->cpid = fork();
     if (pipe_data->cpid == -1)
@@ -104,24 +98,41 @@ static int  wait_children(pipes_t *pipe_data, unsigned char *status, t_data *dat
 
     child_info = 0;
     int i = 0;
+    int rec_sig_int = 0;
+    int rec_sig_quit = 0;
     if ((close(pipe_data->old_pipe) == -1) || ((i = waitpid(pipe_data->cpid, &child_info, 0)) == -1))// the end of pipeline, we don't need the old_pipe anymore;
         return (perror(""), errno);
     if (WIFEXITED(child_info))
         *status = (WEXITSTATUS(child_info));
     else if (WIFSIGNALED(child_info))
+    {
         *status = ((child_info & 127) + 128);
-    while (wait(NULL) != -1)
-        ;
+        if (*status == 130)
+            rec_sig_int = 1;
+        else if (*status == 131)
+            rec_sig_quit = 1;
+    }
+    child_info = 0;
+    while (wait(&child_info) != -1)
+    {
+        if (WIFSIGNALED(child_info) && ((child_info & 127) + 128) == 130)
+        {
+            rec_sig_int = 1;
+        }
+        child_info = 0;
+    }
     if (errno != ECHILD)
         return (perror(""), errno);
-    if (sigaction(SIGINT, &(data->C_c), NULL) == -1)
-        return (perror(""), errno);
-    if (f_sig == 2)
+    if (rec_sig_quit)
     {
-        if (kill(0, SIGINT))
-            return (perror(""), errno);
-        f_sig = 0;
+        ft_putstr("Quit (core dumped)\n", 1);
     }
+    else if (rec_sig_int)
+    {
+        write(1, "\n", 1);
+    }
+    if (sigaction(SIGINT, &(data->SIG_INT), NULL) == -1)
+        return (perror(""), errno);
     return (0);
 }
 static int  redirecting_pipes(pipes_t *pipe_data)
@@ -136,7 +147,6 @@ static int  redirecting_pipes(pipes_t *pipe_data)
 }
 static int  redirecting_child_std(pipes_t *pipe_data, char **p)
 {
-    signal(SIGQUIT, SIG_DFL);
     free(*p);
     *p = ft_strdup(pipe_data->piped_cmds[pipe_data->i]);
     *(pipe_data->is_a_pipe) = 1;

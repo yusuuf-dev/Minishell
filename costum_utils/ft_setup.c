@@ -63,17 +63,18 @@ void    ft_setup(t_data *data, char **envp)
 	if (env)
 		data->env_paths = ft_split(env, ':');*/
     
-    
-    sigemptyset(&(data->C_slash.sa_mask));
-    data->C_slash.sa_flags = 0; // change me to SA_RESTART
-    data->C_slash.sa_handler = SIG_IGN;
-    sigemptyset(&(data->C_c.sa_mask));
-    data->C_c.sa_flags = SA_RESTART;
-    data->C_c.sa_handler = signal_handler;
-	sigemptyset(&(data->C_c_alt.sa_mask));
-	data->C_c_alt.sa_flags = SA_RESTART; // change me to SA_RESTARt
-    data->C_c_alt.sa_handler = count_sigs;
-   // C_slash.sa_handler = ignoree;
+    /* SIG QUIT*/
+    sigemptyset(&(data->S_SIG_IGN.sa_mask));
+    data->S_SIG_IGN.sa_flags = SA_RESTART;
+    data->S_SIG_IGN.sa_handler = SIG_IGN;
+    /* SIG INT*/
+    sigemptyset(&(data->SIG_INT.sa_mask));
+    data->SIG_INT.sa_flags = SA_RESTART;
+    data->SIG_INT.sa_handler = signal_handler;
+
+    /* setting the signal handlers and saving the old ones */
+    sigaction(SIGINT, &(data->SIG_INT), &(data->OLD_SIG_INT));
+   	sigaction(SIGQUIT, &(data->S_SIG_IGN), &(data->OLD_SIG_QUIT));
     return ;
 
 }
