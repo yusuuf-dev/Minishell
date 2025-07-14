@@ -97,8 +97,8 @@ void	no_args(char **envp)
 	while (envp[j])
 		j++;
 	sorted = ft_calloc((j) * sizeof(int));
-	if (!sorted)
-		exit(-1);// exit the program;
+	//if (!sorted)
+	//	exit(-1);// exit the program;
 	while (envp[i])
 	{
 		j = smallest = 0;
@@ -114,7 +114,7 @@ void	no_args(char **envp)
 		i++;
 	}
 	print_the_envs(envp, sorted);
-	free(sorted);
+	//free(sorted);
 }
 static int	ftc_strncmp(const char *s1, const char *s2)
 {
@@ -152,7 +152,7 @@ static int ft_var_exists(char *s, char **envp)
 				return (0);
 			new = ft_strldup(envp[i], ft_strchr(envp[i], '=') - envp[i]);
 			new = ft_strjoinf(new, s);
-			free(envp[i]);
+			//free(envp[i]);
 			envp[i] = new;
 			//*status = 0;
 			return (0);
@@ -167,12 +167,12 @@ static char	**ft_duplicate_add_s(char **dup, char *s)
 	size_t		i = 0;
 
 	p = ft_duplicate(dup, 1);
-	if (!p) ///////////////// CHECK FOR OTHER MALLOCS !!!!!!!!!!!!!!!
-		return (NULL);
+	// if (!p) ///////////////// CHECK FOR OTHER MALLOCS !!!!!!!!!!!!!!!
+	// 	return (NULL);
 	while(p[i])
 		i++;
 	p[i] = ft_strdup(s);
-	free_all(dup);
+	//free_all(dup);
 	return (p);
 }
 char	**ft_export(char **argv, char **envp, unsigned char *status)

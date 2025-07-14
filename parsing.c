@@ -187,10 +187,10 @@ char	**parsing(t_data *data)
     // data->rdl_args = c_split(data->p_rdl,' ', data->envp, &(data->status));
 
 	data->rdl_args = NULL; // important to set it NULL because will need it again with new promt that only free it and doesn't set it to NULL
-	custom_split(data->p_rdl,data);
+	custom_split(data->p_rdl,data,0,0);
 	
 	if (executable(data)) // next 
-		return (free_all(data->rdl_args), free_all(data->env_paths), data->envp);
+		return (data->envp);
 	if (ft_built_in_cmd(data))
 		(void)data->p_rdl;
 	else
@@ -204,7 +204,7 @@ char	**parsing(t_data *data)
 				{
 					is_a_file = open(path, O_DIRECTORY);
 					if (is_a_file == -1) // check for errno
-						return (data->status = execute_command(path, data), free(path), free_all(data->rdl_args), free_all(data->env_paths), data->envp);
+						return (data->status = execute_command(path, data), data->envp);
 					close(is_a_file);
 				}
 				else
@@ -218,7 +218,7 @@ char	**parsing(t_data *data)
 					data->status = 126;
 				}
 			}
-			free(path);
+			//free(path);
 			i++;
 		}
 		if (data->status != 126)
@@ -233,7 +233,7 @@ char	**parsing(t_data *data)
 			free(msg);
 		}
 	}
-	return (free_all(data->rdl_args), free_all(data->env_paths), data->envp);
+	return ( data->envp);
 }
 
 static int	ft_built_in_cmd(t_data *data)
@@ -266,7 +266,7 @@ static int	ft_built_in_cmd(t_data *data)
 		data->envp = ft_unset(data->rdl_args, data->envp, &(data->status));
 	else if (i == 16)
 		data->status = ft_exit(data->rdl_args, data->envp, &(data->status), &(data->exit));
-  	free_all(cmds);
+  	//free_all(cmds);
 	if (i > 9)
 		return (1);
 	return (0);

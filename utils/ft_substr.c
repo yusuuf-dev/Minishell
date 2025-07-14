@@ -1,4 +1,5 @@
 #include "../minishell.h"
+
 char	*ft_substr_c(char *s, unsigned int start, size_t len)
 {
 	char	*p;
@@ -7,7 +8,7 @@ char	*ft_substr_c(char *s, unsigned int start, size_t len)
 	if (!s || (len - start) == 0)
 		return (NULL);
 	i = 0;
-	p = malloc(len - start + 1);
+	p = ft_malloc(len - start + 1);
 	while ((start + i) < len)
 	{
 		p[i] = s[start + i];

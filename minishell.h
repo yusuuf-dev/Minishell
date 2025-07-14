@@ -48,6 +48,8 @@ typedef struct s_data
     struct sigaction  C_c;
     struct sigaction  C_c_alt;
     t_heredoc         *heredooc;
+    char              *checker;
+    char              *expand;
 }t_data;
 
 int     costum_atoi(char *s, unsigned char *status, int fd);
@@ -75,7 +77,7 @@ char	**ft_unset(char **argv, char **envp, unsigned char *status);
 int     ft_env(char **argv, char **envp, char **envp_paths);
 int	    ft_exit(char **argv, char **envp, unsigned char *status, int *s_exit);
 
-char	**free_all(char **str);
+//char	**free_all(char **str);
 char	**ft_duplicate(char	**s, size_t add_size);
 int 	ft_isspace_to_space(char **s);
 int     ft_isdigit(int c);
@@ -83,7 +85,7 @@ char	*ft_getenv(char *s, char **envp, unsigned char *status);
 int		ft_check_spaces(char *s); // this function returns 1 if the argument contains only (isspace) chars.
 void    ft_putstr(char *s, int fd);
 char    *convert_env_var(char *s,char **envp);
-char	**c_split(char *str, char c, char **envp, unsigned char *status);
+//char	**c_split(char *str, char c, char **envp, unsigned char *status);
 // char	**c_split(char *str, char c);
 //int     found_heredoc(char *s);
 char    *rm_quotes(char *str);
@@ -114,6 +116,10 @@ char	*ft_substr_c(char *s, unsigned int start, size_t len);
 char	**c_split_02(char *str, char c, char **envp, unsigned char *func_status);
 char    *expand(char *str, char **envp, unsigned char *status);
 
-void    custom_split(char *str, t_data *data);
+char	**c_split(char *str, char c);
+void    custom_split(char *str, t_data *data, size_t i, char q);
+char	*joinstr_helper(char *str, size_t i, size_t len, size_t index);
+size_t	getlen_helper(char *str, size_t index);
+int	    validchar_helper(char c);
 
 #endif

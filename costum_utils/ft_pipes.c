@@ -33,7 +33,8 @@ int ft_pipes(t_data *data)
             data->is_a_pipe = 1;
             if (redirecting_child_std(&pipe_data, &(data->p_rdl)))
                 return (errno);
-            return (free_all(data->segments), 0);
+            //return (free_all(data->segments), 0);
+            return (0);
         }
         else
         {
@@ -43,7 +44,8 @@ int ft_pipes(t_data *data)
     }
     if (wait_children(&pipe_data, &(data->status), data))
         return (errno);
-    return (free_all(data->segments), free(data->p_rdl), *&(data->p_rdl) = NULL, 0);
+    //return (free_all(data->segments), free(data->p_rdl), *&(data->p_rdl) = NULL, 0);
+    return (*&(data->p_rdl) = NULL, 0);
 }
 
 /*check for errno in case the wait did fail for another reason other than that the process doesn't have anymore children to wait for*/
@@ -99,7 +101,7 @@ static int  redirecting_pipes(pipes_t *pipe_data)
 static int  redirecting_child_std(pipes_t *pipe_data, char **p)
 {
     signal(SIGQUIT, SIG_DFL);
-    free(*p);
+    // free(*p);
     *p = ft_strdup(pipe_data->piped_cmds[pipe_data->i]);
     *(pipe_data->is_a_pipe) = 1;
     if (pipe_data->i == 0)

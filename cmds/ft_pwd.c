@@ -17,6 +17,6 @@ int     ft_pwd(char **argv, char **envp)
 	ft_putstr(p, 1);
 	write(1, "\n", 1);
     //printf("%s\n", p);
-    free(p);
+    // free(p);
     return (0);
 }

@@ -53,9 +53,7 @@ char *heredoc_old_delimiter(char *s, int *isquote, int *index_ret)
     start = 2;
     end = get_delimiter_end(s, isquote);
     *index_ret = end;
-    delimiter = malloc(end - start + 1);
-    if (!delimiter)
-        return (NULL);
+    delimiter = ft_malloc(end - start + 1);
     copy_delimiter(delimiter, s, start, end);
     return (delimiter);
 }

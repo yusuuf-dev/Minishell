@@ -1,12 +1,16 @@
+how to use ft_malloc
+
+call ft_malloc with size to malloc it will return malloced size
+if failed it  will free prevoius malloc if exist exit
+
+call void config_malloc(void *ptr, int isfailed) function to free all malloced but use parameter NULL on ptr and 0 on isfailed
+
 new update 30/06/2025 functions :
 
 c_split ( refactor for norminette )
 check_syntax ( refactor for norminette )
 found_pipe ( refactor for norminette  and remove check for error already exist on check_syntax )
 heredoc_delimiter ( refactor for norminette )
-
-
-
 
 
 new update 08/07/2025 :
@@ -73,3 +77,24 @@ jjjj dosn't exist
 fix this : fixed (done)
 minishell : echo '$jjjj         heloo'"$dsfsdvsdv" $HOME
 $jjjj heloo /home/yoel-youOME
+
+
+tests need some fix :fixed (done)
+95
+111 expand ? doesn't fixed yet
+128 echo $USER$var\$USER$USER\$USERtest$USER 
+
+
+fix this : fixed (done)
+yoel-you@c1r7p1:~$ echo $?
+0
+yoel-you@c1r7p1:~$ echo $?$?
+00
+yoel-you@c1r7p1:~$ echo $?$?$?
+000
+yoel-you@c1r7p1:~$ echo $?$?$?
+000
+yoel-you@c1r7p1:~$ sdgfdag
+sdgfdag: command not found
+yoel-you@c1r7p1:~$ echo $?$?$?
+127127127

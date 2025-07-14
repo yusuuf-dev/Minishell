@@ -49,8 +49,6 @@ void    config_rdline(char **p ,t_data *data)
 
 void    ft_setup(t_data *data, char **envp)
 {
-  //  char    *env;
-
     (void)envp;
     ft_memset(data, 0, sizeof(t_data));
     data->envp = ft_duplicate(__environ, 0);
@@ -59,11 +57,6 @@ void    ft_setup(t_data *data, char **envp)
         perror("");
         exit (errno);
     }
-   /* env = ft_getenv("PATH", data->envp, &(data->status));
-	if (env)
-		data->env_paths = ft_split(env, ':');*/
-    
-    
     sigemptyset(&(data->C_slash.sa_mask));
     data->C_slash.sa_flags = 0; // change me to SA_RESTART
     data->C_slash.sa_handler = SIG_IGN;
@@ -73,9 +66,7 @@ void    ft_setup(t_data *data, char **envp)
 	sigemptyset(&(data->C_c_alt.sa_mask));
 	data->C_c_alt.sa_flags = SA_RESTART; // change me to SA_RESTARt
     data->C_c_alt.sa_handler = count_sigs;
-   // C_slash.sa_handler = ignoree;
     return ;
-
 }
 /*t_data     *ft_setup(char **envp)
 {

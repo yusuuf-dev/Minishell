@@ -1,12 +1,12 @@
 #include "../minishell.h"
-static void	free_null(char **p)
-{
-	if (p && *p)
-	{
-		free(*p);
-		*p = NULL;
-	}
-}
+// static void	free_null(char **p)
+// {
+// 	if (p && *p)
+// 	{
+// 		// free(*p);
+// 		// *p = NULL;
+// 	}
+// }
 
 static char	*empty_or_error(char *old_stash, char **stash)
 {
@@ -17,12 +17,12 @@ static char	*empty_or_error(char *old_stash, char **stash)
 	{
 		if (old_stash)
 		{
-			free_null(stash);
+			//free_null(stash);
 			return (old_stash);
 		}
 		else
 		{
-			free_null(stash);
+			//free_null(stash);
 			return (NULL);
 		}
 	}
@@ -32,8 +32,8 @@ static char	*return_line_update_stash(char *o_stash, char **stash)
 {
 	if (!o_stash)
 		o_stash = *stash;
-	else
-		free_null(stash);
+	// else
+	// 	free_null(stash);
 	*stash = ft_strdup(ft_strchr(o_stash, '\n') + 1);
 	if (!(*stash))
 		*stash = NULL;
@@ -53,7 +53,7 @@ char	*get_next_line(int fd)
 	if (stash)
 	{
 		o_stash = ft_strdup(stash);
-		free_null(&stash);
+		// free_null(&stash);
 	}
 	stash = ft_calloc(sizeof(char) * (BUFFER_SIZE + 1));
 	if (!stash)

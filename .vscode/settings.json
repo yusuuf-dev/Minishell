@@ -2,6 +2,8 @@
     "C_Cpp.errorSquiggles": "disabled",
     "files.associations": {
         "minishell.h": "c",
-        "wait.h": "c"
+        "wait.h": "c",
+        "sstream": "c",
+        "charconv": "c"
     }
 }

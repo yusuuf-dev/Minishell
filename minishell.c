@@ -1,7 +1,7 @@
 #include "minishell.h"
 
 extern volatile sig_atomic_t f_sig;
-static int     exit_minishell(char **envp, char *p, int status, char *msg);
+// static int     exit_minishell(char **envp, char *p, int status, char *msg);
 
 //volatile sig_atomic_t child_exists = 0;
 
@@ -39,7 +39,7 @@ int main(int ac, char **av, char **envp)
   //  __environ;
     ft_setup(&data, envp);
     if (assign_std_in_out_err(&data))
-        {return (free_all(envp), errno);}
+        {return (config_malloc(NULL,0), errno);}
 	while (!(data.exit) && !(data.is_a_pipe))
     {
 		sigaction(SIGQUIT, &(data.C_slash), NULL);
@@ -63,7 +63,7 @@ int main(int ac, char **av, char **envp)
         {
             if (isatty(STDIN_FILENO))
                 ft_putstr("exit\n", 1);
-			return (free_all(data.envp), free(data.p_rdl), rl_clear_history(), free_heredoc(&data, 1), data.status);
+			return (config_malloc(NULL,0), rl_clear_history(), data.status);
         }
         if (data.p_rdl[0])
             add_history(data.p_rdl);
@@ -75,16 +75,14 @@ int main(int ac, char **av, char **envp)
         {
             if (found_pipe(data.p_rdl))
             {
-                data.segments = c_split(data.p_rdl, '|', data.envp, &(data.status));
-                if (!data.segments)
-                    return(exit_minishell(data.envp, data.p_rdl, 1, "failed malloc\n"));//protect malloc
+                data.segments = c_split(data.p_rdl,'|');
                 if (ft_pipes(&data))
                     return (errno);
             }
             if (data.p_rdl)  // not great, this is done for when the piping is done so that the program wouldn't check for cmds;
                 data.envp = parsing(&data);
             if (reset_std_in_out_err(&data)) // remember to close fd{0,1,2} 
-                return (free_all(data.envp), 1);
+                return (config_malloc(NULL,0), 1);
             /*
             int fd_tty;
             errno = 0;
@@ -98,17 +96,17 @@ int main(int ac, char **av, char **envp)
         }
         free(data.p_rdl);
     }
-    return(rl_clear_history(), free_all(data.envp), free_heredoc(&data, 0), data.status);
+    return(rl_clear_history(), config_malloc(NULL,0), data.status);
 }
 
-static int     exit_minishell(char **envp, char *p, int status, char *msg)
-{
-     free_all(envp);
-     free(p);
-     if (msg)
-        printf("%s",msg);
-     exit(status);
-}
+// static int     exit_minishell(char **envp, char *p, int status, char *msg)
+// {
+//      free_all(envp);
+//      free(p);
+//      if (msg)
+//         printf("%s",msg);
+//      exit(status);
+// }
 
 // static void    signal_handler(int signum)
 // {
