@@ -3,12 +3,13 @@
 /*                                                        :::      ::::::::   */
 /*   ft_pipes.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: asoufian <asoufian@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: yoel-you <yoel-you@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/21 11:11:47 by asoufian          #+#    #+#             */
-/*   Updated: 2025/05/21 11:11:50 by asoufian         ###   ########.fr       */
+/*   Updated: 2025/07/15 10:20:27 by yoel-you         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 #include "../minishell.h"
 
 static int  redirecting_child_std(pipes_t *pipe_data, char **p);
@@ -65,7 +66,8 @@ int ft_pipes(t_data *data)
                 return (perror(""), errno);
             if (redirecting_child_std(&pipe_data, &(data->p_rdl)))
                 return (errno);
-            return (free_all(data->segments), 0);
+           // return (free_all(data->segments), 0);
+           return (0);
         }
         else
         {
@@ -75,7 +77,8 @@ int ft_pipes(t_data *data)
     }
     if (wait_children(&pipe_data, &(data->status), data))
         return (errno);
-    return (free_all(data->segments), free(data->p_rdl), *&(data->p_rdl) = NULL, 0);
+    //return (free_all(data->segments), free(data->p_rdl), *&(data->p_rdl) = NULL, 0);
+    return (*&(data->p_rdl) = NULL, 0);
 }
 
 /*check for errno in case the wait did fail for another reason other than that the process doesn't have anymore children to wait for*/
@@ -147,7 +150,7 @@ static int  redirecting_pipes(pipes_t *pipe_data)
 }
 static int  redirecting_child_std(pipes_t *pipe_data, char **p)
 {
-    free(*p);
+  ///  free(*p);
     *p = ft_strdup(pipe_data->piped_cmds[pipe_data->i]);
     *(pipe_data->is_a_pipe) = 1;
     if (pipe_data->i == 0)

@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   ft_cd.c                                            :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: asoufian <asoufian@student.1337.ma>        +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/10 15:05:34 by asoufian          #+#    #+#             */
-/*   Updated: 2025/04/21 09:34:24 by asoufian         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "../minishell.h"
 
 char	*update_env_pwd(char **pwd_variable, char ***envp, unsigned char *status);
@@ -34,7 +22,7 @@ int     ft_cd(char **argv, char ***envp)
 	//p = getcwd(p, 4100);
 	p = getcwd(p, 0);
 	if (!p)
-		return (perror("cd"), free(pwd_variable), errno);
+		return (perror("cd"), errno);
 	pwd_variable[1] = ft_strjoin("OLDPWD=", p);
 	free(p);
 	if (argv[1] && argv[1][0] == '-' && ft_check_spaces(&argv[1][1]))
@@ -44,17 +32,17 @@ int     ft_cd(char **argv, char ***envp)
 	else if (argv[1][0] != '/' && argv[1][0] != '.')	
 		f = search_cdpath_var(argv, envp, pwd_variable);
 	if (argv[1] == NULL && (t == NULL || ft_check_spaces(t)))
-		return (ft_putstr("minishell: cd: HOME not set\n", 2), argv[1] = t, free(pwd_variable[1]), free(pwd_variable), 1);
+		return (ft_putstr("minishell: cd: HOME not set\n", 2), argv[1] = t, 1);
 	if (argv[1] == NULL && t[0] == '-')
-		return (ft_putstr("minishell: cd: OLDPWD not set\n", 2), argv[1] = t, free(pwd_variable[1]), free(pwd_variable), 1);
+		return (ft_putstr("minishell: cd: OLDPWD not set\n", 2), argv[1] = t, 1);
 	if (!f && chdir(argv[1]))
-		return (argv[1] = t, perror("cd"), free(pwd_variable[1]), free(pwd_variable), 1);
+		return (argv[1] = t, perror("cd"), 1);
 	p = update_env_pwd(pwd_variable, envp, &status);
 	if (!p)
-		return (argv[1] = t, perror("cd"), free(pwd_variable[1]), free(pwd_variable), errno);
+		return (argv[1] = t, perror("cd"), errno);
 	if (t && t[0] == '-' && ft_check_spaces(&t[1]))
 		printf("%s\n", (ft_strchr(pwd_variable[2], '=') + 1));
-	return (argv[1] = t, free(p), free(pwd_variable[1]), free(pwd_variable[2]), free(pwd_variable), 0);
+	return (argv[1] = t, 0);
 }
 
 int	search_cdpath_var(char **argv, char ***envp, char **pwd_variable)
@@ -75,11 +63,9 @@ int	search_cdpath_var(char **argv, char ***envp, char **pwd_variable)
 			paths[i] = ft_strjoinf(paths[i], "/");
 		try_dir = ft_strjoin(paths[i], argv[1]);
 		if (!chdir(try_dir))
-			return (printf("%s\n", try_dir), free(try_dir), free_all(paths), 1);
-		free(try_dir);
+			return (1);
 		i++;
 	}
-	free_all(paths);
 	return (0);
 }
 

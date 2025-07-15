@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   ft_export.c                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: asoufian <asoufian@student.1337.ma>        +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/10 15:18:54 by asoufian          #+#    #+#             */
-/*   Updated: 2025/04/11 11:41:51 by asoufian         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "../minishell.h"
 
 static  int    valid_var(char *s)
@@ -109,8 +97,8 @@ void	no_args(char **envp)
 	while (envp[j])
 		j++;
 	sorted = ft_calloc((j) * sizeof(int));
-	if (!sorted)
-		exit(-1);// exit the program;
+	//if (!sorted)
+	//	exit(-1);// exit the program;
 	while (envp[i])
 	{
 		j = smallest = 0;
@@ -126,7 +114,7 @@ void	no_args(char **envp)
 		i++;
 	}
 	print_the_envs(envp, sorted);
-	free(sorted);
+	//free(sorted);
 }
 static int	ftc_strncmp(const char *s1, const char *s2)
 {
@@ -164,7 +152,7 @@ static int ft_var_exists(char *s, char **envp)
 				return (0);
 			new = ft_strldup(envp[i], ft_strchr(envp[i], '=') - envp[i]);
 			new = ft_strjoinf(new, s);
-			free(envp[i]);
+			//free(envp[i]);
 			envp[i] = new;
 			//*status = 0;
 			return (0);
@@ -178,13 +166,13 @@ static char	**ft_duplicate_add_s(char **dup, char *s)
 	char **p;
 	size_t		i = 0;
 
-	p = ft_duplicate(dup, 1); // change this so that It doesn't duplicate all the env var, and their value, just move them to the new array;
-	if (!p) ///////////////// CHECK FOR OTHER MALLOCS !!!!!!!!!!!!!!!
-		return (NULL);
+	p = ft_duplicate(dup, 1);
+	// if (!p) ///////////////// CHECK FOR OTHER MALLOCS !!!!!!!!!!!!!!!
+	// 	return (NULL);
 	while(p[i])
 		i++;
 	p[i] = ft_strdup(s);
-	free_all(dup);
+	//free_all(dup);
 	return (p);
 }
 char	**ft_export(char **argv, char **envp, unsigned char *status)
@@ -215,4 +203,33 @@ char	**ft_export(char **argv, char **envp, unsigned char *status)
 		ar++;
 	}
 	return (envp);
+}
+
+char **ft_new_export(t_data *data)
+{
+	size_t	ar = 1;
+
+	//data->rdl_args = c_split_02(data->dup_rdl,' ',data->envp,&data->status);
+	if (!data->rdl_args[ar])
+		return (data->status = 0, no_args(data->envp), data->envp);
+	while (data->rdl_args[ar])
+	{ 
+		while (data->rdl_args[ar] && (valid_var(data->rdl_args[ar])))
+		{
+			print_error("minishell: export: `", data->rdl_args[ar], "': not a valid identifier\n");
+			data->status = 1;
+			ar++;
+		}
+		if (data->rdl_args[ar] == NULL)
+			return (data->envp);		
+		if (ft_var_exists(data->rdl_args[ar], data->envp)) // It has to have an equal '=' if we want to change the value of the given variable;
+		{
+			//*status = 0;
+			data->envp = ft_duplicate_add_s(data->envp, data->rdl_args[ar]); // copying the old variables and making space for the new one;
+			if (!data->envp) ///////////////// CHECK FOR OTHER MALLOCS !!!!!!!!!!!!!!!
+				return (data->status = -1, NULL);
+		}
+		ar++;
+	}
+	return (data->envp);
 }

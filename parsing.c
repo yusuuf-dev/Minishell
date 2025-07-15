@@ -20,6 +20,8 @@
 int			execute_command(char *path, t_data *data);
 static int	ft_built_in_cmd(t_data *data);
 
+extern volatile sig_atomic_t f_sig;
+
 /*static void		ft_space(char *s)
 {
 	size_t	i = 0;
@@ -85,9 +87,9 @@ static char	*ft_itoa(int n)
 char	*ft_getenv(char *s, char **envp, unsigned char *status)
 {
 	size_t	i = 0;
-	size_t	size = 0;
+	// size_t	size = 0;
 
-	size = ft_strlen(s);
+	// size = ft_strlen(s);
 	while (envp[i])
 	{
 		if (!c_strncmp(envp[i], s))
@@ -149,11 +151,12 @@ static int	ft_execute_cmd(t_data *data)
     return (200);
 }
 
+
 static  int executable(t_data *data)
 {
 	int is_a_file = 0;
 
-	if (!data->rdl_args[0])
+	if (!data->rdl_args || !data->rdl_args[0])
 		return (1);
     if (!(ft_strchr(data->rdl_args[0], '/')))
     {    return (0);}
@@ -171,6 +174,7 @@ static  int executable(t_data *data)
         perror("minishell");
     return(data->status = 126, 1);
 }
+
 char	**parsing(t_data *data)
 {
     char	*env;
@@ -190,10 +194,14 @@ char	**parsing(t_data *data)
 		data->env_paths = ft_split(env, ':');
 	else
 		data->env_paths = NULL; // In case we unset the PATH later, the pointer will be pointing to a non-valid memory (dangling pointer)
-    data->rdl_args = c_split(data->p_rdl,' ', data->envp, &(data->status));
+	// data->dup_rdl = ft_strdup(data->p_rdl);
+    // data->rdl_args = c_split(data->p_rdl,' ', data->envp, &(data->status));
+
+	data->rdl_args = NULL; // important to set it NULL because will need it again with new promt that only free it and doesn't set it to NULL
+	custom_split(data->p_rdl,data,0,0);
 	
 	if (executable(data)) // next 
-		return (free_all(data->rdl_args), free_all(data->env_paths), data->envp);
+		return (data->envp);
 	if (ft_built_in_cmd(data))
 		(void)data->p_rdl;
 	else
@@ -210,8 +218,7 @@ char	**parsing(t_data *data)
 					{
 						if (execute_command(path, data)) // need to do cleanup since this now returns on error
 							return (data->envp);
-						return (free(path), free_all(data->rdl_args), free_all(data->env_paths), data->envp);
-						//return (data->status = execute_command(path, data), free(path), free_all(data->rdl_args), free_all(data->env_paths), data->envp);
+						return (data->envp);
 					}
 					close(is_a_file);
 				}
@@ -226,7 +233,7 @@ char	**parsing(t_data *data)
 					data->status = 126;
 				}
 			}
-			free(path);
+			//free(path);
 			i++;
 		}
 		if (data->status != 126)
@@ -241,7 +248,7 @@ char	**parsing(t_data *data)
 			free(msg);
 		}
 	}
-	return (free_all(data->rdl_args), free_all(data->env_paths), data->envp);
+	return ( data->envp);
 }
 
 static int	ft_built_in_cmd(t_data *data)
@@ -262,7 +269,10 @@ static int	ft_built_in_cmd(t_data *data)
 	else if (i == 11)
 		data->status = ft_cd(data->rdl_args, &(data->envp));
 	else if (i == 12)
-		data->envp = ft_export(data->rdl_args, data->envp, &(data->status));
+	{
+		data->envp = ft_new_export(data);
+		//data->envp = ft_export(data->rdl_args, data->envp, &(data->status));
+	}
 	else if (i == 13)
 		data->status = ft_echo(data->rdl_args);
 	else if (i == 14)
@@ -271,11 +281,12 @@ static int	ft_built_in_cmd(t_data *data)
 		data->envp = ft_unset(data->rdl_args, data->envp, &(data->status));
 	else if (i == 16)
 		data->status = ft_exit(data->rdl_args, data->envp, &(data->status), &(data->exit));
-  	free_all(cmds);
+  	//free_all(cmds);
 	if (i > 9)
 		return (1);
 	return (0);
 }
+
 
 int	execute_command(char *path, t_data *data)
 {
@@ -304,7 +315,6 @@ int	execute_command(char *path, t_data *data)
 	{
 		if (sigaction(SIGINT, &(data->S_SIG_IGN), NULL) == -1)
 			return (perror(""), errno);
-		signal(SIGINT, SIG_IGN);
 		wait(&child_info);
 		if (sigaction(SIGINT, &(data->SIG_INT), NULL) == -1)
 			return (perror(""), errno);

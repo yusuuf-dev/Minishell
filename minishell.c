@@ -1,10 +1,12 @@
 #include "minishell.h"
 
-static int     exit_minishell(char **envp, char *p, int status, char *msg);
+extern volatile sig_atomic_t f_sig;
+// static int     exit_minishell(char **envp, char *p, int status, char *msg);
+
+//volatile sig_atomic_t child_exists = 0;
 
 static int assign_std_in_out_err(t_data *data)
 {
-    // there's a problem when we close std in/out/err when we use exec and run the minishell; (the fd 0, 1, 2 opens even thou we closed them in bash)
     data->fd0 = dup(0);
     if (data->fd0 == -1)
         return (perror(""), 1);
@@ -30,7 +32,6 @@ static int reset_std_in_out_err(t_data *data)
 
 int main(int ac, char **av, char **envp)
 {
-    int i;
     t_data data;
 
 	(void)av; // maybe we can remove these two from the argument since we don't use them, the problem is wether the envp will work or not;
@@ -38,13 +39,13 @@ int main(int ac, char **av, char **envp)
   //  __environ;
     ft_setup(&data, envp);
     if (assign_std_in_out_err(&data))
-        {return (free_all(envp), errno);}
+        {return (config_malloc(NULL,0), errno);}
 	while (!(data.exit) && !(data.is_a_pipe))
     {
         if (sigaction(SIGINT, &(data.SIG_INT), NULL) == -1) // remember to remove all the if condition on sigaction
-            return (perror (""), ernno);                    // check the man for possible errors
+            return (perror (""), errno);                    // check the man for possible errors
 		if (sigaction(SIGQUIT, &(data.S_SIG_IGN), NULL) == -1)
-            return (perror (""), ernno);
+            return (perror (""), errno);
         if (isatty(STDIN_FILENO))
 		    data.p_rdl = readline("minishell : ");
 	    else
@@ -64,7 +65,7 @@ int main(int ac, char **av, char **envp)
         {
             if (isatty(STDIN_FILENO))
                 ft_putstr("exit\n", 1);
-			return (free_all(data.envp), free(data.p_rdl), rl_clear_history(), free_heredoc(&data, 1), data.status);
+			return (config_malloc(NULL,0), rl_clear_history(), data.status);
         }
         if (data.p_rdl[0])
             add_history(data.p_rdl);
@@ -74,22 +75,16 @@ int main(int ac, char **av, char **envp)
             return (errno);
         else if (data.p_rdl && data.p_rdl[0])
         {
-       //     add_history(data.p_rdl);
-            i = found_pipe(data.p_rdl);
-            if (i == 1)
+            if (found_pipe(data.p_rdl))
             {
-                data.segments = c_split(data.p_rdl, '|', data.envp, &(data.status));
-                if (!data.segments)
-                    return(exit_minishell(data.envp, data.p_rdl, 1, "failed malloc\n"));//protect malloc
+                data.segments = c_split(data.p_rdl,'|');
                 if (ft_pipes(&data))
                     return (errno);
             }
-            else if (i == -1)
-                return(exit_minishell(data.envp, data.p_rdl, 1, "failed malloc\n"));//protect malloc
             if (data.p_rdl)  // not great, this is done for when the piping is done so that the program wouldn't check for cmds;
                 data.envp = parsing(&data);
             if (reset_std_in_out_err(&data)) // remember to close fd{0,1,2} 
-                return (free_all(data.envp), 1);
+                return (config_malloc(NULL,0), 1);
             /*
             int fd_tty;
             errno = 0;
@@ -103,17 +98,17 @@ int main(int ac, char **av, char **envp)
         }
         free(data.p_rdl);
     }
-    return(rl_clear_history(), free_all(data.envp), free_heredoc(&data, 0), data.status); // close all fds of assign_std_in_out_err
+    return(rl_clear_history(), config_malloc(NULL,0), data.status);
 }
 
-static int     exit_minishell(char **envp, char *p, int status, char *msg)
-{
-     free_all(envp);
-     free(p);
-     if (msg)
-        printf("%s",msg);
-     exit(status);
-}
+// static int     exit_minishell(char **envp, char *p, int status, char *msg)
+// {
+//      free_all(envp);
+//      free(p);
+//      if (msg)
+//         printf("%s",msg);
+//      exit(status);
+// }
 
 // static void    signal_handler(int signum)
 // {

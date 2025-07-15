@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   ft_unset.c                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: asoufian <asoufian@student.1337.ma>        +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/11 09:02:38 by asoufian          #+#    #+#             */
-/*   Updated: 2025/04/11 10:58:33 by asoufian         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "../minishell.h"
 
 int	ft_find(char **s, char *find, size_t *index)
@@ -47,9 +35,7 @@ char	**ft_unset(char **argv, char **envp, unsigned char *status)
 			i = size_env = 0;
 			while (envp[size_env])
 				size_env++;
-			p = malloc(sizeof(char *) * (size_env + 1));
-			if (!p)
-					exit(-1);
+			p = ft_malloc(sizeof(char *) * (size_env + 1));
 			p[size_env - 1] = NULL;
 			size_env = 0;
 			while (envp[i])
@@ -61,7 +47,7 @@ char	**ft_unset(char **argv, char **envp, unsigned char *status)
 				}
 				i++;
 			}
-			free_all(envp);
+			//free_all(envp);
 			envp = p;
 			i = size_env = index = 0;
 		}

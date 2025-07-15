@@ -149,11 +149,11 @@ static char *var_expansion(char **str, char **envp, int *n, char **full_str, uns
 	var = ft_getenv(extract, envp, status);
 	left_side = ft_strldup(*full_str, (i));
 	if (!var && !(*n))
-		return (ft_putstr("minishell: $" , 2), ft_putstr(extract, 2), ft_putstr(": ambiguous redirect\n", 2), free(left_side), free(extract), NULL);
+		return (ft_putstr("minishell: $" , 2), ft_putstr(extract, 2), ft_putstr(": ambiguous redirect\n", 2), NULL);
 	if (var)
 		left_side =	ft_strjoinf(left_side, var);
 	right_side = ft_strdup(c_strpbrk(&s[*n + 1]));
-	free(*full_str);
+
 	s = ft_strjoinf(left_side, right_side);
 	*full_str = s;
 
@@ -161,8 +161,7 @@ static char *var_expansion(char **str, char **envp, int *n, char **full_str, uns
 		*n += (ft_strlen(var)); // used to be (ft_strlen(var) - 1) can't remember why I added the -1
 	//else
 	//	*n -= ft_strlen(extract);
-	free(right_side);
-	free(extract);
+
 	return (&s[ret]);
 	//return (&s[i]);
 }
@@ -222,12 +221,12 @@ static int open_assign_fd(char *s, int *fd, int mode, int append)
 	else if (!mode)
 		fd_file = open(s, O_RDONLY, 00644);
 	if (fd_file < 0)
-		return(temp = ft_strjoin("minishell: ", s), temp = ft_strjoinf(temp, ": "), temp = ft_strjoinf(temp, strerror(errno)) , temp = ft_strjoinf(temp, "\n"), ft_putstr(temp, 2), free(temp), free(s) , 1);
+		return(temp = ft_strjoin("minishell: ", s), temp = ft_strjoinf(temp, ": "), temp = ft_strjoinf(temp, strerror(errno)) , temp = ft_strjoinf(temp, "\n"), ft_putstr(temp, 2) , 1);
 	*fd = dup2(fd_file, *fd);
 	close(fd_file);
 	if (*fd < 0)
-		return (free(s), 2);
- 	return (free(s), 0);
+		return (2);
+ 	return ( 0);
 }
 
 static int	open_file_redi(char *s, int *fd, int mode, int *end, char **full_str, t_data *data)
@@ -269,22 +268,23 @@ static int apply_redirection(size_t *i, int fd, char **full_str, t_data *data)
 	else
 		f_mode = open_file_redi(&(*full_str)[*i + 1], &fd, 0, &end_file_name, full_str, data);
 	if (f_mode == 1)
-		return (free(fd_input), data->status = 1, 1);
+		return ( data->status = 1, 1);
 	if (f_mode == 2)
-		return (ft_putstr("minishell: ", 2), ft_putstr(fd_input, 2), ft_putstr(" ", 2), ft_putstr(strerror(errno), 2), ft_putstr("\n", 2), free(fd_input), data->status = 1, 2);
+		return (ft_putstr("minishell: ", 2), ft_putstr(fd_input, 2), ft_putstr(" ", 2), ft_putstr(strerror(errno), 2), ft_putstr("\n", 2), data->status = 1, 2);
 	if (end_file_name) // this indicates wether the file name is the last thing in the string or not
 		*i += end_file_name;
 	else
 		*i += 1;
 	ft_remove_extra_junk(&(*full_str)[dest], &(*full_str)[*i], *i);
 	*i = dest;
-    return (free(fd_input), 0);
+    //return (free(fd_input), 0);
+	return (0);
 }
 
 static void remove_heredoc(char *s)
 {
 	size_t i = 0;
-    size_t st = 0;
+    // size_t st = 0;
     size_t f = 0;
     size_t j = 0;
     char    q = 0;
@@ -293,7 +293,7 @@ static void remove_heredoc(char *s)
     f = 0;
     while (s[i] == ' ' || (s[i] >= 9 && s[i] <= 13))
         i++;
-    st = i;
+    // st = i;
     while (s[i] && s[i] != ' ' && !(s[i] >= 9 && s[i] <= 13))
     {
         if (!q && (s[i] == '\'' || s[i] == '\"'))

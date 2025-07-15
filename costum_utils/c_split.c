@@ -1,150 +1,22 @@
-// #include "../minishell.h"
-
-// static int	ft_count_wd(char *s, char c)
-// {
-// 	int	i;
-// 	int	count;
-// 	int f_wd;
-//     char q;
-
-// 	i = 0;
-// 	count = 0;
-// 	q = 0;
-// 	f_wd = 0;
-// 	while (s[i])
-// 	{
-// 		if (s[i] == c)
-// 		{
-// 			f_wd = 0;
-// 			i++;
-// 		}
-// 		else if (s[i] != c && !f_wd)
-// 		{
-// 			f_wd = 1;
-// 			count++;
-// 		}
-// 		else if (!q && (s[i] == '\'' || s[i] == '\"'))
-// 		{
-// 			q = s[i++];
-// 			while (s[i] && s[i] != q)
-// 				i++;
-// 			q = 0;
-// 			i++;
-// 		}
-// 		else
-// 			i++;
-// 	}
-// 	return (count);
-// }
-
-
-// static char	*ft_substr(char *s, int st, int ed)
-// {
-// 	char	*str;
-// 	int	i;
-
-// 	i = 0;
-// 	str = ft_malloc((ed - st + 1) * sizeof(char));
-// 	while (st < ed)
-// 	{
-// 		str[i++] = s[st++];
-// 	}
-// 	str[i] = '\0';
-// 	return (str);
-// }
-
-// char	**split_q(char *str, char c)
-// {
-// 	char	**ptr;
-// 	size_t	i;
-// 	size_t	j;
-// 	size_t	st;
-// 	size_t	wd;
-// 	char q = 0;
-
-// 	wd = (size_t)ft_count_wd(str,c);
-// 	ptr = ft_malloc((wd + 1) * sizeof(char*));
-// 	i = 0;
-// 	j = 0;
-// 	while (str[i] && j < wd)
-// 	{
-// 		while (str[i] == c)
-// 			i++;
-// 		st = i;
-// 		while (str[i] != c && str[i])
-// 		{
-// 			if (str[i] == '\"' || str[i] == '\'')
-// 			{
-// 				q = str[i];
-// 				i++;
-// 				while (str[i] != q)
-// 					i++;
-// 			}
-// 			i++;
-// 		}
-// 		ptr[j] = ft_substr(str,st,i);
-// 		j++;
-// 		q = 0;
-// 	}
-// 	ptr[j] = NULL;
-// 	return (ptr);
-// }
-
-
-// int  found_q(char *s) 
-// {
-//     size_t  i;
-// 	int		f_s;
-// 	int		f_d;
-// 	int		found;
-
-//     i = 0;
-// 	f_s = 0;
-// 	f_d = 0;
-// 	found = 0;
-//     while (s[i])
-//     {
-// 		if (s[i] == '\'' && !f_d)
-// 			f_s = !f_s;
-// 		if (s[i] == '\"' && !f_s)
-// 			f_d = !f_d;
-// 		if (s[i] == '\"' || s[i] == '\'')
-// 			found++;
-//         i++;
-//     }
-//     if((f_d || f_s) && found > 0)
-//         return(-1);
-// 	else if(found == 0)
-// 		return(0);
-//     return(1);
-// }
-
-
-// char	**c_split(char *str, char c)
-// {
-//     char    **ptr;
-// 	int		status;
-
-// 	status = found_q(str);
-// 	if (status == -1)
-// 		return (NULL);
-// 	else if (status == 1)
-// 		ptr = split_q(str,c);
-//     else
-// 	{
-//         ptr = ft_split(str,c);
-// 	}
-//     return(ptr);
-// }
-
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   c_split.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: yoel-you <yoel-you@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/14 17:17:31 by yoel-you          #+#    #+#             */
+/*   Updated: 2025/07/14 18:51:03 by yoel-you         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "../minishell.h"
 
-static int	ft_count_wd(char *s, char c)
+static size_t	ft_count_wd(char *s, char c)
 {
-	int	i;
-	int	count;
-    char q;
+	size_t	i;
+	size_t	count;
+	char	q;
 
 	i = 0;
 	count = 0;
@@ -170,12 +42,10 @@ static int	ft_count_wd(char *s, char c)
 static char	*ft_substr(char *s, int st, int ed)
 {
 	char	*str;
-	int	i;
+	int		i;
 
 	i = 0;
-	str = malloc((ed - st + 1) * sizeof(char));
-	if (!str)
-		return (NULL);
+	str = ft_malloc((ed - st + 1) * sizeof(char));
 	while (st < ed)
 	{
 		str[i++] = s[st++];
@@ -184,20 +54,35 @@ static char	*ft_substr(char *s, int st, int ed)
 	return (str);
 }
 
-char	**c_split(char *str, char c, char **envp, unsigned char *func_status)
+static size_t	skip_quotes(char *str, char c, size_t i)
+{
+	char	q;
+
+	q = 0;
+	while (str[i] != c && str[i])
+	{
+		if (str[i] == '\"' || str[i] == '\'')
+		{
+			q = str[i];
+			i++;
+			while (str[i] != q)
+				i++;
+		}
+		i++;
+	}
+	return (i);
+}
+
+char	**c_split(char *str, char c)
 {
 	char	**ptr;
-	size_t	i;
-	size_t	j;
-	size_t	st;
 	size_t	wd;
-	char q = 0;
+	size_t	st;
+	size_t	j;
+	size_t	i;
 
-
-	wd = (size_t)ft_count_wd(str,c);
-	ptr = malloc((wd + 1) * sizeof(char*));
-	if(!ptr)
-		return(NULL);
+	wd = ft_count_wd(str, c);
+	ptr = ft_malloc((wd + 1) * sizeof(char *));
 	i = 0;
 	j = 0;
 	while (str[i] && j < wd)
@@ -205,55 +90,39 @@ char	**c_split(char *str, char c, char **envp, unsigned char *func_status)
 		while (str[i] == c)
 			i++;
 		st = i;
-		while (str[i] != c && str[i])
-		{
-			if (str[i] == '\"' || str[i] == '\'')
-			{
-				q = str[i];
-				i++;
-				while (str[i] != q)
-					i++;
-			}
-			i++;
-		}
-		ptr[j] = ft_substr(str,st,i);
-		if (!ptr[j])
-			return(free_all(ptr));
-		if (c != '|')
-			ptr[j] = rm_quotes_expand(ptr[j],envp,func_status);
-		if(ptr[j])
+		i = skip_quotes(str, c, i);
+		ptr[j] = ft_substr(str, st, i);
+		if (ptr[j])
 			j++;
-		q = 0;
 	}
 	ptr[j] = NULL;
 	return (ptr);
 }
 
-
-int  found_q(char *s) 
+int	found_q(char *s)
 {
-    size_t  i;
+	size_t	i;
 	int		f_s;
 	int		f_d;
 	int		found;
 
-    i = 0;
+	i = 0;
 	f_s = 0;
 	f_d = 0;
 	found = 0;
-    while (s[i])
-    {
+	while (s[i])
+	{
 		if (s[i] == '\'' && !f_d)
 			f_s = !f_s;
 		if (s[i] == '\"' && !f_s)
 			f_d = !f_d;
 		if (s[i] == '\"' || s[i] == '\'')
 			found++;
-        i++;
-    }
-    if((f_d || f_s) && found > 0)
-        return(-1);
-	else if(found == 0)
-		return(0);
-    return(1);
+		i++;
+	}
+	if ((f_d || f_s) && found > 0)
+		return (-1);
+	else if (found == 0)
+		return (0);
+	return (1);
 }

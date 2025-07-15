@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   ft_exit.c                                          :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: asoufian <asoufian@student.1337.ma>        +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/11 14:38:07 by asoufian          #+#    #+#             */
-/*   Updated: 2025/04/13 11:00:24 by asoufian         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "../minishell.h"
 
 int	ft_isdigit(int	c)
@@ -36,6 +24,7 @@ static int	ft_valid_int(char *s)
 	}
 	return (1);
 }
+
 int	ft_exit(char **argv, char **envp, unsigned char *status, int *s_exit)
 {
 	long	ret = 0;

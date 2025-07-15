@@ -1,6 +1,6 @@
 #include "../minishell.h"
 
-static void free_malloc_exit(t_lstm *lst, int status)
+static void free_malloc_exit(t_lstm *lst, int is_exit)
 {
     t_lstm *tmp;
 
@@ -11,7 +11,11 @@ static void free_malloc_exit(t_lstm *lst, int status)
         free(tmp->p);
         free(tmp);
     }
-    exit(status);
+    if (is_exit)
+    {
+        write(2,"failed malloc\n",14);
+        exit(1);
+    }
 }
 
 static t_lstm *last_node(t_lstm *lst)
@@ -26,6 +30,13 @@ static t_lstm *last_node(t_lstm *lst)
     return(last);
 }
 
+static void failed_first_malloc(char *ptr)
+{
+    free(ptr);
+    write(2,"failed malloc\n",14);
+    exit(1);
+}
+
 void config_malloc(void *ptr, int isfailed)
 {
     static t_lstm *lstmalloc = NULL;
@@ -36,7 +47,7 @@ void config_malloc(void *ptr, int isfailed)
     {
         new_malloc = malloc(sizeof(t_lstm));
         if (!new_malloc && !lstmalloc)
-            exit(1);
+            failed_first_malloc(ptr);
         else if (!new_malloc && lstmalloc)
             free_malloc_exit(lstmalloc,1);
         new_malloc->p = ptr;
@@ -62,7 +73,10 @@ void *ft_malloc(size_t size)
 
     p = malloc(size);
     if (!p && !is_malloced)
+    {
+        write(2,"failed malloc\n",14);
         exit(1);
+    }
     else if (!p && is_malloced)
         config_malloc(NULL,1);
     else
@@ -72,6 +86,4 @@ void *ft_malloc(size_t size)
     }
     return (p);
 }
-
-
 

@@ -1,51 +1,17 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_setup.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: yoel-you <yoel-you@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/15 10:08:11 by yoel-you          #+#    #+#             */
+/*   Updated: 2025/07/15 10:08:12 by yoel-you         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../minishell.h"
-/*
-static void			ft_space(char *s)
-{
-	size_t	i = 0;
-	int		f_s = 0;
-	int		f_d = 0;
 
-	while(s[i])
-	{
-		if(s[i] == '\'' && !f_d)
-			f_s = !f_s;
-		if(s[i] == '\"' && !f_s)
-			f_d = !f_d;
-		if(!f_d && !f_s && s[i] >= 9 && s[i] <= 13)
-			s[i] = ' ';
-		i++;
-	}
-}
-
-void    config_rdline(char **p ,t_data *data)
-{
-    size_t  len;
-    size_t  i;
-    char    *new_p;
-
-    len = ft_strlen(*p);
-    new_p = ft_calloc(len + 1);
-    i = 0;
-    while (i < len)
-    {
-        new_p[i] = (*p)[i];
-        i++;
-    }
-    new_p[i] = 0;
-    free(*p);
-    *p = NULL;
-    //data->p_rdl = new_p;
-    data->p_rdl = *p;
-    ft_space(data->p_rdl); 
-    data->rdl_args = c_split(*p, ' ');
-    i = 0;
-    while (data->rdl_args[i])
-    {
-        data->rdl_args[i] = rm_quotes_expand(data->rdl_args[i],data->envp,data->status);
-        i++;
-    }
-}*/
 
 void    ft_setup(t_data *data, char **envp)
 {
@@ -78,21 +44,3 @@ void    ft_setup(t_data *data, char **envp)
     return ;
 
 }
-/*t_data     *ft_setup(char **envp)
-{
-    t_data  *data;
-    char    *env;
-
-   // data = ft_malloc(sizeof(t_data));
-    data = ft_calloc(sizeof(t_data));
-    data->envp = ft_duplicate(envp, 0);
-    env = ft_getenv("PATH", data->envp, data->status);
-	if (env)
-    {
-		data->env_paths = ft_split(env,':');
-    }
-    else
-        data->env_paths = NULL;
-    data->rdl_args = NULL;
-    return(data);
-}*/

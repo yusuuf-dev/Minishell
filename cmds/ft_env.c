@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   ft_env.c                                           :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: asoufian <asoufian@student.1337.ma>        +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/11 11:00:03 by asoufian          #+#    #+#             */
-/*   Updated: 2025/04/13 11:29:06 by asoufian         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "../minishell.h"
  // make the function print the var only if it has '=' on it;
 int	ft_env(char **argv, char **envp, char **envp_paths)
@@ -64,7 +52,7 @@ int	ft_env(char **argv, char **envp, char **envp_paths)
 			//	printf("Error while executing execve\n");
 			//	exit(-1);
 			}
-			free(path);
+			//free(path);
 			i++;
 		}
 		exit (0);
@@ -79,8 +67,8 @@ int	ft_env(char **argv, char **envp, char **envp_paths)
 		}
 		wait(&child_info);
 	}
-	free_all(new_envp);
-	free_all(new_arg);
+	//free_all(new_envp);
+	///free_all(new_arg);
 	if (WIFEXITED(child_info))
 		return (WEXITSTATUS(child_info));
 	return (0);

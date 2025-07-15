@@ -23,9 +23,7 @@ static char *c_strjoinf(char *s1, char c)
 	char	*ptr;
 
 	len = ft_strlen(s1);
-	ptr = malloc((len + 2) * sizeof(char));
-	if (!ptr)
-		return(NULL);
+	ptr = ft_malloc((len + 2) * sizeof(char));
 	i = 0;
 	while (i < len)
 	{
@@ -34,7 +32,6 @@ static char *c_strjoinf(char *s1, char c)
 	}
 	ptr[i++] = c;
 	ptr[i] = 0;
-	free(s1);
 	return (ptr);
 }
 
@@ -60,7 +57,7 @@ static char *c_expand(char *str, char **envp, unsigned char *status)
 			var = ft_getenv(key, envp, status);
 			if (var)
 				ptr = ft_strjoinf(ptr,var);
-			free(key);
+			//free(key);
 			i += len;
 		}
 		else
@@ -69,7 +66,7 @@ static char *c_expand(char *str, char **envp, unsigned char *status)
 			i++;
 		}
 	}
-	free(str);
+	//free(str);
 	return(ptr);
 }
 static void ft_strcpy(char *dest, char *src)
@@ -131,10 +128,10 @@ static char *create_file_name(t_data *data)
     name = ft_strdup(og_name);
     while ((access(name, F_OK) == 0) || ((name_reserved(name, data)) == 1)) // change this to long
     {
-        free(name);
+        //free(name);
         counter = ft_itoa(count);
         name = ft_strjoin(og_name, counter);
-        free(counter);
+        //free(counter);
         count++;
 		if (count == 2147483647)
 			return (unlink(name), name);
@@ -174,16 +171,16 @@ int     ft_new_isheredoc(char *p, char **envp, unsigned char *status, t_data *da
 		//tmp = readline("> ");
 		if (!tmp || ft_strcmp(tmp, dl))
 		{
-			free(tmp);
+			//free(tmp);
 			break;
 		}
 		if (!isquote && tmp[0])
 			tmp = c_expand(tmp, envp, status);
 		c_putstr_fd(fd, tmp);
-		free(tmp);
+		//free(tmp);
 	}
 //	sleep(30);
-	free(dl);
+	//free(dl);
 	close(fd);
 	return(index_ret);
 }
@@ -313,8 +310,8 @@ static int found_here_doc(char **p, t_data *data)
 			}
             free_heredoc(data, 1);
             data->heredooc = NULL;
-            free(*p);
-            *p = NULL;
+            //free(*p);
+            //*p = NULL;
 		//	sleep(30);
             return (0);
         }
