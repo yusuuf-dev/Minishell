@@ -117,7 +117,10 @@ static int	ft_execute_cmd(t_data *data)
 	}
     if (pid == 0 || data->is_a_pipe)
 	{
-		signal(SIGQUIT, SIG_DFL);
+		if (sigaction(SIGINT, &(data->OLD_SIG_INT), NULL))
+			return (perror(""), errno);
+        if (sigaction(SIGQUIT, &(data->OLD_SIG_QUIT), NULL))
+			return (perror(""), errno);
 		execve(data->rdl_args[0], data->rdl_args, data->envp);
 		perror("");
 		// free allocated memory
@@ -125,22 +128,29 @@ static int	ft_execute_cmd(t_data *data)
 	}
     else if (pid > 0)
 	{
-		sigaction(SIGINT, &(data->C_c_alt), NULL);
-/*		if (sigaction(SIGINT, &(data->C_c_alt), NULL) == -1)
-			return (perror(""), errno);*/
-
+		if (sigaction(SIGINT, &(data->S_SIG_IGN), NULL))
+			return (perror(""), errno);
         waitpid(pid, &child_info, 0);
-		if (sigaction(SIGINT, &(data->C_c), NULL) == -1)
+		if (sigaction(SIGINT, &(data->SIG_INT), NULL) == -1)
 			return (perror(""), errno);
-		if (f_sig == 2 && kill(0, SIGINT))
-			return (perror(""), errno);
+		if (WIFEXITED(child_info))
+			data->status = WEXITSTATUS(child_info);
+		else if (WIFSIGNALED(child_info))
+		{
+			data->status =  ((child_info & 127) + 128);
+			if (!data->is_a_pipe && data->status == 131)
+			{
+				ft_putstr("Quit (core dumped)\n", 1);
+			}
+			else if (!data->is_a_pipe && data->status == 130)
+			{	
+				write(1, "\n", 1);
+			}
+		}
 	}
-	if (WIFEXITED(child_info))
-		data->status = WEXITSTATUS(child_info);
-	else if (WIFSIGNALED(child_info))
-		data->status =  ((child_info & 127) + 128);
     return (200);
 }
+
 
 static  int executable(t_data *data)
 {
@@ -164,6 +174,7 @@ static  int executable(t_data *data)
         perror("minishell");
     return(data->status = 126, 1);
 }
+
 char	**parsing(t_data *data)
 {
     char	*env;
@@ -204,7 +215,11 @@ char	**parsing(t_data *data)
 				{
 					is_a_file = open(path, O_DIRECTORY);
 					if (is_a_file == -1) // check for errno
-						return (data->status = execute_command(path, data), data->envp);
+					{
+						if (execute_command(path, data)) // need to do cleanup since this now returns on error
+							return (data->envp);
+						return (data->envp);
+					}
 					close(is_a_file);
 				}
 				else
@@ -272,6 +287,7 @@ static int	ft_built_in_cmd(t_data *data)
 	return (0);
 }
 
+
 int	execute_command(char *path, t_data *data)
 {
 	int	child_pid = 0;
@@ -279,8 +295,6 @@ int	execute_command(char *path, t_data *data)
 
 	if (!(data->is_a_pipe))
 	{
-		if (sigaction(SIGINT, &(data->C_c_alt), NULL) == -1)
-			return (perror(""), errno);
 		child_pid = fork();
 	}
 	if (child_pid < 0)
@@ -290,7 +304,8 @@ int	execute_command(char *path, t_data *data)
 	}
 	if (!child_pid || data->is_a_pipe)
 	{
-		signal(SIGQUIT, SIG_DFL);
+		sigaction(SIGINT, &(data->OLD_SIG_INT), NULL);
+        sigaction(SIGQUIT, &(data->OLD_SIG_QUIT), NULL);
 		execve(path, data->rdl_args, data->envp);
 		perror("execve");
 		// free allocated memory
@@ -298,21 +313,27 @@ int	execute_command(char *path, t_data *data)
 	}
 	else
 	{
-		if (!(data->is_a_pipe))
+		if (sigaction(SIGINT, &(data->S_SIG_IGN), NULL) == -1)
+			return (perror(""), errno);
+		wait(&child_info);
+		if (sigaction(SIGINT, &(data->SIG_INT), NULL) == -1)
+			return (perror(""), errno);
+		if (WIFEXITED(child_info))
+			data->status = WEXITSTATUS(child_info);
+		else if (WIFSIGNALED(child_info))
 		{
-			wait(&child_info);
-			if (sigaction(SIGINT, &(data->C_c), NULL) == -1)
-				return (perror(""), errno);	
-			if (f_sig == 2 && kill(0, SIGINT))
-				return (perror(""), errno);
+			data->status = ((child_info & 127) + 128);
+			if (!data->is_a_pipe && data->status == 131)
+			{
+				ft_putstr("Quit (core dumped)\n", 1);
+			}
+			else if (!data->is_a_pipe && data->status == 130)
+			{
+				write(1, "\n", 1);
+				signal_fun(2);
+			}
 		}
 	}
-	if (WIFEXITED(child_info))
-		return (WEXITSTATUS(child_info));
-	else if (WIFSIGNALED(child_info))
-		return ((child_info & 127) + 128);
-		// return (WTERMSIG(status) + 128);
-	//if (!is_a_pipe && WIFEXITED(child_info))
-	//	return (WEXITSTATUS(child_info));
-	return (200);
+	return (0);
+	//return (200);
 }

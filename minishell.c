@@ -42,8 +42,10 @@ int main(int ac, char **av, char **envp)
         {return (config_malloc(NULL,0), errno);}
 	while (!(data.exit) && !(data.is_a_pipe))
     {
-		sigaction(SIGQUIT, &(data.C_slash), NULL);
-        sigaction(SIGINT, &(data.C_c), NULL);
+        if (sigaction(SIGINT, &(data.SIG_INT), NULL) == -1) // remember to remove all the if condition on sigaction
+            return (perror (""), errno);                    // check the man for possible errors
+		if (sigaction(SIGQUIT, &(data.S_SIG_IGN), NULL) == -1)
+            return (perror (""), errno);
         if (isatty(STDIN_FILENO))
 		    data.p_rdl = readline("minishell : ");
 	    else
@@ -54,11 +56,11 @@ int main(int ac, char **av, char **envp)
                 line[ft_strlen(line) - 1] = 0;
 		    data.p_rdl = line;
 	    }
-        if (f_sig)
+        if (signal_fun(-1))
         {
             data.status = 130;
-            f_sig = 0; // could this cause a data race ? , what if we sent SIGINT just as the proram was about to change the f_sig value ? I'm guessing it should work 
-        }               // fine since I used an atomic var 
+            signal_fun(0);
+        }
 		if (!data.p_rdl) // C^d
         {
             if (isatty(STDIN_FILENO))

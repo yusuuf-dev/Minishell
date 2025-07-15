@@ -16,18 +16,30 @@
 
 #define BUFFER_SIZE 1
 #define HEREDOC_MAX 16
-#define SPLIT_MARKER '\001'
 
+// for malloc garbage collector
 typedef struct s_lstm
 {
     void            *p;
     struct s_lstm   *next;
 } t_lstm;
 
+
+typedef struct pipes
+{
+    int     i;
+    pid_t   cpid;
+    int     pipefd[2];
+    int     old_pipe;
+    char    **piped_cmds;
+    int     *is_a_pipe;
+} pipes_t;
+
+
 typedef struct heredooc
 {
-    int         arg_num;
-    int         taken;
+    int         arg_num; // wether the foundheredoc in the ft_all_redirection will use this node or not
+    int         taken;  // wether will the redline use this node or not
     char        *file_name;
     struct heredooc   *next;
 }t_heredoc;
@@ -35,7 +47,6 @@ typedef struct heredooc
 typedef struct s_data
 {
     char              *p_rdl;
-    char              *dup_rdl;
     char              **rdl_args;
     char              **envp;
     char              **env_paths;
@@ -44,13 +55,13 @@ typedef struct s_data
     int               is_a_pipe;
     int               fd0, fd1, fd2;
     char              **segments;
-    struct sigaction  C_slash;
-    struct sigaction  C_c;
-    struct sigaction  C_c_alt;
+    struct sigaction    S_SIG_IGN; 
+    struct sigaction    SIG_INT;
+    struct sigaction    OLD_SIG_QUIT;
+    struct sigaction    OLD_SIG_INT;
     t_heredoc         *heredooc;
-    char              *checker;
-    char              *expand;
 }t_data;
+
 
 int     costum_atoi(char *s, unsigned char *status, int fd);
 size_t	ft_strlen(char *s);
@@ -105,8 +116,12 @@ void    *ft_malloc(size_t size);
 void    config_malloc(void *ptr, int isfailed); // use it only when end program pass NULL to free all thing and exit;
 void    config_rdline(char **p ,t_data *data);
 void    *ft_memset(void *ptr, int c, size_t n);
+
+///////signals
 void    signal_handler(int signum);
-void    count_sigs(int signum);
+int     signal_fun(int n);
+
+
 void    free_heredoc(t_data *data, int m_unlink);
 int     here_doc_fork(char **p, unsigned char *status, t_data *data);
 char    *heredoc_old_delimiter(char *s ,int *isquote, int *index_ret);
