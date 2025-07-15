@@ -20,8 +20,6 @@
 int			execute_command(char *path, t_data *data);
 static int	ft_built_in_cmd(t_data *data);
 
-extern volatile sig_atomic_t f_sig;
-
 /*static void		ft_space(char *s)
 {
 	size_t	i = 0;
@@ -40,118 +38,6 @@ extern volatile sig_atomic_t f_sig;
 	}
 }*/
 
-static int     c_strncmp(const char *s1, const char *s2) // there's another copy of this in ft_export
-{
-    size_t  i;
-
-    i = 0;
-    while(s1[i] && s1[i] != '=')
-    {
-        if (s1[i] - s2[i])
-            return (s1[i] - s2[i]);
-        i++;
-    }
-	if (!(s2[i]))
-		return (0);
-    return (s1[i] - s2[i]);
-}
-
-static void ft_strcpy(char *dest, char *src)
-{
-	size_t	i = 0;
-
-	while(src[i])
-	{
-		dest[i] = src[i];
-		i++;
-	}
-	dest[i] = 0;
-}
-
-static char	*ft_itoa(int n)
-{
-	char	*s = ft_calloc(17);
-	int		i = 15;
-
-	if (!n)
-		return (s[0] = '0', s);
-	while (n)
-	{
-		s[i] = (n % 10) + '0';
-		i--;
-		n = n / 10;
-	}
-	ft_strcpy(s, (s + i + 1));
-	return (s);
-}
-char	*ft_getenv(char *s, char **envp, unsigned char *status)
-{
-	size_t	i = 0;
-	// size_t	size = 0;
-
-	// size = ft_strlen(s);
-	while (envp[i])
-	{
-		if (!c_strncmp(envp[i], s))
-		{
-			return (ft_strchr(envp[i], '=') + 1);
-		}
-		if (s[0] == '?' && !s[1])
-			return (i = *status, ft_itoa(i));
-		i++;
-	}
-	return (NULL);
-}
-
-static int	ft_execute_cmd(t_data *data)
-{ // I need to add the status here too, so I can get the status of I run a local program (not in the PATH)
-    int     pid = 0;
-	int		child_info = 0;
-
-	if (!(data->is_a_pipe))
-    	pid = fork();
-	if (pid == -1)
-	{
-		perror("");
-		exit (-1);
-	}
-    if (pid == 0 || data->is_a_pipe)
-	{
-		if (sigaction(SIGINT, &(data->OLD_SIG_INT), NULL))
-			return (perror(""), errno);
-        if (sigaction(SIGQUIT, &(data->OLD_SIG_QUIT), NULL))
-			return (perror(""), errno);
-		execve(data->rdl_args[0], data->rdl_args, data->envp);
-		perror("");
-		// free allocated memory
-		exit (errno);
-	}
-    else if (pid > 0)
-	{
-		if (sigaction(SIGINT, &(data->S_SIG_IGN), NULL))
-			return (perror(""), errno);
-        waitpid(pid, &child_info, 0);
-		if (sigaction(SIGINT, &(data->SIG_INT), NULL) == -1)
-			return (perror(""), errno);
-		if (WIFEXITED(child_info))
-			data->status = WEXITSTATUS(child_info);
-		else if (WIFSIGNALED(child_info))
-		{
-			data->status =  ((child_info & 127) + 128);
-			if (!data->is_a_pipe && data->status == 131)
-			{
-				ft_putstr("Quit (core dumped)\n", 1);
-			}
-			else if (!data->is_a_pipe && data->status == 130)
-			{	
-				write(1, "\n", 1);
-			}
-		}
-	}
-    return (200);
-}
-
-
 static  int executable(t_data *data)
 {
 	int is_a_file = 0;
@@ -169,7 +55,7 @@ static  int executable(t_data *data)
         return(data->status = 127, 127);
     }
     if (access(data->rdl_args[0],X_OK) == 0)
-        return (ft_execute_cmd(data));
+        return (execute_command(NULL, data));
     else
         perror("minishell");
     return(data->status = 126, 1);
@@ -216,7 +102,7 @@ char	**parsing(t_data *data)
 					is_a_file = open(path, O_DIRECTORY);
 					if (is_a_file == -1) // check for errno
 					{
-						if (execute_command(path, data)) // need to do cleanup since this now returns on error
+						if (execute_command(path, data) != 200) // need to do cleanup since this now returns on error
 							return (data->envp);
 						return (data->envp);
 					}
@@ -270,8 +156,8 @@ static int	ft_built_in_cmd(t_data *data)
 		data->status = ft_cd(data->rdl_args, &(data->envp));
 	else if (i == 12)
 	{
-		data->envp = ft_new_export(data);
-		//data->envp = ft_export(data->rdl_args, data->envp, &(data->status));
+		//data->envp = ft_new_export(data);
+		data->envp = ft_export(data->rdl_args, data->envp, &(data->status));
 	}
 	else if (i == 13)
 		data->status = ft_echo(data->rdl_args);
@@ -281,59 +167,59 @@ static int	ft_built_in_cmd(t_data *data)
 		data->envp = ft_unset(data->rdl_args, data->envp, &(data->status));
 	else if (i == 16)
 		data->status = ft_exit(data->rdl_args, data->envp, &(data->status), &(data->exit));
-  	//free_all(cmds);
+  	//free_all(cmds); // needs free to be freed from the linked list.
 	if (i > 9)
 		return (1);
 	return (0);
 }
 
+static void	reset_sig_a_reap_exit_code(t_data *data)
+{
+	int	child_info;
+
+	child_info = 0;
+	sigaction(SIGINT, &(data->S_SIG_IGN), NULL);
+	wait(&child_info);
+	sigaction(SIGINT, &(data->SIG_INT), NULL);
+	if (WIFEXITED(child_info))
+		data->status = WEXITSTATUS(child_info);
+	else if (WIFSIGNALED(child_info))
+	{
+	//	data->status = ((child_info & 127) + 128);
+		data->status = WTERMSIG(child_info) + 128;
+		if (!data->is_a_pipe && data->status == 131)
+			ft_putstr("Quit (core dumped)\n", 1);
+		else if (!data->is_a_pipe && data->status == 130)
+			write(1, "\n", 1);
+	}
+	return ;
+}
 
 int	execute_command(char *path, t_data *data)
 {
-	int	child_pid = 0;
-	int	child_info = 0;
+	int	child_pid;
 
+	child_pid = 0;
 	if (!(data->is_a_pipe))
-	{
 		child_pid = fork();
-	}
 	if (child_pid < 0)
 	{
 		perror("fork");
-		exit(errno);
+		exit(errno); // free previous allocated mem, use config_malloc ?
 	}
 	if (!child_pid || data->is_a_pipe)
 	{
 		sigaction(SIGINT, &(data->OLD_SIG_INT), NULL);
         sigaction(SIGQUIT, &(data->OLD_SIG_QUIT), NULL);
-		execve(path, data->rdl_args, data->envp);
+		if (path)
+			execve(path, data->rdl_args, data->envp);
+		else
+			execve(data->rdl_args[0], data->rdl_args, data->envp);
 		perror("execve");
 		// free allocated memory
 		exit(errno);
 	}
 	else
-	{
-		if (sigaction(SIGINT, &(data->S_SIG_IGN), NULL) == -1)
-			return (perror(""), errno);
-		wait(&child_info);
-		if (sigaction(SIGINT, &(data->SIG_INT), NULL) == -1)
-			return (perror(""), errno);
-		if (WIFEXITED(child_info))
-			data->status = WEXITSTATUS(child_info);
-		else if (WIFSIGNALED(child_info))
-		{
-			data->status = ((child_info & 127) + 128);
-			if (!data->is_a_pipe && data->status == 131)
-			{
-				ft_putstr("Quit (core dumped)\n", 1);
-			}
-			else if (!data->is_a_pipe && data->status == 130)
-			{
-				write(1, "\n", 1);
-				signal_fun(2);
-			}
-		}
-	}
-	return (0);
-	//return (200);
+		reset_sig_a_reap_exit_code(data);
+	return (200);
 }

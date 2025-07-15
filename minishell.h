@@ -32,7 +32,7 @@ typedef struct pipes
     int     pipefd[2];
     int     old_pipe;
     char    **piped_cmds;
-    int     *is_a_pipe;
+  //  int     *is_a_pipe;
 } pipes_t;
 
 

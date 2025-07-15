@@ -136,7 +136,7 @@ static int ft_var_exists(char *s, char **envp)
 	size_t	i;
 	size_t	size;
 	char	*new;
-	
+
 	i = 0;
 	size = 0;
 	while (s[size] && s[size] != '=')
@@ -164,14 +164,26 @@ static int ft_var_exists(char *s, char **envp)
 static char	**ft_duplicate_add_s(char **dup, char *s)
 {
 	char **p;
-	size_t		i = 0;
+///	size_t		i = 0;
+	size_t		size = 0;
 
-	p = ft_duplicate(dup, 1);
+///	p = ft_duplicate(dup, 1);
 	// if (!p) ///////////////// CHECK FOR OTHER MALLOCS !!!!!!!!!!!!!!!
 	// 	return (NULL);
-	while(p[i])
+	while(dup[size])
+		size++;
+	p = ft_calloc(sizeof(char *) * (size + 1));
+	size = 0;
+	while (dup[size])
+	{
+		p[size] = dup[size];
+		size++;
+	}
+	p[size] = ft_strdup(s);
+	//free(dup); // ft_malloc error
+	/*while(p[i])
 		i++;
-	p[i] = ft_strdup(s);
+	p[i] = ft_strdup(s);*/
 	//free_all(dup);
 	return (p);
 }

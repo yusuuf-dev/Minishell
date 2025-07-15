@@ -34,7 +34,7 @@ static char	*ft_substr(char *s, int st, int ed)
 	int	i;
 
 	i = 0;
-	str = malloc((ed - st + 1) * sizeof(char));
+	str = ft_malloc((ed - st + 1) * sizeof(char));
 	if (!str)
 		return (NULL);
 	while (st < ed)
@@ -70,7 +70,7 @@ char	**ft_split(char *str, char c)
 	int	wd;
 
 	wd = ft_count_wd(str,c);
-	ptr = malloc((wd + 1) * sizeof(char*));
+	ptr = ft_malloc((wd + 1) * sizeof(char*));
 	if(!ptr)
 		return(NULL);
 	i = 0;
