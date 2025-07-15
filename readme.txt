@@ -98,3 +98,17 @@ yoel-you@c1r7p1:~$ sdgfdag
 sdgfdag: command not found
 yoel-you@c1r7p1:~$ echo $?$?$?
 127127127
+
+- ayoub 15_07 modified/added the following files:
+
+	modified:   Makefile
+	modified:   TO_DO
+	modified:   cmds/ft_cd.c
+	modified:   cmds/ft_export.c
+	modified:   cmds/ft_pwd.c
+	modified:   costum_utils/ft_pipes.c
+	modified:   minishell.c
+	modified:   minishell.h
+	modified:   parsing.c
+	added   :   costum_utils/ft_getenv.c
+
