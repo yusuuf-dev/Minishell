@@ -16,7 +16,138 @@ int	ft_find(char **s, char *find, size_t *index)
 	}
 	return (0);
 }
+static  int    valid_var(char *s) // same function is used in ft_export
+{
+	size_t	i;
 
+	i = 1;
+	if (s[0] && (s[0] != '_' && !ft_isalpha(s[0])))
+		return (1);
+	while (s[i] && s[i] != '=') // I make the function stop if it finds the '=' cuz bash doesn't mind what the value of the varialbe is
+	{							//	wether it contains (some chars other than alphanum, '_', '=').
+    	if (!ft_isalnum(s[i]) && s[i] != '_' && s[i] != '=') 
+       	 return (1);
+		i++;
+	}
+    return (0);
+}
+
+//void	query_envp(data->rdl_args[ar])
+
+/*void	move_all_the_nodes(t_lstm *move)
+{
+	t_lstm	*tmp;
+	t_lstm	*last_node = move;
+
+
+	while (last_node)
+	{
+		last_node = last_node->next;
+	}
+
+}*/
+t_lstm	*head_of_ft_malloc_struct(t_lstm *head)
+{
+	static t_lstm *ptr = NULL;
+
+	if (head)
+		ptr = head;
+	return (ptr);
+}
+
+void	move_content_remove_last_node(t_lstm *head)
+{
+	t_lstm *tmp;
+	t_lstm *last_node;
+
+	/* get the last node*/
+	last_node = head;
+	while (last_node->next)
+		last_node = last_node->next;
+	/*move the content from the last node to the first one*/
+	head->p = last_node->p;
+	tmp = head;
+	/* get the node before the last one*/
+	while (tmp->next != last_node)
+	{
+		tmp = tmp->next;
+	}
+	/* make it the last node by making it point to null*/
+	tmp->next = NULL;
+	/* free the old last node*/
+	free(last_node);
+}
+
+void	free_ft_malloc(void *ptr)
+{
+    t_lstm *tmp;
+	t_lstm *head = head_of_ft_malloc_struct(NULL);
+
+	if (head->p == ptr)
+	{
+		free(head->p);
+		move_content_remove_last_node(head);
+	}
+
+    while (head)
+    {
+        tmp = head;
+        head = head->next;
+		if (head->p == ptr)
+		{
+			tmp->next = head->next;
+			free(head->p);
+			free(head);
+			return ;
+		///	move_all_the_nodes(tmp);
+			//tmp->next = head->next;
+        	//free(head);
+		}
+    }
+}
+
+static void	remove_var_from_env(t_data *data, size_t ar)
+{
+	size_t	i;
+
+	i = 0;
+	while (data->envp[i]) // query the env
+	{
+		if (!c_strncmp(data->rdl_args[ar], data->envp[i]))
+		{
+			//free(envp[i]); // we use ft_malloc this is going to use a double free error,
+			free_ft_malloc(data->envp[i]);
+			while (data->envp[i])
+			{
+				data->envp[i] = data->envp[i + 1];
+				i++;
+			}
+			return ;
+		}
+		i++;
+	}
+}
+
+int		ft_unset(t_data *data)
+{
+	size_t	ar = 1;
+	size_t	i;
+
+	// check if the arg is valid otherwise skip to the next arg set the exit status to 0;
+	while (data->rdl_args[ar])
+	{
+		i = 0;
+		if (data->rdl_args[ar] && valid_var(data->rdl_args[ar]))
+			ar++;
+		if (!data->rdl_args[ar])
+			return (0);
+		remove_var_from_env(data, ar);
+		ar++;
+	}
+	// if found, free the string and move the other strings in the array starting from n to n-1, and set NULL to the last and the before-last string
+	return (0);
+}
+/*
 char	**ft_unset(char **argv, char **envp, unsigned char *status)
 {
 	char	**p = NULL;
@@ -55,4 +186,4 @@ char	**ft_unset(char **argv, char **envp, unsigned char *status)
 	}
 	*status = 0;
 	return (envp);
-}
+}*/

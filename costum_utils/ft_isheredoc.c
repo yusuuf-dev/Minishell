@@ -58,6 +58,7 @@ static char *c_expand(char *str, char **envp, unsigned char *status)
 			if (var)
 				ptr = ft_strjoinf(ptr,var);
 			//free(key);
+			free_ft_malloc(key);
 			i += len;
 		}
 		else
@@ -66,6 +67,7 @@ static char *c_expand(char *str, char **envp, unsigned char *status)
 			i++;
 		}
 	}
+	free_ft_malloc(str);
 	//free(str);
 	return(ptr);
 }
@@ -129,9 +131,11 @@ static char *create_file_name(t_data *data)
     while ((access(name, F_OK) == 0) || ((name_reserved(name, data)) == 1)) // change this to long
     {
         //free(name);
+		free_ft_malloc(name);
         counter = ft_itoa(count);
         name = ft_strjoin(og_name, counter);
         //free(counter);
+		free_ft_malloc(counter);
         count++;
 		if (count == 2147483647)
 			return (unlink(name), name);
@@ -172,15 +176,18 @@ int     ft_new_isheredoc(char *p, char **envp, unsigned char *status, t_data *da
 		if (!tmp || ft_strcmp(tmp, dl))
 		{
 			//free(tmp);
+			free_ft_malloc(tmp);
 			break;
 		}
 		if (!isquote && tmp[0])
 			tmp = c_expand(tmp, envp, status);
 		c_putstr_fd(fd, tmp);
+		free_ft_malloc(tmp);
 		//free(tmp);
 	}
 //	sleep(30);
 	//free(dl);
+	free_ft_malloc(dl);
 	close(fd);
 	return(index_ret);
 }
@@ -196,14 +203,18 @@ void free_heredoc(t_data *data, int m_unlink)
         temp_f = temp;
         temp = temp->next;
         if (m_unlink)
-            unlink(temp_f->file_name); // check for error ?
-        free(temp_f->file_name);
-        free(temp_f);
+        	{unlink(temp_f->file_name);}	 // check for error ?
+        /*free(temp_f->file_name);
+        free(temp_f);*/
+		free_ft_malloc(temp_f->file_name);
+		free_ft_malloc(temp_f);
     }
     if (m_unlink)
-        unlink(temp->file_name);
-    free(temp->file_name);
-    free(temp);
+        {unlink(temp->file_name);}
+    /*free(temp->file_name);
+    free(temp);*/
+	free_ft_malloc(temp->file_name);
+	free_ft_malloc(temp);
     data->heredooc = NULL;
 }
 int create_file_heredoc(char *p, t_data *data)
@@ -238,7 +249,7 @@ static int found_here_doc(char **p, t_data *data)
     int     f_s = 0;
     int     found = 0;
     int     cpid;
-    int     child_status;
+    int     child_status = 0;
 	while ((s)[i])
 	{
 		if (found > HEREDOC_MAX)
@@ -268,6 +279,7 @@ static int found_here_doc(char **p, t_data *data)
         {
             data->is_a_pipe = 1;
             signal(SIGINT, SIG_DFL);
+			//sigaction(SIGINT, &(data->S_SIG_DFL), NULL);
             i = f_d = f_s = 0;
             t_heredoc *temp = data->heredooc;
             while ((s)[i])
@@ -308,10 +320,12 @@ static int found_here_doc(char **p, t_data *data)
 					signal_fun(2);
 				}
 			}
-            free_heredoc(data, 1);
+            free_heredoc(data, 1); // do files get deleted in this part ?
             data->heredooc = NULL;
-            //free(*p);
-            //*p = NULL;
+			free_ft_malloc(*p);
+			*p = NULL;
+            /*free(*p);
+            *p = NULL;*/
 		//	sleep(30);
             return (0);
         }

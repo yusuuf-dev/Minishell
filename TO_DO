@@ -312,3 +312,7 @@ but this works               >> ls|cat Makefile|cat<<asd >out
 
 restore old frees on the built-in cmds, and the other places too in the minishell, make a function that will free the node which it stores the ptr to the allocated
 block so that 'config_malloc' won't cause double free error
+
+
+minishell : export a="a   b"
+minishell : > $a

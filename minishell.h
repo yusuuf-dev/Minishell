@@ -24,7 +24,6 @@ typedef struct s_lstm
     struct s_lstm   *next;
 } t_lstm;
 
-
 typedef struct pipes
 {
     int     i;
@@ -55,7 +54,8 @@ typedef struct s_data
     int               is_a_pipe;
     int               fd0, fd1, fd2;
     char              **segments;
-    struct sigaction    S_SIG_IGN; 
+    struct sigaction    S_SIG_IGN;
+    struct sigaction    S_SIG_DFL;
     struct sigaction    SIG_INT;
     struct sigaction    OLD_SIG_QUIT;
     struct sigaction    OLD_SIG_INT;
@@ -63,6 +63,7 @@ typedef struct s_data
 }t_data;
 
 
+int     c_strncmp(const char *s1, const char *s2);
 int     costum_atoi(char *s, unsigned char *status, int fd);
 size_t	ft_strlen(char *s);
 char	**ft_split(char *str, char c);
@@ -84,9 +85,9 @@ int     ft_pwd(char	**argv, char **envp);
 int     ft_cd(char **argv, char ***envp);
 char	**ft_export(char **argv, char **envp, unsigned char *status);
 char    **ft_new_export(t_data *data); // new export just to parse only data i didn't change original one because we call other place ft_export to chane vars
-char	**ft_unset(char **argv, char **envp, unsigned char *status);
+int		ft_unset(t_data *data);
 int     ft_env(char **argv, char **envp, char **envp_paths);
-int	    ft_exit(char **argv, char **envp, unsigned char *status, int *s_exit);
+int     ft_exit(char **argv, unsigned char *status, int *s_exit);
 
 //char	**free_all(char **str);
 char	**ft_duplicate(char	**s, size_t add_size);
@@ -112,6 +113,8 @@ int	    parse_redirection(char **full_str, t_data *data);
 int     costum_atoi(char *nptr, unsigned char *status, int fd);
 int     ft_pipes(t_data *data);
 void    ft_setup(t_data *data, char **envp);
+t_lstm	*head_of_ft_malloc_struct(t_lstm *head);
+void	free_ft_malloc(void *ptr);
 void    *ft_malloc(size_t size);
 void    config_malloc(void *ptr, int isfailed); // use it only when end program pass NULL to free all thing and exit;
 void    config_rdline(char **p ,t_data *data);

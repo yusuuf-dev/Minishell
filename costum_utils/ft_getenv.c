@@ -12,11 +12,12 @@
 
 #include "../minishell.h"
 
-static void ft_strcpy(char *dest, char *src)
+static void	ft_strcpy(char *dest, char *src)
 {
-	size_t	i = 0;
+	size_t	i;
 
-	while(src[i])
+	i = 0;
+	while (src[i])
 	{
 		dest[i] = src[i];
 		i++;
@@ -26,9 +27,11 @@ static void ft_strcpy(char *dest, char *src)
 
 static char	*ft_itoa(int n)
 {
-	char	*s = ft_calloc(17);
-	int		i = 15;
+	char	*s;
+	int		i;
 
+	s = ft_calloc(18);
+	i = 15;
 	if (!n)
 		return (s[0] = '0', s);
 	while (n)
@@ -41,28 +44,11 @@ static char	*ft_itoa(int n)
 	return (s);
 }
 
-static int     c_strncmp(const char *s1, const char *s2) // there's another copy of this in ft_export
-{
-    size_t  i;
-
-    i = 0;
-    while(s1[i] && s1[i] != '=')
-    {
-        if (s1[i] - s2[i])
-            return (s1[i] - s2[i]);
-        i++;
-    }
-	if (!(s2[i]))
-		return (0);
-    return (s1[i] - s2[i]);
-}
-
 char	*ft_getenv(char *s, char **envp, unsigned char *status)
 {
-	size_t	i = 0;
-	// size_t	size = 0;
+	size_t	i;
 
-	// size = ft_strlen(s);
+	i = 0;
 	while (envp[i])
 	{
 		if (!c_strncmp(envp[i], s))

@@ -164,9 +164,10 @@ static int	ft_built_in_cmd(t_data *data)
 	else if (i == 14)
 		data->status = ft_env(data->rdl_args, data->envp, data->env_paths);
 	else if (i == 15)
-		data->envp = ft_unset(data->rdl_args, data->envp, &(data->status));
+		data->status = ft_unset(data);
+	//	data->envp = ft_unset(data->rdl_args, data->envp, &(data->status));
 	else if (i == 16)
-		data->status = ft_exit(data->rdl_args, data->envp, &(data->status), &(data->exit));
+		data->status = ft_exit(data->rdl_args, &(data->status), &(data->exit));
   	//free_all(cmds); // needs free to be freed from the linked list.
 	if (i > 9)
 		return (1);

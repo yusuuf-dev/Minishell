@@ -52,7 +52,10 @@ int main(int ac, char **av, char **envp)
 		if (sigaction(SIGQUIT, &(data.S_SIG_IGN), NULL) == -1)
             return (perror (""), errno);
         if (isatty(STDIN_FILENO))
+        {
 		    data.p_rdl = readline("minishell : ");
+            data.p_rdl = ft_strdup(data.p_rdl);
+        }
 	    else
 	    {
 		    char *line;
@@ -94,6 +97,7 @@ int main(int ac, char **av, char **envp)
         if (!data.is_a_pipe)
             free(data.p_rdl);
        // config_malloc(NULL,0);
+       // delete files of heredoc;
     }
     return(close_dup_fds(&data), rl_clear_history(), config_malloc(NULL,0), data.status);
 }

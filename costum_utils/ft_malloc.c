@@ -55,6 +55,7 @@ void config_malloc(void *ptr, int isfailed)
         if (!lstmalloc)
         {
             lstmalloc = new_malloc;
+            head_of_ft_malloc_struct(lstmalloc);
             return;
         }
         tmp = last_node(lstmalloc);

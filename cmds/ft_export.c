@@ -23,7 +23,7 @@ static void print_error(char *s1, char *s2, char *s3)
 
 }
 
-static int	c_strncmp(const char *s1, const char *s2, char terminator)
+static int	ft_ex_strncmp(const char *s1, const char *s2, char terminator)
 {
         size_t  i;
 
@@ -106,7 +106,7 @@ void	no_args(char **envp)
 			smallest++;
 		while (envp[j])
 		{
-			if (!(sorted[j]) && (c_strncmp(envp[j], envp[smallest], '=') < 0)) // this line checks if the string is alread sorted if it is it skips it
+			if (!(sorted[j]) && (ft_ex_strncmp(envp[j], envp[smallest], '=') < 0)) // this line checks if the string is alread sorted if it is it skips it
 				smallest = j;
 			j++;
 		}
@@ -116,21 +116,7 @@ void	no_args(char **envp)
 	print_the_envs(envp, sorted);
 	//free(sorted);
 }
-static int	ftc_strncmp(const char *s1, const char *s2)
-{
-    size_t  i;
 
-    i = 0;
-    while(s1[i] && s1[i] != '=')
-    {
-        if (s1[i] - s2[i])
-            return (s1[i] - s2[i]);
-        i++;
-    }
-	if (!(s2[i]))
-		return (0);
-    return (s1[i] - s2[i]);
-}
 static int ft_var_exists(char *s, char **envp)
 {
 	size_t	i;
@@ -145,7 +131,7 @@ static int ft_var_exists(char *s, char **envp)
 	while (envp[i])
 	{
 		//if (!ft_strncmp(envp[i], s, size))
-		if (!ftc_strncmp(s, envp[i]))
+		if (!c_strncmp(s, envp[i]))
 		{
 			s = ft_strchr(s, '=');
 			if (!s) // if the entered command doesn't include an '=' we shouldn't change the value that the var has;

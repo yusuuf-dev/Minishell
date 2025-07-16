@@ -38,6 +38,10 @@ void    ft_setup(t_data *data, char **envp)
     data->SIG_INT.sa_flags = SA_RESTART;
     data->SIG_INT.sa_handler = signal_handler;
 
+    /* DFL*/
+    sigemptyset(&(data->S_SIG_DFL.sa_mask));
+    data->S_SIG_DFL.sa_flags = SA_RESTART;
+    data->S_SIG_DFL.sa_handler = SIG_DFL;
     /* setting the signal handlers and saving the old ones */
     sigaction(SIGINT, &(data->SIG_INT), &(data->OLD_SIG_INT));
    	sigaction(SIGQUIT, &(data->S_SIG_IGN), &(data->OLD_SIG_QUIT));
