@@ -74,8 +74,8 @@ int main(int ac, char **av, char **envp)
         }
         if (data.p_rdl[0])
             add_history(data.p_rdl);
-        if (data.p_rdl[0] && check_syntax(data.p_rdl))
-            data.status = 2;
+        if (data.p_rdl[0] && check_syntax(&data))
+            ;
         else if (data.p_rdl[0] && here_doc_fork(&(data.p_rdl), &(data.status), &data))
             return (close_dup_fds(&data), errno); // ?? free the other stuff ?
         else if (data.p_rdl && data.p_rdl[0])
@@ -93,6 +93,7 @@ int main(int ac, char **av, char **envp)
         }
         if (!data.is_a_pipe)
             free(data.p_rdl);
+       // config_malloc(NULL,0);
     }
     return(close_dup_fds(&data), rl_clear_history(), config_malloc(NULL,0), data.status);
 }

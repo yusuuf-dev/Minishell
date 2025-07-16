@@ -222,6 +222,7 @@ char **ft_new_export(t_data *data)
 	size_t	ar = 1;
 
 	//data->rdl_args = c_split_02(data->dup_rdl,' ',data->envp,&data->status);
+	data->status = 0;
 	if (!data->rdl_args[ar])
 		return (data->status = 0, no_args(data->envp), data->envp);
 	while (data->rdl_args[ar])

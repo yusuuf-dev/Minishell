@@ -156,8 +156,8 @@ static int	ft_built_in_cmd(t_data *data)
 		data->status = ft_cd(data->rdl_args, &(data->envp));
 	else if (i == 12)
 	{
-		//data->envp = ft_new_export(data);
-		data->envp = ft_export(data->rdl_args, data->envp, &(data->status));
+		data->envp = ft_new_export(data);
+		//data->envp = ft_export(data->rdl_args, data->envp, &(data->status));
 	}
 	else if (i == 13)
 		data->status = ft_echo(data->rdl_args);
