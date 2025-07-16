@@ -6,7 +6,7 @@
 /*   By: yoel-you <yoel-you@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/14 17:19:15 by yoel-you          #+#    #+#             */
-/*   Updated: 2025/07/14 17:19:16 by yoel-you         ###   ########.fr       */
+/*   Updated: 2025/07/16 10:57:50 by yoel-you         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,29 +80,29 @@ static int	check_operator(char *p, int i)
 	return (0);
 }
 
-int	check_syntax(char *p)
+int	check_syntax(t_data *data)
 {
 	int		i;
 	char	q;
 
 	i = 0;
 	q = 0;
-	if (found_q(p) == -1)
-		return (ft_putstr("Error Unclose quote\n", 2), 1);
-	if (is_onlyspace(p))
+	if (found_q(data->p_rdl) == -1)
+		return (ft_putstr("Error Unclose quote\n", 2),data->status = 2, 1);
+	if (is_onlyspace(data->p_rdl))
 		return (1);
-	while (p[i] == ' ')
+	while (data->p_rdl[i] == ' ')
 		i++;
-	if (p[i] == '|')
-		return (ft_putstr("Minishell: syntax error\n", 2), 1);
-	while (p[i])
+	if (data->p_rdl[i] == '|')
+		return (ft_putstr("Minishell: syntax error\n", 2), data->status = 2, 1);
+	while (data->p_rdl[i])
 	{
-		if (!q && (p[i] == '\'' || p[i] == '\"'))
-			q = p[i];
-		else if (q && p[i] == q)
+		if (!q && (data->p_rdl[i] == '\'' || data->p_rdl[i] == '\"'))
+			q = data->p_rdl[i];
+		else if (q && data->p_rdl[i] == q)
 			q = 0;
-		else if (!q && check_operator(p, i))
-			return (1);
+		else if (!q && check_operator(data->p_rdl, i))
+			return (data->status = 2,1);
 		i++;
 	}
 	return (0);

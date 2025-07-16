@@ -98,3 +98,14 @@ yoel-you@c1r7p1:~$ sdgfdag
 sdgfdag: command not found
 yoel-you@c1r7p1:~$ echo $?$?$?
 127127127
+
+
+files not the same from branches :
+
+files still use free and free_all function :
+
+	utils/ft_split
+	utils/ft_get_next_line.c
+
+
+parsing need to change on ft_redirection

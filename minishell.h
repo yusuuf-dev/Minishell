@@ -32,7 +32,7 @@ typedef struct pipes
     int     pipefd[2];
     int     old_pipe;
     char    **piped_cmds;
-    int     *is_a_pipe;
+    //int     *is_a_pipe;
 } pipes_t;
 
 
@@ -125,7 +125,7 @@ int     signal_fun(int n);
 void    free_heredoc(t_data *data, int m_unlink);
 int     here_doc_fork(char **p, unsigned char *status, t_data *data);
 char    *heredoc_old_delimiter(char *s ,int *isquote, int *index_ret);
-int     check_syntax(char *p);
+int     check_syntax(t_data *data);
 char	*get_next_line(int fd);
 char	*ft_substr_c(char *s, unsigned int start, size_t len);
 char	**c_split_02(char *str, char c, char **envp, unsigned char *func_status);

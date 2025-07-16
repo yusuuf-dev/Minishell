@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_cd.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: yoel-you <yoel-you@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/16 11:25:02 by yoel-you          #+#    #+#             */
+/*   Updated: 2025/07/16 11:25:03 by yoel-you         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../minishell.h"
 
 char	*update_env_pwd(char **pwd_variable, char ***envp, unsigned char *status);
@@ -25,9 +37,9 @@ int     ft_cd(char **argv, char ***envp)
 		return (perror("cd"), errno);
 	pwd_variable[1] = ft_strjoin("OLDPWD=", p);
 	free(p);
-	if (argv[1] && argv[1][0] == '-' && ft_check_spaces(&argv[1][1]))
+	if (argv[1] && argv[1][0] == '-' && argv[1][1] == 0) //ft_check_spaces(&argv[1][1]))
 		argv[1] = ft_getenv("OLDPWD", *envp, NULL);	
-	else if (!argv[1] || ft_check_spaces(argv[1])) // || (argv[1][0] == '~' && !argv[1][1])): I don't need this here cuz the '~' gets handled in the parsing part
+	else if (!argv[1]) // || ft_check_spaces(argv[1])) // || (argv[1][0] == '~' && !argv[1][1])): I don't need this here cuz the '~' gets handled in the parsing part
 		argv[1] = ft_getenv("HOME", *envp, NULL); // I don't need to do this cuz the expansion happens in the parsin part of the shell;
 	else if (argv[1][0] != '/' && argv[1][0] != '.')	
 		f = search_cdpath_var(argv, envp, pwd_variable);
