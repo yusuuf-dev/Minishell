@@ -81,9 +81,9 @@ void config_malloc(void *ptr, int isfailed, int is_env)
 
     if (!ptr)
     {
-        if (isfailed == 2 && is_env == 2)
+        if (is_env == 2 && isfailed == 0)
         {
-            free_all_malloc(&lstm, &lstm_env, 0);
+            free_all_malloc(&lstm,&lstm_env,0);
             return;
         }
         if (isfailed == 1)
