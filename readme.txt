@@ -98,7 +98,7 @@ yoel-you@c1r7p1:~$ sdgfdag
 sdgfdag: command not found
 yoel-you@c1r7p1:~$ echo $?$?$?
 127127127
-
+===================================================
 - ayoub 15_07 modified/added the following files:
 
 	modified:   Makefile
@@ -111,4 +111,19 @@ yoel-you@c1r7p1:~$ echo $?$?$?
 	modified:   minishell.h
 	modified:   parsing.c
 	added   :   costum_utils/ft_getenv.c
+===================================================
+- ayoub 17_07 modified/added the following files:
 
+	modified:   cmds/ft_unset.c
+	modified:   costum_utils/ft_getenv.c
+	modified:   costum_utils/ft_isheredoc.c
+	modified:   costum_utils/ft_putstr.c
+	modified:   costum_utils/ft_setup.c
+	modified:   minishell.c
+	modified:   minishell.h
+	modified:   parsing.c
+	costum_utils/ft_free.c
+	costum_utils/ft_read_line_gnl.c
+	utils/ft_itoa.c
+	utils/ft_strcpy.c
+=====================================================

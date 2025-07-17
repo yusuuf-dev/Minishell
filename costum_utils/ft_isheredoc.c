@@ -2,7 +2,7 @@
 
 extern volatile sig_atomic_t f_sig;
 
-static void c_putstr_fd(int fd, char *s)
+/*static void c_putstr_fd(int fd, char *s)
 {
 	size_t i = 0;
 
@@ -14,7 +14,7 @@ static void c_putstr_fd(int fd, char *s)
 		i++;
 	}
 	write(fd, "\n", 1);
-}
+}*/
 
 static char *c_strjoinf(char *s1, char c)
 {
@@ -71,36 +71,6 @@ static char *c_expand(char *str, char **envp, unsigned char *status)
 	//free(str);
 	return(ptr);
 }
-static void ft_strcpy(char *dest, char *src)
-{
-	size_t	i = 0;
-
-	while(src[i])
-	{
-		dest[i] = src[i];
-		i++;
-	}
-	dest[i] = 0;
-}
-
-static char	*ft_itoa(int n)
-{
-	char	*s = ft_calloc(17);
-	int		i = 15;
-
-	if (!s)
-		exit (-1);
-	if (!n)
-		return (s[0] = '0', s);
-	while (n)
-	{
-		s[i] = (n % 10) + '0';
-		i--;
-		n = n / 10;
-	}
-	ft_strcpy(s, (s + i + 1));
-	return (s);
-}
 
 /*
 	checks wether the argument name; which is the name of a file, is already in the linked list of heredooc;
@@ -145,6 +115,7 @@ static char *create_file_name(t_data *data)
 int     ft_new_isheredoc(char *p, char **envp, unsigned char *status, t_data *data, char *file_name)
 {
     char    *tmp;
+	//char	*rdl_line;
     char    *dl;
 	int		fd;
 	int		isquote = 0;
@@ -162,16 +133,7 @@ int     ft_new_isheredoc(char *p, char **envp, unsigned char *status, t_data *da
 		return (perror(""), 0);
 	while (1)
 	{
-		if (isatty(STDIN_FILENO))
-		    tmp = readline("> ");
-	    else
-	    {
-		    char *line;
-		    line = get_next_line(STDIN_FILENO);
-            if (line && line[ft_strlen(line) - 1] == '\n')
-                line[ft_strlen(line) - 1] = 0;
-		    tmp = line;
-	    }
+		tmp = ft_read_line_gnl(0);
 		//tmp = readline("> ");
 		if (!tmp || ft_strcmp(tmp, dl))
 		{
@@ -181,7 +143,9 @@ int     ft_new_isheredoc(char *p, char **envp, unsigned char *status, t_data *da
 		}
 		if (!isquote && tmp[0])
 			tmp = c_expand(tmp, envp, status);
-		c_putstr_fd(fd, tmp);
+		//c_putstr_fd(fd, tmp);
+		ft_putstr(tmp, fd);
+		write(fd, "\n", 1);
 		free_ft_malloc(tmp);
 		//free(tmp);
 	}

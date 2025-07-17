@@ -82,9 +82,10 @@ char	**parsing(t_data *data)
 		data->env_paths = NULL; // In case we unset the PATH later, the pointer will be pointing to a non-valid memory (dangling pointer)
 	// data->dup_rdl = ft_strdup(data->p_rdl);
     // data->rdl_args = c_split(data->p_rdl,' ', data->envp, &(data->status));
-
+	if (!data->p_rdl || !data->p_rdl[0])
+		return (data->envp);
 	data->rdl_args = NULL; // important to set it NULL because will need it again with new promt that only free it and doesn't set it to NULL
-	custom_split(data->p_rdl,data,0,0);
+	custom_split(data->p_rdl,data, 0, 0);
 	
 	if (executable(data)) // next 
 		return (data->envp);

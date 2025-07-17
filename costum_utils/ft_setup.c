@@ -12,12 +12,27 @@
 
 #include "../minishell.h"
 
+static int assign_std_in_out_err(t_data *data)
+{
+    data->fd0 = dup(STDIN_FILENO);
+    if (data->fd0 == -1)
+        return (perror(""), 1);
+    data->fd1 = dup(STDOUT_FILENO);
+    if (data->fd1 == -1)
+        return (perror(""), 1);
+    data->fd2 = dup(STDERR_FILENO);
+    if (data->fd2 == -1)
+        return (perror(""), 1);
+    return (0);
+}
 
 void    ft_setup(t_data *data, char **envp)
 {
   //  char    *env;
 
     (void)envp;
+    if (assign_std_in_out_err(data))
+      exit(errno);
     ft_memset(data, 0, sizeof(t_data));
     data->envp = ft_duplicate(__environ, 0);
     if (!data->envp)

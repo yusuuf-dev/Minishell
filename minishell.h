@@ -65,6 +65,9 @@ typedef struct s_data
 
 int     c_strncmp(const char *s1, const char *s2);
 int     costum_atoi(char *s, unsigned char *status, int fd);
+/*********************** UTILS ***********************/
+void    ft_strcpy(char *dest, char *src);
+char	*ft_itoa(int n);
 size_t	ft_strlen(char *s);
 char	**ft_split(char *str, char c);
 char	*ft_strjoin(char *s1, char *s2);
@@ -119,7 +122,7 @@ void    *ft_malloc(size_t size);
 void    config_malloc(void *ptr, int isfailed); // use it only when end program pass NULL to free all thing and exit;
 void    config_rdline(char **p ,t_data *data);
 void    *ft_memset(void *ptr, int c, size_t n);
-
+char    *ft_read_line_gnl(int p_prompt);
 ///////signals
 void    signal_handler(int signum);
 int     signal_fun(int n);

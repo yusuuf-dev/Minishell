@@ -31,7 +31,7 @@
 # .PHONY : all clean fclean re
 
 
-CC = cc
+CC = @cc
 FLAGS = -Werror -Wextra -Wall
 NAME = minishell
 SRC = minishell.c parsing.c ./utils/ft_calloc.c ./costum_utils/ft_putstr.c ./costum_utils/ft_check_spaces.c \
@@ -40,8 +40,9 @@ SRC = minishell.c parsing.c ./utils/ft_calloc.c ./costum_utils/ft_putstr.c ./cos
 ./cmds/ft_env.c ./costum_utils/ft_isspace_to_space.c ./cmds/ft_exit.c ./costum_utils/c_split.c ./costum_utils/custom_atoi.c \
 ./costum_utils/heredoc_delimiter.c ./costum_utils/found_pipe.c ./costum_utils/ft_isheredoc.c \
 ./utils/ft_isalnum.c ./utils/ft_isalpha.c ./costum_utils/c_atoi.c ./costum_utils/ft_all_redirections.c ./costum_utils/ft_pipes.c \
-./costum_utils/ft_setup.c ./costum_utils/ft_malloc.c ./utils/ft_memset.c ./costum_utils/signals_handler.c ./costum_utils/check_syntax.c ./utils/ft_substr.c ./utils/ft_get_next_line.c \
-./costum_utils/custom_split.c ./costum_utils/custom_split_utils.c ./costum_utils/ft_getenv.c costum_utils/c_strncmp.c
+./costum_utils/ft_setup.c ./costum_utils/ft_malloc.c ./utils/ft_memset.c ./costum_utils/signals_handler.c ./costum_utils/check_syntax.c ./utils/ft_substr.c \
+./utils/ft_get_next_line.c ./costum_utils/custom_split.c ./costum_utils/custom_split_utils.c ./costum_utils/ft_getenv.c ./costum_utils/c_strncmp.c \
+./costum_utils/ft_free.c costum_utils/ft_read_line_gnl.c ./utils/ft_strcpy.c ./utils/ft_itoa.c
 
 OBJ = $(SRC:.c=.o)
 
