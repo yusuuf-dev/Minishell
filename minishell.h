@@ -103,9 +103,11 @@ char    *convert_env_var(char *s,char **envp);
 //char	**c_split(char *str, char c, char **envp, unsigned char *status);
 // char	**c_split(char *str, char c);
 //int     found_heredoc(char *s);
+
 char    *rm_quotes(char *str);
 int     found_q(char *s);
 int     found_pipe(char *line);
+
 int     ft_isheredoc(char *p, char **envp, unsigned char *status);
 char    *rm_quotes_expand(char *str, char **envp, unsigned char *status);
 char    *heredoc_delimiter(char *s ,int *isquote);
@@ -116,10 +118,23 @@ int	    parse_redirection(char **full_str, t_data *data);
 int     costum_atoi(char *nptr, unsigned char *status, int fd);
 int     ft_pipes(t_data *data);
 void    ft_setup(t_data *data, char **envp);
-t_lstm	*head_of_ft_malloc_struct(t_lstm *head);
+///////////malloc
 void	free_ft_malloc(void *ptr);
 void    *ft_malloc(size_t size);
-void    config_malloc(void *ptr, int isfailed); // use it only when end program pass NULL to free all thing and exit;
+void    *ft_malloc_env(size_t size);
+void    config_malloc(void *ptr, int isfailed, int is_env);
+
+t_lstm	*head_of_ft_malloc_struct(t_lstm *head);
+t_lstm  *envp_head_of_ft_malloc_struct(t_lstm *head);
+void	free_ft_malloc(void *ptr);
+
+// config_malloc(NULL, 0, 0) // free all execpt env stuff
+// config_malloc(NULL, 0, 1) // free env only
+// config_malloc(NULL, 0, 2) // free all ?
+// use it only when end program pass NULL to free all thing and exit;
+// to free all malloc except env use config_malloc(NULL,0, 0);
+// to free all malloc to end program by ctr+d or something else use config_malloc(NULL,2,2);
+// to free all env varriables call config_malloc(NULL,0,1);
 void    config_rdline(char **p ,t_data *data);
 void    *ft_memset(void *ptr, int c, size_t n);
 char    *ft_read_line_gnl(int p_prompt);
@@ -127,9 +142,10 @@ char    *ft_read_line_gnl(int p_prompt);
 void    signal_handler(int signum);
 int     signal_fun(int n);
 
-
+/********************** HEREDOC ***********************************/
+int     here_doc(t_data *data);
 void    free_heredoc(t_data *data, int m_unlink);
-int     here_doc_fork(char **p, unsigned char *status, t_data *data);
+//int     here_doc_fork(char **p, unsigned char *status, t_data *data);
 char    *heredoc_old_delimiter(char *s ,int *isquote, int *index_ret);
 int     check_syntax(t_data *data);
 char	*get_next_line(int fd);

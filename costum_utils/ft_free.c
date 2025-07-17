@@ -11,6 +11,15 @@
 	}
 
 }*/
+t_lstm	*envp_head_of_ft_malloc_struct(t_lstm *head)
+{
+	static t_lstm *ptr = NULL;
+
+	if (head)
+		ptr = head;
+	return (ptr);
+}
+
 t_lstm	*head_of_ft_malloc_struct(t_lstm *head)
 {
 	static t_lstm *ptr = NULL;
