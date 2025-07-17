@@ -55,7 +55,8 @@ typedef struct s_data
     int               is_a_pipe;
     int               fd0, fd1, fd2;
     char              **segments;
-    struct sigaction    S_SIG_IGN; 
+    struct sigaction    S_SIG_IGN;
+    struct sigaction    S_SIG_DFL;
     struct sigaction    SIG_INT;
     struct sigaction    OLD_SIG_QUIT;
     struct sigaction    OLD_SIG_INT;
@@ -74,6 +75,9 @@ char	*ft_strchr(char *s, char c);
 char	*ft_strjoinf(char *s1, char *s2);
 char    *ft_strldup(char *s, size_t     n);
 void    *ft_calloc(size_t n);
+void    ft_strcpy(char *dest, char *src);
+char	*ft_itoa(int n);
+int     c_strncmp(const char *s1, const char *s2);
 
 //int     minishell(int ac, char **av);
 char	**parsing(t_data *data);
@@ -84,9 +88,9 @@ int     ft_pwd(char	**argv, char **envp);
 int     ft_cd(char **argv, char ***envp);
 char	**ft_export(char **argv, char **envp, unsigned char *status);
 char    **ft_new_export(t_data *data); // new export just to parse only data i didn't change original one because we call other place ft_export to chane vars
-char	**ft_unset(char **argv, char **envp, unsigned char *status);
+int		ft_unset(t_data *data);
 int     ft_env(char **argv, char **envp, char **envp_paths);
-int	    ft_exit(char **argv, char **envp, unsigned char *status, int *s_exit);
+int     ft_exit(char **argv, unsigned char *status, int *s_exit);
 
 //char	**free_all(char **str);
 char	**ft_duplicate(char	**s, size_t add_size);
@@ -112,10 +116,23 @@ int	    parse_redirection(char **full_str, t_data *data);
 int     costum_atoi(char *nptr, unsigned char *status, int fd);
 int     ft_pipes(t_data *data);
 void    ft_setup(t_data *data, char **envp);
-void    *ft_malloc(size_t size);
-void    config_malloc(void *ptr, int isfailed); // use it only when end program pass NULL to free all thing and exit;
 void    config_rdline(char **p ,t_data *data);
 void    *ft_memset(void *ptr, int c, size_t n);
+char    *ft_read_line_gnl(int p_prompt);
+
+///////////malloc
+void    *ft_malloc(size_t size);
+void    *ft_malloc_env(size_t size);
+void    config_malloc(void *ptr, int isfailed, int is_env);
+
+t_lstm	*head_of_ft_malloc_struct(t_lstm *head);
+t_lstm  *envp_head_of_ft_malloc_struct(t_lstm *head);
+void	free_ft_malloc(void *ptr);
+
+// use it only when end program pass NULL to free all thing and exit;
+// to free all malloc except env use config_malloc(NULL,0,1);
+// to free all malloc to end program by ctr+d or something else use config_malloc(NULL,2,2);
+// to free all env varriables call config_malloc(NULL,0,1);
 
 ///////signals
 void    signal_handler(int signum);

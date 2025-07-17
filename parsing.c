@@ -20,7 +20,6 @@
 int			execute_command(char *path, t_data *data);
 static int	ft_built_in_cmd(t_data *data);
 
-
 /*static void		ft_space(char *s)
 {
 	size_t	i = 0;
@@ -62,7 +61,6 @@ static  int executable(t_data *data)
     return(data->status = 126, 1);
 }
 
-
 char	**parsing(t_data *data)
 {
     char	*env;
@@ -84,9 +82,10 @@ char	**parsing(t_data *data)
 		data->env_paths = NULL; // In case we unset the PATH later, the pointer will be pointing to a non-valid memory (dangling pointer)
 	// data->dup_rdl = ft_strdup(data->p_rdl);
     // data->rdl_args = c_split(data->p_rdl,' ', data->envp, &(data->status));
-
+	if (!data->p_rdl || !data->p_rdl[0])
+		return (data->envp);
 	data->rdl_args = NULL; // important to set it NULL because will need it again with new promt that only free it and doesn't set it to NULL
-	custom_split(data->p_rdl,data,0,0);
+	custom_split(data->p_rdl,data, 0, 0);
 	
 	if (executable(data)) // next 
 		return (data->envp);
@@ -166,15 +165,15 @@ static int	ft_built_in_cmd(t_data *data)
 	else if (i == 14)
 		data->status = ft_env(data->rdl_args, data->envp, data->env_paths);
 	else if (i == 15)
-		data->envp = ft_unset(data->rdl_args, data->envp, &(data->status));
+		data->status = ft_unset(data);
+	//	data->envp = ft_unset(data->rdl_args, data->envp, &(data->status));
 	else if (i == 16)
-		data->status = ft_exit(data->rdl_args, data->envp, &(data->status), &(data->exit));
+		data->status = ft_exit(data->rdl_args, &(data->status), &(data->exit));
   	//free_all(cmds); // needs free to be freed from the linked list.
 	if (i > 9)
 		return (1);
 	return (0);
 }
-
 
 static void	reset_sig_a_reap_exit_code(t_data *data)
 {

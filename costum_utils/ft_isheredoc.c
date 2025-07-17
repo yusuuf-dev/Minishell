@@ -2,7 +2,7 @@
 
 extern volatile sig_atomic_t f_sig;
 
-static void c_putstr_fd(int fd, char *s)
+/*static void c_putstr_fd(int fd, char *s)
 {
 	size_t i = 0;
 
@@ -14,7 +14,7 @@ static void c_putstr_fd(int fd, char *s)
 		i++;
 	}
 	write(fd, "\n", 1);
-}
+}*/
 
 static char *c_strjoinf(char *s1, char c)
 {
@@ -58,6 +58,7 @@ static char *c_expand(char *str, char **envp, unsigned char *status)
 			if (var)
 				ptr = ft_strjoinf(ptr,var);
 			//free(key);
+			free_ft_malloc(key);
 			i += len;
 		}
 		else
@@ -66,38 +67,9 @@ static char *c_expand(char *str, char **envp, unsigned char *status)
 			i++;
 		}
 	}
+	free_ft_malloc(str);
 	//free(str);
 	return(ptr);
-}
-static void ft_strcpy(char *dest, char *src)
-{
-	size_t	i = 0;
-
-	while(src[i])
-	{
-		dest[i] = src[i];
-		i++;
-	}
-	dest[i] = 0;
-}
-
-static char	*ft_itoa(int n)
-{
-	char	*s = ft_calloc(17);
-	int		i = 15;
-
-	if (!s)
-		exit (-1);
-	if (!n)
-		return (s[0] = '0', s);
-	while (n)
-	{
-		s[i] = (n % 10) + '0';
-		i--;
-		n = n / 10;
-	}
-	ft_strcpy(s, (s + i + 1));
-	return (s);
 }
 
 /*
@@ -129,9 +101,11 @@ static char *create_file_name(t_data *data)
     while ((access(name, F_OK) == 0) || ((name_reserved(name, data)) == 1)) // change this to long
     {
         //free(name);
+		free_ft_malloc(name);
         counter = ft_itoa(count);
         name = ft_strjoin(og_name, counter);
         //free(counter);
+		free_ft_malloc(counter);
         count++;
 		if (count == 2147483647)
 			return (unlink(name), name);
@@ -141,6 +115,7 @@ static char *create_file_name(t_data *data)
 int     ft_new_isheredoc(char *p, char **envp, unsigned char *status, t_data *data, char *file_name)
 {
     char    *tmp;
+	//char	*rdl_line;
     char    *dl;
 	int		fd;
 	int		isquote = 0;
@@ -158,29 +133,25 @@ int     ft_new_isheredoc(char *p, char **envp, unsigned char *status, t_data *da
 		return (perror(""), 0);
 	while (1)
 	{
-		if (isatty(STDIN_FILENO))
-		    tmp = readline("> ");
-	    else
-	    {
-		    char *line;
-		    line = get_next_line(STDIN_FILENO);
-            if (line && line[ft_strlen(line) - 1] == '\n')
-                line[ft_strlen(line) - 1] = 0;
-		    tmp = line;
-	    }
+		tmp = ft_read_line_gnl(0);
 		//tmp = readline("> ");
 		if (!tmp || ft_strcmp(tmp, dl))
 		{
 			//free(tmp);
+			free_ft_malloc(tmp);
 			break;
 		}
 		if (!isquote && tmp[0])
 			tmp = c_expand(tmp, envp, status);
-		c_putstr_fd(fd, tmp);
+		//c_putstr_fd(fd, tmp);
+		ft_putstr(tmp, fd);
+		write(fd, "\n", 1);
+		free_ft_malloc(tmp);
 		//free(tmp);
 	}
 //	sleep(30);
 	//free(dl);
+	free_ft_malloc(dl);
 	close(fd);
 	return(index_ret);
 }
@@ -196,14 +167,18 @@ void free_heredoc(t_data *data, int m_unlink)
         temp_f = temp;
         temp = temp->next;
         if (m_unlink)
-            unlink(temp_f->file_name); // check for error ?
-        free(temp_f->file_name);
-        free(temp_f);
+        	{unlink(temp_f->file_name);}	 // check for error ?
+        /*free(temp_f->file_name);
+        free(temp_f);*/
+		free_ft_malloc(temp_f->file_name);
+		free_ft_malloc(temp_f);
     }
     if (m_unlink)
-        unlink(temp->file_name);
-    free(temp->file_name);
-    free(temp);
+        {unlink(temp->file_name);}
+    /*free(temp->file_name);
+    free(temp);*/
+	free_ft_malloc(temp->file_name);
+	free_ft_malloc(temp);
     data->heredooc = NULL;
 }
 int create_file_heredoc(char *p, t_data *data)
@@ -238,7 +213,7 @@ static int found_here_doc(char **p, t_data *data)
     int     f_s = 0;
     int     found = 0;
     int     cpid;
-    int     child_status;
+    int     child_status = 0;
 	while ((s)[i])
 	{
 		if (found > HEREDOC_MAX)
@@ -268,6 +243,7 @@ static int found_here_doc(char **p, t_data *data)
         {
             data->is_a_pipe = 1;
             signal(SIGINT, SIG_DFL);
+			//sigaction(SIGINT, &(data->S_SIG_DFL), NULL);
             i = f_d = f_s = 0;
             t_heredoc *temp = data->heredooc;
             while ((s)[i])
@@ -308,10 +284,12 @@ static int found_here_doc(char **p, t_data *data)
 					signal_fun(2);
 				}
 			}
-            free_heredoc(data, 1);
+            free_heredoc(data, 1); // do files get deleted in this part ?
             data->heredooc = NULL;
-            //free(*p);
-            //*p = NULL;
+			free_ft_malloc(*p);
+			*p = NULL;
+            /*free(*p);
+            *p = NULL;*/
 		//	sleep(30);
             return (0);
         }
