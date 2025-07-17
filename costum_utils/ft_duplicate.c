@@ -21,12 +21,14 @@ char	**ft_duplicate(char	**s, size_t add_size)
 	i = size = 0;
 	while (s[size])
 		size++;
-	p = ft_calloc(sizeof(char *) * (size + 1 + add_size));
+	size = (sizeof(char *) * (size + 1 + add_size));
+	p = ft_malloc_env(size);
+	memset(p, 0, size);
 	if (!p)
 		exit (-1);
 	while (s[i])
 	{
-		p[i] = ft_strdup(s[i]);
+		p[i] = ft_strdup_env(s[i]);
 		i++;
 	}	
 	return (p);

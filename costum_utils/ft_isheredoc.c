@@ -42,7 +42,7 @@ static char *c_expand(char *str, char **envp, unsigned char *status)
 			if (var)
 				ptr = ft_strjoinf(ptr,var);
 			//free(key);
-			free_ft_malloc(key);
+			free_ft_malloc(key, 0);
 			i += len;
 		}
 		else
@@ -51,7 +51,7 @@ static char *c_expand(char *str, char **envp, unsigned char *status)
 			i++;
 		}
 	}
-	free_ft_malloc(str);
+	free_ft_malloc(str, 0);
 	//free(str);
 	return(ptr);
 }
@@ -85,11 +85,11 @@ static char *create_file_name(t_data *data)
     while ((access(name, F_OK) == 0) || ((name_reserved(name, data)) == 1)) // change this to long
     {
         //free(name);
-		free_ft_malloc(name);
+		free_ft_malloc(name, 0);
         counter = ft_itoa(count);
         name = ft_strjoin(og_name, counter);
         //free(counter);
-		free_ft_malloc(counter);
+		free_ft_malloc(counter, 0);
         count++;
 		if (count == 2147483647)
 			return (unlink(name), name);
@@ -110,27 +110,27 @@ int     ft_new_isheredoc(char *p, t_data *data, char *file_name)
 	dl = heredoc_old_delimiter(p, &isquote, &index_ret);
 	fd = open(file_name, O_RDWR | O_CREAT | O_TRUNC , 0600); // change perms
 	if (fd < 0)
-		return (perror(""), 0);
+	{
+		perror("");
+		config_malloc(NULL, 2, 2);
+		exit(errno);
+	}
 	while (1)
 	{
 		tmp = ft_read_line_gnl(0);
-		//tmp = readline("> ");
 		if (!tmp || ft_strcmp(tmp, dl))
 		{
-			//free(tmp);
-			free_ft_malloc(tmp);
+			free_ft_malloc(tmp, 0);
 			break;
 		}
 		if (!isquote && tmp[0])
-			tmp = c_expand(tmp, data->envp, *(data->status));
+			tmp = c_expand(tmp, data->envp, &(data->status));
 		//c_putstr_fd(fd, tmp);
 		ft_putstr(tmp, fd);
 		write(fd, "\n", 1);
-		free_ft_malloc(tmp);
-		//free(tmp);
+		free_ft_malloc(tmp, 0);
 	}
-	//free(dl);
-	free_ft_malloc(dl);
+	free_ft_malloc(dl, 0);
 	close(fd);
 	return(index_ret);
 }
@@ -149,15 +149,15 @@ void free_heredoc(t_data *data, int m_unlink)
         	{unlink(temp_f->file_name);}	 // check for error ?
         /*free(temp_f->file_name);
         free(temp_f);*/
-		free_ft_malloc(temp_f->file_name);
-		free_ft_malloc(temp_f);
+		free_ft_malloc(temp_f->file_name, 0);
+		free_ft_malloc(temp_f, 0);
     }
     if (m_unlink)
         {unlink(temp->file_name);}
     /*free(temp->file_name);
     free(temp);*/
-	free_ft_malloc(temp->file_name);
-	free_ft_malloc(temp);
+	free_ft_malloc(temp->file_name, 0);
+	free_ft_malloc(temp, 0);
     data->heredooc = NULL;
 }
 int create_file_heredoc(t_data *data)
@@ -202,7 +202,7 @@ void	wait_a_reap_exit_code(t_data *data, int child_pid)
 	}
     free_heredoc(data, 1); // files get deleted and the struct gets freed.
     data->heredooc = NULL;
-	free_ft_malloc(data->p_rdl);
+	free_ft_malloc(data->p_rdl, 0);
 	data->p_rdl = NULL;
 }
 
@@ -240,9 +240,8 @@ static void	init_heredoc_prompt_file(t_data *data)
 static int	init_heredoc_struct(t_data *data)
 {
 	size_t	i = 0;
-	int     f_d = 0;
-    int     f_s = 0;
 	int		found = 0;
+	char	q = 0 ;
 
 	while (data->p_rdl[i])
 	{
@@ -252,11 +251,11 @@ static int	init_heredoc_struct(t_data *data)
 			config_malloc(NULL, 2, 2);
 			exit(2);
 		}
-		if (data->p_rdl[i] == '\'' && !f_d)
-			f_s = !f_s;
-        if (data->p_rdl[i] == '\"' && !f_s)
-            f_d = !f_d;
-		if (!f_d && !f_s && data->p_rdl[i] == '<' && data->p_rdl[i + 1] == '<')
+		if ((data->p_rdl[i] == '\'' || data->p_rdl[i] == '\"') && !q)
+			q = data->p_rdl[i];
+		else if (q && data->p_rdl[i] == q)
+			q = 0;
+		if (!q && data->p_rdl[i] == '<' && data->p_rdl[i + 1] == '<')
 		{
             create_file_heredoc(data);
             i += 2;

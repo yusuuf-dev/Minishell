@@ -119,14 +119,14 @@ int     costum_atoi(char *nptr, unsigned char *status, int fd);
 int     ft_pipes(t_data *data);
 void    ft_setup(t_data *data, char **envp);
 ///////////malloc
-void	free_ft_malloc(void *ptr);
 void    *ft_malloc(size_t size);
 void    *ft_malloc_env(size_t size);
 void    config_malloc(void *ptr, int isfailed, int is_env);
 
 t_lstm	*head_of_ft_malloc_struct(t_lstm *head);
 t_lstm  *envp_head_of_ft_malloc_struct(t_lstm *head);
-void	free_ft_malloc(void *ptr);
+char    *ft_strdup_env(char *s);
+void	free_ft_malloc(void *ptr, int is_envp);
 
 // config_malloc(NULL, 0, 0) // free all execpt env stuff
 // config_malloc(NULL, 0, 1) // free env only
