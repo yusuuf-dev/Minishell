@@ -1,21 +1,5 @@
 #include "../minishell.h"
 
-extern volatile sig_atomic_t f_sig;
-
-/*static void c_putstr_fd(int fd, char *s)
-{
-	size_t i = 0;
-
-	if (!s)
-		return;
-	while (s[i])
-	{
-		write(fd, &s[i], 1);
-		i++;
-	}
-	write(fd, "\n", 1);
-}*/
-
 static char *c_strjoinf(char *s1, char c)
 {
 	size_t i;
@@ -58,7 +42,7 @@ static char *c_expand(char *str, char **envp, unsigned char *status)
 			if (var)
 				ptr = ft_strjoinf(ptr,var);
 			//free(key);
-			free_ft_malloc(key);
+			free_ft_malloc(key, 0);
 			i += len;
 		}
 		else
@@ -67,7 +51,7 @@ static char *c_expand(char *str, char **envp, unsigned char *status)
 			i++;
 		}
 	}
-	free_ft_malloc(str);
+	free_ft_malloc(str, 0);
 	//free(str);
 	return(ptr);
 }
@@ -101,57 +85,52 @@ static char *create_file_name(t_data *data)
     while ((access(name, F_OK) == 0) || ((name_reserved(name, data)) == 1)) // change this to long
     {
         //free(name);
-		free_ft_malloc(name);
+		free_ft_malloc(name, 0);
         counter = ft_itoa(count);
         name = ft_strjoin(og_name, counter);
         //free(counter);
-		free_ft_malloc(counter);
+		free_ft_malloc(counter, 0);
         count++;
 		if (count == 2147483647)
 			return (unlink(name), name);
     }
     return (name);
 }
-int     ft_new_isheredoc(char *p, char **envp, unsigned char *status, t_data *data, char *file_name)
+int     ft_new_isheredoc(char *p, t_data *data, char *file_name)
 {
     char    *tmp;
-	//char	*rdl_line;
     char    *dl;
 	int		fd;
 	int		isquote = 0;
     int     index_ret = 0;
-//	int 	temp_fd_1 = -1;
 
 	(void)data;
 	if (!(p[2]) && (p[2] == '<' || p[2] == '>'))
 		{return(ft_putstr("minishell: syntax error near unexpected token `newline'\n", 2), -1);}
 	dl = heredoc_old_delimiter(p, &isquote, &index_ret);
-	if (!dl)
-		return(-1); // failed malloc protection
 	fd = open(file_name, O_RDWR | O_CREAT | O_TRUNC , 0600); // change perms
 	if (fd < 0)
-		return (perror(""), 0);
+	{
+		perror("");
+		config_malloc(NULL, 2, 2);
+		exit(errno);
+	}
 	while (1)
 	{
 		tmp = ft_read_line_gnl(0);
-		//tmp = readline("> ");
 		if (!tmp || ft_strcmp(tmp, dl))
 		{
-			//free(tmp);
-			free_ft_malloc(tmp);
+			free_ft_malloc(tmp, 0);
 			break;
 		}
 		if (!isquote && tmp[0])
-			tmp = c_expand(tmp, envp, status);
+			tmp = c_expand(tmp, data->envp, &(data->status));
 		//c_putstr_fd(fd, tmp);
 		ft_putstr(tmp, fd);
 		write(fd, "\n", 1);
-		free_ft_malloc(tmp);
-		//free(tmp);
+		free_ft_malloc(tmp, 0);
 	}
-//	sleep(30);
-	//free(dl);
-	free_ft_malloc(dl);
+	free_ft_malloc(dl, 0);
 	close(fd);
 	return(index_ret);
 }
@@ -170,25 +149,24 @@ void free_heredoc(t_data *data, int m_unlink)
         	{unlink(temp_f->file_name);}	 // check for error ?
         /*free(temp_f->file_name);
         free(temp_f);*/
-		free_ft_malloc(temp_f->file_name);
-		free_ft_malloc(temp_f);
+		free_ft_malloc(temp_f->file_name, 0);
+		free_ft_malloc(temp_f, 0);
     }
     if (m_unlink)
         {unlink(temp->file_name);}
     /*free(temp->file_name);
     free(temp);*/
-	free_ft_malloc(temp->file_name);
-	free_ft_malloc(temp);
+	free_ft_malloc(temp->file_name, 0);
+	free_ft_malloc(temp, 0);
     data->heredooc = NULL;
 }
-int create_file_heredoc(char *p, t_data *data)
+int create_file_heredoc(t_data *data)
 {
-    t_heredoc *new = ft_calloc(sizeof(t_heredoc));
+    t_heredoc	*new = ft_calloc(sizeof(t_heredoc));
     t_heredoc   *temp = data->heredooc;
     new->file_name = create_file_name(data);
     int     ret = 0;
 
-    (void)p;
     if (!data->heredooc)
     {
         data->heredooc = new;
@@ -204,110 +182,112 @@ int create_file_heredoc(char *p, t_data *data)
     return (ret);
 }
 
-
-static int found_here_doc(char **p, t_data *data)
+void	wait_a_reap_exit_code(t_data *data, int child_pid)
 {
-    char    *s = *p;
-    size_t	i = 0;
-	int     f_d = 0;
-    int     f_s = 0;
-    int     found = 0;
-    int     cpid;
-    int     child_status = 0;
-	while ((s)[i])
+	int	child_status;
+
+	child_status = 0;
+	sigaction(SIGINT, &(data->S_SIG_IGN), NULL);
+    waitpid(child_pid, &child_status, 0);
+	sigaction(SIGINT, &(data->SIG_INT), NULL);
+    if (WIFEXITED(child_status))
+    	data->status = (WEXITSTATUS(child_status));
+    else if (WIFSIGNALED(child_status))
+	{
+        data->status = WTERMSIG(child_status) + 128;
+		if (!data->is_a_pipe && data->status == 130)
+		{
+			write(1, "\n", 1);
+		}
+	}
+    free_heredoc(data, 1); // files get deleted and the struct gets freed.
+    data->heredooc = NULL;
+	free_ft_malloc(data->p_rdl, 0);
+	data->p_rdl = NULL;
+}
+
+
+static void	init_heredoc_prompt_file(t_data *data)
+{
+	size_t	i;
+	int		f_d;
+    int		f_s;
+	t_heredoc *temp;
+
+	i = 0;
+	f_d = 0;
+    f_s = 0;
+	temp = data->heredooc;
+    while (data->p_rdl[i])
+    {
+        if (data->p_rdl[i] == '\'' && !f_d)
+            f_s = !f_s;
+        if (data->p_rdl[i] == '\"' && !f_s)
+            f_d = !f_d;
+    	if (!f_d && !f_s && data->p_rdl[i] == '<' && data->p_rdl[i + 1] == '<')
+        {
+            while (temp && temp->taken)
+                temp = temp->next;
+            temp->taken = 1;
+            i += ft_new_isheredoc((&data->p_rdl[i]), data, temp->file_name);
+        }
+        else
+        	i++;
+    }
+}
+/* the below functions checks if the cmd includes a heredoc op, 
+	if It does it allocates a node for it and a name for the file  */
+static int	init_heredoc_struct(t_data *data)
+{
+	size_t	i = 0;
+	int		found = 0;
+	char	q = 0 ;
+
+	while (data->p_rdl[i])
 	{
 		if (found > HEREDOC_MAX)
 		{
 			ft_putstr("minishell: maximum here-document count exceeded\n", 2);
-			exit(2); // free allocated memory
+			config_malloc(NULL, 2, 2);
+			exit(2);
 		}
-		if ((s)[i] == '\'' && !f_d)
-			f_s = !f_s;
-        if ((s)[i] == '\"' && !f_s)
-            f_d = !f_d;
-		if (!f_d && !f_s && (s)[i] == '<' && (s)[i + 1] == '<')
+		if ((data->p_rdl[i] == '\'' || data->p_rdl[i] == '\"') && !q)
+			q = data->p_rdl[i];
+		else if (q && data->p_rdl[i] == q)
+			q = 0;
+		if (!q && data->p_rdl[i] == '<' && data->p_rdl[i + 1] == '<')
 		{
-            create_file_heredoc((s + i), data);
+            create_file_heredoc(data);
             i += 2;
             found++;
 		}
 		else
 			i++;
 	}
-    if (found)
+	return (found);
+}
+
+int here_doc(t_data *data)
+{
+    int     child_pid;
+
+    if (init_heredoc_struct(data))
     {
-        cpid = fork();
-        if (cpid < 0)
-            return (perror(""), errno);
-        if (cpid == 0)
+        child_pid = fork();
+        if (child_pid < 0)
+            return (perror(""), errno); // config_malloc ?
+        if (child_pid == 0)
         {
             data->is_a_pipe = 1;
-            signal(SIGINT, SIG_DFL);
-			//sigaction(SIGINT, &(data->S_SIG_DFL), NULL);
-            i = f_d = f_s = 0;
-            t_heredoc *temp = data->heredooc;
-            while ((s)[i])
-            {
-                if ((s)[i] == '\'' && !f_d)
-                    f_s = !f_s;
-                if ((s)[i] == '\"' && !f_s)
-                    f_d = !f_d;
-                if (!f_d && !f_s && (s)[i] == '<' && (s)[i + 1] == '<')
-                {
-                    while (temp && temp->taken)
-                    {
-                        temp = temp->next;
-                    }
-                    temp->taken = 1;
-                    i += ft_new_isheredoc((s + i), data->envp, &(data->status), data, temp->file_name);
-                    found++;
-                }
-                else
-                    i++;
-            }
+			sigaction(SIGINT, &(data->S_SIG_DFL), NULL);
+			init_heredoc_prompt_file(data);
         }
         else
-        {
-			if (sigaction(SIGINT, &(data->S_SIG_IGN), NULL) == -1)
-				return (perror(""), errno);
-            waitpid(cpid, &child_status, 0);
-			if (sigaction(SIGINT, &(data->SIG_INT), NULL) == -1)
-				return (perror(""), errno);
-            if (WIFEXITED(child_status))
-                data->status = (WEXITSTATUS(child_status));
-            else if (WIFSIGNALED(child_status))
-			{
-                data->status = ((child_status & 127) + 128);
-				if (!data->is_a_pipe && data->status == 130)
-				{
-					write(1, "\n", 1);
-					signal_fun(2);
-				}
-			}
-            free_heredoc(data, 1); // do files get deleted in this part ?
-            data->heredooc = NULL;
-			free_ft_malloc(*p);
-			*p = NULL;
-            /*free(*p);
-            *p = NULL;*/
-		//	sleep(30);
-            return (0);
-        }
+			wait_a_reap_exit_code(data, child_pid);
     }
 	return (0);
 }
 
-int here_doc_fork(char **p, unsigned char *status, t_data *data) // add is_pipe = 1; cuz it doesn't finish/
-{
-  //  pid_t   cpid;
-    //int     child_status;
-    (void)status;
-    if (found_here_doc(p, data))
-    {
-		;
-    }
-    return (0);
-}
 /*int     ft_isheredoc(char *p, char **envp, unsigned char *status, t_data *data)
 {
     char    *tmp;

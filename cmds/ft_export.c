@@ -20,7 +20,6 @@ static void print_error(char *s1, char *s2, char *s3)
 	ft_putstr(s1, 2);
 	ft_putstr(s2, 2);
 	ft_putstr(s3, 2);
-
 }
 
 static int	ft_ex_strncmp(const char *s1, const char *s2, char terminator)
@@ -93,7 +92,7 @@ void	no_args(char **envp)
 	int		i, j, smallest;
 	int		*sorted; // I need to change the starting point of the index from 0 to 1 cuz how would I know if 0 is alread sorted or not ?
 
-	i = j = smallest =0;
+	i = j = smallest = 0;
 	while (envp[j])
 		j++;
 	sorted = ft_calloc((j) * sizeof(int));
@@ -138,8 +137,9 @@ static int ft_var_exists(char *s, char **envp)
 				return (0);
 			new = ft_strldup(envp[i], ft_strchr(envp[i], '=') - envp[i]);
 			new = ft_strjoinf(new, s);
+			free_ft_malloc(envp[i], 1);
 			//free(envp[i]);
-			envp[i] = new;
+			envp[i] = ft_strdup_env(new);
 			//*status = 0;
 			return (0);
 		}
@@ -158,14 +158,17 @@ static char	**ft_duplicate_add_s(char **dup, char *s)
 	// 	return (NULL);
 	while(dup[size])
 		size++;
-	p = ft_calloc(sizeof(char *) * (size + 1));
+	size = (sizeof(char *) * (size + 1));
+//	p = ft_calloc(sizeof(char *) * (size + 1));
+	p = ft_malloc_env(size);
+	memset(p, 0, size);
 	size = 0;
 	while (dup[size])
 	{
 		p[size] = dup[size];
 		size++;
 	}
-	p[size] = ft_strdup(s);
+	p[size] = ft_strdup_env(s);
 	//free(dup); // ft_malloc error
 	/*while(p[i])
 		i++;

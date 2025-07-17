@@ -148,7 +148,7 @@ static char *var_expansion(char **str, char **envp, int *n, char **full_str, uns
 	extract = ft_strldup(&s[*n + 1], c_strpbrk(&s[*n + 1]) - &s[*n + 1]);
 	var = ft_getenv(extract, envp, status);
 	left_side = ft_strldup(*full_str, (i));
-	if (!var && !(*n))
+	if ((!var || !var[0]) && !(*n))
 		return (ft_putstr("minishell: $" , 2), ft_putstr(extract, 2), ft_putstr(": ambiguous redirect\n", 2), NULL);
 	if (var)
 		left_side =	ft_strjoinf(left_side, var);

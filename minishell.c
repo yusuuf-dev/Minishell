@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-// extern volatile sig_atomic_t f_sig;
+extern volatile sig_atomic_t f_sig;
 // static int     exit_minishell(char **envp, char *p, int status, char *msg);
 
 static int reset_std_in_out_err(t_data *data)
@@ -45,13 +45,13 @@ int main(int ac, char **av, char **envp)
         {
             if (isatty(STDIN_FILENO))
                 ft_putstr("exit\n", 1);
-			return (close_dup_fds(&data), config_malloc(NULL, 0), rl_clear_history(), data.status);
+			return (close_dup_fds(&data), config_malloc(NULL, 0, 2), rl_clear_history(), data.status);
         }
         if (data.p_rdl[0])
             add_history(data.p_rdl);
         if (data.p_rdl[0] && check_syntax(&data))
             ;
-        else if (data.p_rdl[0] && here_doc_fork(&(data.p_rdl), &(data.status), &data))
+        else if (data.p_rdl[0] && here_doc(&data))
             return (close_dup_fds(&data), errno); // ?? free the other stuff ?
         else if (data.p_rdl && data.p_rdl[0])
         {
@@ -64,14 +64,15 @@ int main(int ac, char **av, char **envp)
             if (data.p_rdl)  // not great, this is done for when the piping is done so that the program wouldn't check for cmds;
                 data.envp = parsing(&data);
             if (reset_std_in_out_err(&data)) // remember to close fd{0,1,2} 
-                return (close_dup_fds(&data), config_malloc(NULL,0), 1);
+                return (close_dup_fds(&data), config_malloc(NULL, 2, 2), 1);
         }
        // if (!data.is_a_pipe)
        // free(data.p_rdl); // we don't need this anymore since we dup and free the return of realdine.
        // config_malloc(NULL,0);
        // delete files of heredoc;
+       config_malloc(NULL, 0, 0);
     }
-    return(close_dup_fds(&data), rl_clear_history(), config_malloc(NULL,0), data.status);
+    return(close_dup_fds(&data), rl_clear_history(), config_malloc(NULL, 2, 2), data.status);
 }
 
 // static int     exit_minishell(char **envp, char *p, int status, char *msg)

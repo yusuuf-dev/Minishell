@@ -61,6 +61,8 @@ typedef struct s_data
     struct sigaction    OLD_SIG_QUIT;
     struct sigaction    OLD_SIG_INT;
     t_heredoc         *heredooc;
+    char                *expand;
+    char                *checker;
 }t_data;
 
 
@@ -78,7 +80,7 @@ void    *ft_calloc(size_t n);
 void    ft_strcpy(char *dest, char *src);
 char	*ft_itoa(int n);
 int     c_strncmp(const char *s1, const char *s2);
-
+int     here_doc(t_data *data);
 //int     minishell(int ac, char **av);
 char	**parsing(t_data *data);
 //char	*ft_remove_isspace(char *s);
@@ -127,7 +129,8 @@ void    config_malloc(void *ptr, int isfailed, int is_env);
 
 t_lstm	*head_of_ft_malloc_struct(t_lstm *head);
 t_lstm  *envp_head_of_ft_malloc_struct(t_lstm *head);
-void	free_ft_malloc(void *ptr);
+void	free_ft_malloc(void *ptr, int is_envp);
+char    *ft_strdup_env(char *s);
 
 // use it only when end program pass NULL to free all thing and exit;
 // to free all malloc except env use config_malloc(NULL,0,1);

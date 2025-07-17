@@ -6,7 +6,7 @@ void *ft_malloc(size_t size)
 
     p = malloc(size);
     if (!p)
-        config_malloc(NULL,1,0)
+        config_malloc(NULL,1,0);
     else
     {
         config_malloc(p, 0,0);
