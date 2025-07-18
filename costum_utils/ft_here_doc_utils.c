@@ -98,7 +98,7 @@ void	create_file_give_prompt(t_data *data, char *dl, int isquote, char *file_nam
 			break;
 		}
 		if (!isquote && tmp[0])
-			tmp = c_expand(tmp, data->envp, &(data->status));
+			tmp = c_expand(tmp,data,0,0);
 		ft_putstr(tmp, fd);
 		write(fd, "\n", 1);
 		free_ft_malloc(tmp, 0);
