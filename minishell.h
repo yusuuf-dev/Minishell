@@ -24,7 +24,6 @@ typedef struct s_lstm
     struct s_lstm   *next;
 } t_lstm;
 
-
 typedef struct pipes
 {
     int     i;
@@ -32,14 +31,14 @@ typedef struct pipes
     int     pipefd[2];
     int     old_pipe;
     char    **piped_cmds;
-    //int     *is_a_pipe;
+  //  int     *is_a_pipe;
 } pipes_t;
 
 
 typedef struct heredooc
 {
     int         arg_num; // wether the foundheredoc in the ft_all_redirection will use this node or not
-    int         taken;  // wether will the redline use this node or not
+    int         taken;  // wether will the readline use this node or not
     char        *file_name;
     struct heredooc   *next;
 }t_heredoc;
@@ -61,12 +60,16 @@ typedef struct s_data
     struct sigaction    OLD_SIG_QUIT;
     struct sigaction    OLD_SIG_INT;
     t_heredoc         *heredooc;
-    char                *expand;
-    char                *checker;
+    char               *expand;
+    char               *checker;
 }t_data;
 
 
+int     c_strncmp(const char *s1, const char *s2);
 int     costum_atoi(char *s, unsigned char *status, int fd);
+/*********************** UTILS ***********************/
+void    ft_strcpy(char *dest, char *src);
+char	*ft_itoa(int n);
 size_t	ft_strlen(char *s);
 char	**ft_split(char *str, char c);
 char	*ft_strjoin(char *s1, char *s2);
@@ -77,10 +80,7 @@ char	*ft_strchr(char *s, char c);
 char	*ft_strjoinf(char *s1, char *s2);
 char    *ft_strldup(char *s, size_t     n);
 void    *ft_calloc(size_t n);
-void    ft_strcpy(char *dest, char *src);
-char	*ft_itoa(int n);
-int     c_strncmp(const char *s1, const char *s2);
-int     here_doc(t_data *data);
+
 //int     minishell(int ac, char **av);
 char	**parsing(t_data *data);
 //char	*ft_remove_isspace(char *s);
@@ -105,9 +105,11 @@ char    *convert_env_var(char *s,char **envp);
 //char	**c_split(char *str, char c, char **envp, unsigned char *status);
 // char	**c_split(char *str, char c);
 //int     found_heredoc(char *s);
+
 char    *rm_quotes(char *str);
 int     found_q(char *s);
 int     found_pipe(char *line);
+
 int     ft_isheredoc(char *p, char **envp, unsigned char *status);
 char    *rm_quotes_expand(char *str, char **envp, unsigned char *status);
 char    *heredoc_delimiter(char *s ,int *isquote);
@@ -118,10 +120,6 @@ int	    parse_redirection(char **full_str, t_data *data);
 int     costum_atoi(char *nptr, unsigned char *status, int fd);
 int     ft_pipes(t_data *data);
 void    ft_setup(t_data *data, char **envp);
-void    config_rdline(char **p ,t_data *data);
-void    *ft_memset(void *ptr, int c, size_t n);
-char    *ft_read_line_gnl(int p_prompt);
-
 ///////////malloc
 void    *ft_malloc(size_t size);
 void    *ft_malloc_env(size_t size);
@@ -129,21 +127,27 @@ void    config_malloc(void *ptr, int isfailed, int is_env);
 
 t_lstm	*head_of_ft_malloc_struct(t_lstm *head);
 t_lstm  *envp_head_of_ft_malloc_struct(t_lstm *head);
-void	free_ft_malloc(void *ptr, int is_envp);
 char    *ft_strdup_env(char *s);
+void	free_ft_malloc(void *ptr, int is_envp);
 
+// config_malloc(NULL, 0, 0) // free all execpt env stuff
+// config_malloc(NULL, 0, 1) // free env only
+// config_malloc(NULL, 0, 2) // free all ?
 // use it only when end program pass NULL to free all thing and exit;
-// to free all malloc except env use config_malloc(NULL,0,1);
+// to free all malloc except env use config_malloc(NULL,0, 0);
 // to free all malloc to end program by ctr+d or something else use config_malloc(NULL,2,2);
 // to free all env varriables call config_malloc(NULL,0,1);
-
+void    config_rdline(char **p ,t_data *data);
+void    *ft_memset(void *ptr, int c, size_t n);
+char    *ft_read_line_gnl(int p_prompt);
 ///////signals
 void    signal_handler(int signum);
 int     signal_fun(int n);
 
-
+/********************** HEREDOC ***********************************/
+int     here_doc(t_data *data);
 void    free_heredoc(t_data *data, int m_unlink);
-int     here_doc_fork(char **p, unsigned char *status, t_data *data);
+//int     here_doc_fork(char **p, unsigned char *status, t_data *data);
 char    *heredoc_old_delimiter(char *s ,int *isquote, int *index_ret);
 int     check_syntax(t_data *data);
 char	*get_next_line(int fd);

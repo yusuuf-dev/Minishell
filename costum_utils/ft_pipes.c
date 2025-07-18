@@ -6,7 +6,7 @@
 /*   By: yoel-you <yoel-you@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/21 11:11:47 by asoufian          #+#    #+#             */
-/*   Updated: 2025/07/16 10:50:55 by yoel-you         ###   ########.fr       */
+/*   Updated: 2025/07/18 09:48:40 by yoel-you         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,11 +37,11 @@ int update_used_heredoc_list(char *s, t_data *data)
 	}
     if (!temp || !found)
         return (1);
-    while(temp->next && temp->arg_num)
+    while(temp->next && temp->taken)
 	{
 		temp = temp->next;
 	}
-    temp->arg_num = 1;
+    temp->taken = 1;
     return (1); // just so I can bypass norminette
 }
 int ft_pipes(t_data *data)

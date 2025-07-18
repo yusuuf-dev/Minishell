@@ -229,6 +229,63 @@ static int open_assign_fd(char *s, int *fd, int mode, int append)
  	return ( 0);
 }
 
+// static char	*expand_var(char **str, t_data *data, size_t index, size_t *len,char *ptr)
+// {
+// 	char	*new;
+// 	char	*key;
+// 	char	*var;
+// 	size_t	i;
+// 	size_t	l;
+
+// 	l = 0;
+// 	i = index + 1;
+// 	l = getlen_helper(*str, i);
+// 	key = ft_strldup(*str + i, l);
+// 	if (ft_strcmp(key, "?"))
+// 		var = ft_getenv("?", data->envp, &data->status);
+// 	else
+// 		var = ft_getenv(key, data->envp, &data->status);
+// 	if (var)
+// 	{
+// 		new = ft_strjoin(ft_strldup(*str, index), var);
+// 		new = ft_strjoin(new, ft_strldup(*str + i + l, ft_strlen(*str + i)));
+// 		*len += ft_strlen(var);
+// 	}
+// 	else
+// 		new = joinstr_helper(*str, i, l, index);
+// 	*ptr = var;
+// 	return (new);
+// }
+
+// static int	get_file_name(char *str, char **full_str, t_data *data)
+// {
+// 	char	q;
+// 	size_t	i;
+// 	size_t	len;
+// 	char	**ptrs;
+
+// 	q = 0;
+// 	i = 0;
+// 	while ((*full_str)[i])
+// 	{
+// 		if (!q && ((*full_str)[i] == '\'' || (*full_str)[i] == '\"'))
+// 			q = (*full_str)[i];
+// 		else if (q && q == (*full_str)[i])
+// 			q = 0;
+// 		else if (q != '\'' && (*full_str)[i] == '$' && validchar_helper((*full_str)[i + 1]))
+// 		{
+// 			*full_str = expand_var((*full_str) + i,data,i,&len,&str);
+// 			if (!str)
+// 				return (-1);
+// 			ptrs = ft_split(str,' ');
+// 			if (ptrs[1])
+// 				return (-1);
+// 		}
+// 		i++;
+// 	}
+// 	return ((int)len);
+// }
+
 static int	open_file_redi(char *s, int *fd, int mode, int *end, char **full_str, t_data *data)
 {
 	int		append = 0;
@@ -243,6 +300,7 @@ static int	open_file_redi(char *s, int *fd, int mode, int *end, char **full_str,
 	while (s[begin] == ' ' || s[begin] == '\t' || s[begin] == '\v' || s[begin] == '\f' || s[begin] == '\r')
 		begin += 1;
 	*end = expand_rm_quotes(&s[begin], data->envp, full_str, &(data->status));
+	// *end = get_file_name(&s[begin],full_str,data);
 	if (*end == -1)
 		return (1);
 	s = (*full_str) + old_i;

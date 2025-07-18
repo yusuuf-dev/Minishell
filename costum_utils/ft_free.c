@@ -39,11 +39,16 @@ static void move_content_remove_last_node(t_lstm *head)
 	last_node = head;
 	while (last_node->next)
 		last_node = last_node->next;
+	if (head == last_node)
+	{
+		head->p = NULL;
+		return ;
+	}
 	/*move the content from the last node to the first one*/
 	head->p = last_node->p;
 	tmp = head;
 	/* get the node before the last one*/
-	while (tmp->next != last_node)
+	while (tmp && tmp->next != last_node)
 	{
 		tmp = tmp->next;
 	}
@@ -67,12 +72,13 @@ void	free_ft_malloc(void *ptr, int is_envp)
 	if (head->p == ptr)
 	{
 		move_content_remove_last_node(head);
+		return ;
 	}
     while (head)
     {
         tmp = head;
         head = head->next;
-		if (head->p == ptr)
+		if (head && head->p == ptr)
 		{
 			tmp->next = head->next;
 			free(head->p);

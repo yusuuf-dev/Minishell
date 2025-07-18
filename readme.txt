@@ -109,3 +109,9 @@ files still use free and free_all function :
 
 
 parsing need to change on ft_redirection
+
+
+update 17/07
+
+fix custom_split function
+add : expand and checker pinters on struct data
