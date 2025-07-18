@@ -138,3 +138,13 @@ yoel-you@c1r7p1:~$ echo $?$?$?
 	modified:   minishell.c
 	modified:   minishell.h
 	Added   : costum_utils/ft_strdup_env.c
+- Ayoub 18_07 modified added the following files:
+	modified:   Makefile
+	modified:   costum_utils/custom_split.c
+	deleted:    costum_utils/ft_isheredoc.c
+	modified:   costum_utils/ft_pipes.c
+	modified:   minishell.h
+	Added   :  
+		costum_utils/ft_here_doc.c
+	costum_utils/ft_here_doc_utils.c
+	costum_utils/t_heredoc.c

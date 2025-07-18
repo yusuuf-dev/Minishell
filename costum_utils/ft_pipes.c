@@ -17,33 +17,7 @@ static int  redirecting_pipes(pipes_t *pipe_data);
 static int  wait_children(pipes_t *pipe_data, unsigned char *status, t_data *data);
 static int  fork_and_create_pipe(pipes_t *pipe_data, t_data *data);
 
-int update_used_heredoc_list(char *s, t_data *data)
-{
-    t_heredoc *temp = data->heredooc;
-    int     f_d = 0;
-    int     f_s = 0;
-    int     found = 0;
-    int     i = 0;
 
-	while ((s)[i] && !found)
-	{
-		if ((s)[i] == '\'' && !f_d)
-			f_s = !f_s;
-        if ((s)[i] == '\"' && !f_s)
-            f_d = !f_d;
-		if (!f_d && !f_s && (s)[i] == '<' && (s)[i + 1] == '<') // I don't have to check wether the heredoc is valid cuz we have check_syntax for that;
-            found = 1;
-		i++;
-	}
-    if (!temp || !found)
-        return (1);
-    while(temp->next && temp->take)
-	{
-		temp = temp->next;
-	}
-    temp->taken = 1;
-    return (1); // just so I can bypass norminette
-}
 int ft_pipes(t_data *data)
 {
     pipes_t pipe_data; // = ft_calloc(sizeof(pipes_t));
@@ -63,7 +37,7 @@ int ft_pipes(t_data *data)
         }
         else
         {
-            if (update_used_heredoc_list(pipe_data.piped_cmds[pipe_data.i], data) && redirecting_pipes(&pipe_data))
+            if (update_used_heredoc_list(pipe_data.piped_cmds[pipe_data.i], data, 0, 0) && redirecting_pipes(&pipe_data))
                 return (errno);
         }
     }

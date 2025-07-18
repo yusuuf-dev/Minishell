@@ -6,7 +6,7 @@
 /*   By: yoel-you <yoel-you@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/14 17:00:05 by yoel-you          #+#    #+#             */
-/*   Updated: 2025/07/14 19:06:56 by yoel-you         ###   ########.fr       */
+/*   Updated: 2025/07/18 11:50:53 by yoel-you         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,8 @@ static char	*charjoin(char *s1, char c)
 	size_t	len;
 	char	*ptr;
 
+	if (!c)
+		return (s1);
 	len = ft_strlen(s1);
 	ptr = ft_malloc((len + 2) * sizeof(char));
 	i = 0;
@@ -51,7 +53,6 @@ static void	add_ptr(char **ptr, t_data *data, int i, int j)
 	ptrs[j] = NULL;
 	if (data->rdl_args)
 	{
-		//free(data->rdl_args);
 		data->rdl_args = ptrs;
 	}
 	else
@@ -117,12 +118,10 @@ static void	get_argements(char *str, char *checker, t_data *data)
 
 void	custom_split(char *str, t_data *data, size_t i, char q)
 {
-	char	*checker;
-	char	*expand;
 	size_t	is_exp;
 
-	expand = NULL;
-	checker = NULL;
+	data->expand = NULL;
+	data->checker = NULL;
 	is_exp = 0;
 	while (str[i])
 	{
@@ -132,14 +131,18 @@ void	custom_split(char *str, t_data *data, size_t i, char q)
 			q = 0;
 		while (q != '\'' && str[i] == '$' && validchar_helper(str[i + 1]))
 			str = expand_join(str, data, i, &is_exp);
-		expand = charjoin(expand, str[i]);
+		if (!str[0])
+			return;
+		data->expand = charjoin(data->expand, str[i]);
+		if (!str[i])
+			break;
 		if (is_exp)
-			checker = charjoin(checker, '1');
+			data->checker = charjoin(data->checker, '1');
 		else
-			checker = charjoin(checker, '0');
+			data->checker = charjoin(data->checker, '0');
 		i++;
 		if (is_exp)
 			is_exp--;
 	}
-	get_argements(expand, checker, data);
+	get_argements(data->expand, data->checker, data);
 }
