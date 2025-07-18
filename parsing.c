@@ -187,11 +187,10 @@ static void	reset_sig_a_reap_exit_code(t_data *data)
 		data->status = WEXITSTATUS(child_info);
 	else if (WIFSIGNALED(child_info))
 	{
-	//	data->status = ((child_info & 127) + 128);
 		data->status = WTERMSIG(child_info) + 128;
-		if (!data->is_a_pipe && data->status == 131)
+		if (data->status == 131)
 			ft_putstr("Quit (core dumped)\n", 1);
-		else if (!data->is_a_pipe && data->status == 130)
+		else if (data->status == 130)
 			write(1, "\n", 1);
 	}
 	return ;
@@ -202,14 +201,13 @@ int	execute_command(char *path, t_data *data)
 	int	child_pid;
 
 	child_pid = 0;
-	if (!(data->is_a_pipe))
+	if (!(data->is_a_child))
 		child_pid = fork();
 	if (child_pid < 0)
 	{
-		perror("fork");
-		exit(errno); // free previous allocated mem, use config_malloc ?
+		print_free_exit(FORK_FAILED, errno);
 	}
-	if (!child_pid || data->is_a_pipe)
+	if (!child_pid || data->is_a_child)
 	{
 		sigaction(SIGINT, &(data->OLD_SIG_INT), NULL);
         sigaction(SIGQUIT, &(data->OLD_SIG_QUIT), NULL);
@@ -217,9 +215,7 @@ int	execute_command(char *path, t_data *data)
 			execve(path, data->rdl_args, data->envp);
 		else
 			execve(data->rdl_args[0], data->rdl_args, data->envp);
-		perror("execve");
-		// free allocated memory
-		exit(errno);
+		print_free_exit(EXECVE_FAILED, errno);
 	}
 	else
 		reset_sig_a_reap_exit_code(data);

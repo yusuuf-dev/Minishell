@@ -72,7 +72,7 @@ static void	wait_a_reap_exit_code(t_data *data, int child_pid)
 	else if (WIFSIGNALED(child_status))
 	{
 		data->status = WTERMSIG(child_status) + 128;
-		if (!data->is_a_pipe && data->status == 130)
+		if (data->status == 130)
 		{
 			write(1, "\n", 1);
 		}
@@ -83,7 +83,7 @@ static void	wait_a_reap_exit_code(t_data *data, int child_pid)
 	data->p_rdl = NULL;
 }
 
-int	here_doc(t_data *data)
+void	here_doc(t_data *data)
 {
 	int		child_pid;
 
@@ -91,15 +91,15 @@ int	here_doc(t_data *data)
 	{
 		child_pid = fork();
 		if (child_pid < 0)
-			return (perror(""), errno);
+			print_free_exit(FORK_FAILED, errno);
 		if (child_pid == 0)
 		{
-			data->is_a_pipe = 1;
+			data->is_a_child = 1;
 			sigaction(SIGINT, &(data->S_SIG_DFL), NULL);
 			init_heredoc_prompt_file(data);
 		}
 		else
 			wait_a_reap_exit_code(data, child_pid);
 	}
-	return (0);
+	return ;
 }

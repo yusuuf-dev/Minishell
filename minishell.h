@@ -16,7 +16,10 @@
 
 #define BUFFER_SIZE 1
 #define HEREDOC_MAX 16
-
+#define PIPE_FAILED "pipe function failed\n"
+#define FORK_FAILED "fork function failed\n"
+#define DUP_FAILED  "dup function failed\n"
+#define EXECVE_FAILED "execve function failed\n"
 // for malloc garbage collector
 typedef struct s_lstm
 {
@@ -51,7 +54,7 @@ typedef struct s_data
     char              **env_paths;
     unsigned char     status;
     int               exit;
-    int               is_a_pipe;
+    int               is_a_child;
     int               fd0, fd1, fd2;
     char              **segments;
     struct sigaction    S_SIG_IGN;
@@ -94,7 +97,7 @@ void    signal_handler(int signum);
 int     signal_fun(int n);
 /***************************************************************/
 /****************************HEREDOC****************************/
-int     here_doc(t_data *data);
+void     here_doc(t_data *data);
 int     check_for_heredoc_create_node(t_data *data, size_t i, int found);
 void	create_file_give_prompt(t_data *data, char *dl, int isquote, char *file_name);
 void    create_t_heredoc_node(t_data *data);
@@ -105,6 +108,10 @@ char    *heredoc_old_delimiter(char *s ,int *isquote, int *index_ret);
 char    *heredoc_delimiter(char *s ,int *isquote);
 int     ft_isheredoc(char *p, char **envp, unsigned char *status);
 /***************************************************************/
+/****************************PIPE*******************************/
+void     ft_pipes(t_data *data);
+/***************************************************************/
+void    *get_data(void *p);
 int     c_strncmp(const char *s1, const char *s2);
 int     costum_atoi(char *s, unsigned char *status, int fd);
 //int     minishell(int ac, char **av);
@@ -129,7 +136,6 @@ int	    ft_isalnum(int c);
 int	    c_atoi(char *s, long *rslt);
 int	    parse_redirection(char **full_str, t_data *data);
 int     costum_atoi(char *nptr, unsigned char *status, int fd);
-int     ft_pipes(t_data *data);
 void    ft_setup(t_data *data, char **envp);
 ///////////malloc
 void    *ft_malloc(size_t size);
@@ -139,6 +145,7 @@ t_lstm	*head_of_ft_malloc_struct(t_lstm *head);
 t_lstm  *envp_head_of_ft_malloc_struct(t_lstm *head);
 char    *ft_strdup_env(char *s);
 void	free_ft_malloc(void *ptr, int is_envp);
+void	print_free_exit(char *s, int exit_code);
 
 // config_malloc(NULL, 0, 0) // free all execpt env stuff
 // config_malloc(NULL, 0, 1) // free env only

@@ -87,10 +87,11 @@ int	check_syntax(t_data *data)
 
 	i = 0;
 	q = 0;
-	if (found_q(data->p_rdl) == -1)
-		return (ft_putstr("Error Unclose quote\n", 2),data->status = 2, 1);
 	if (is_onlyspace(data->p_rdl))
 		return (1);
+	add_history(data->p_rdl);
+	if (found_q(data->p_rdl) == -1)
+		return (ft_putstr("Error Unclose quote\n", 2),data->status = 2, 1);
 	while (data->p_rdl[i] == ' ')
 		i++;
 	if (data->p_rdl[i] == '|')

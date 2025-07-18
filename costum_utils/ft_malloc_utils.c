@@ -14,8 +14,19 @@ static void free_list(t_lstm **lst)
     *lst = NULL;
 }
 
+static void close_dup_fds(void)
+{
+    t_data *data;
+
+    data = get_data(NULL);
+    close(data->fd0);
+    close(data->fd1);
+    close(data->fd2);
+}
+/* move the below and above function into ft_free.c */
 static void free_all_malloc(t_lstm **lstm, t_lstm **lstm_env, int isfailed)
 {
+    close_dup_fds();
     if (*lstm_env)
     {
         free_list(lstm_env);

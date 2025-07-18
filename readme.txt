@@ -148,3 +148,13 @@ yoel-you@c1r7p1:~$ echo $?$?$?
 		costum_utils/ft_here_doc.c
 	costum_utils/ft_here_doc_utils.c
 	costum_utils/t_heredoc.c
+- Ayoub 18_07 16:00 Added modified the following:
+	modified:   costum_utils/check_syntax.c
+	modified:   costum_utils/ft_free.c
+	modified:   costum_utils/ft_here_doc.c
+	modified:   costum_utils/ft_malloc_utils.c
+	modified:   costum_utils/ft_pipes.c
+	modified:   costum_utils/ft_setup.c
+	modified:   minishell.c
+	modified:   minishell.h
+	modified:   parsing.c
