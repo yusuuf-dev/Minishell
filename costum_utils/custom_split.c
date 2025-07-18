@@ -6,7 +6,7 @@
 /*   By: yoel-you <yoel-you@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/14 17:00:05 by yoel-you          #+#    #+#             */
-/*   Updated: 2025/07/17 16:05:06 by yoel-you         ###   ########.fr       */
+/*   Updated: 2025/07/18 11:50:53 by yoel-you         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,6 +131,8 @@ void	custom_split(char *str, t_data *data, size_t i, char q)
 			q = 0;
 		while (q != '\'' && str[i] == '$' && validchar_helper(str[i + 1]))
 			str = expand_join(str, data, i, &is_exp);
+		if (!str[0])
+			return;
 		data->expand = charjoin(data->expand, str[i]);
 		if (!str[i])
 			break;
