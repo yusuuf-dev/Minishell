@@ -38,7 +38,7 @@ typedef struct pipes
 typedef struct heredooc
 {
     int         arg_num; // wether the foundheredoc in the ft_all_redirection will use this node or not
-    int         taken;  // wether will the redline use this node or not
+    int         taken;  // wether will the readline use this node or not
     char        *file_name;
     struct heredooc   *next;
 }t_heredoc;

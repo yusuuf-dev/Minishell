@@ -45,7 +45,7 @@ int main(int ac, char **av, char **envp)
         {
             if (isatty(STDIN_FILENO))
                 ft_putstr("exit\n", 1);
-			return (close_dup_fds(&data), config_malloc(NULL, 0, 2), rl_clear_history(), data.status);
+			return (close_dup_fds(&data), rl_clear_history(), config_malloc(NULL, 0, 2), data.status);
         }
         if (data.p_rdl[0])
             add_history(data.p_rdl);
@@ -72,7 +72,7 @@ int main(int ac, char **av, char **envp)
        // delete files of heredoc;
        config_malloc(NULL, 0, 0);
     }
-    return(close_dup_fds(&data), rl_clear_history(), config_malloc(NULL, 2, 2), data.status);
+    return(close_dup_fds(&data), rl_clear_history(), config_malloc(NULL, 0, 2), data.status);
 }
 
 // static int     exit_minishell(char **envp, char *p, int status, char *msg)

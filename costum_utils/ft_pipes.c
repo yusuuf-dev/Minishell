@@ -37,11 +37,11 @@ int update_used_heredoc_list(char *s, t_data *data)
 	}
     if (!temp || !found)
         return (1);
-    while(temp->next && temp->arg_num)
+    while(temp->next && temp->take)
 	{
 		temp = temp->next;
 	}
-    temp->arg_num = 1;
+    temp->taken = 1;
     return (1); // just so I can bypass norminette
 }
 int ft_pipes(t_data *data)

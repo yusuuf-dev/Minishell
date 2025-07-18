@@ -13,6 +13,8 @@
         "chrono": "c",
         "text_encoding": "c",
         "typeinfo": "c",
-        "posix_opt.h": "c"
+        "posix_opt.h": "c",
+        "algorithm": "c",
+        "format": "c"
     }
 }

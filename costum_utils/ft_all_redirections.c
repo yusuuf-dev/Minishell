@@ -318,7 +318,7 @@ int found_here_doc(t_data *data, char *s)
 {
 	t_heredoc	*temp = data->heredooc;
 	int			fd;
-	while(temp->next && temp->arg_num)
+	while(temp->next && temp->taken)
 	{
 		temp = temp->next;
 	}
@@ -329,7 +329,7 @@ int found_here_doc(t_data *data, char *s)
 	if (dup2(fd, 0) < 0)
 		{return (close(fd), perror(""), errno);}
 	close(fd);
-	temp->arg_num = 1;
+	temp->taken = 1;
 	remove_heredoc(s);
 	return (0);
 }

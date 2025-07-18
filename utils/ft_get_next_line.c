@@ -3,7 +3,7 @@ static void	free_null(char **p)
 {
 	if (p && *p)
 	{
-		free(*p);
+		free_ft_malloc(*p, 0);
 		*p = NULL;
 	}
 }
@@ -34,7 +34,7 @@ static char	*return_line_update_stash(char *o_stash, char **stash)
 		o_stash = *stash;
 	else
 		free_null(stash);
-	*stash = ft_strdup(ft_strchr(o_stash, '\n') + 1);
+	*stash = ft_strdup_env(ft_strchr(o_stash, '\n') + 1);
 	if (!(*stash))
 		*stash = NULL;
 	return (ft_substr_c(o_stash, 0, ((ft_strchr(o_stash, '\n')) - o_stash + 1)));
@@ -42,7 +42,7 @@ static char	*return_line_update_stash(char *o_stash, char **stash)
 
 char	*get_next_line(int fd)
 {
-	static char	*stash;
+	static char	*stash = NULL;
 	//char *stash = NULL;
 	ssize_t		rd;
 	char		*o_stash;
@@ -50,14 +50,12 @@ char	*get_next_line(int fd)
 	o_stash = NULL;
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
-	if (stash)
+	if (stash && stash[0])
 	{
 		o_stash = ft_strdup(stash);
 		free_null(&stash);
 	}
 	stash = ft_calloc(sizeof(char) * (BUFFER_SIZE + 1));
-	if (!stash)
-		return (NULL);
 	while ((!ft_strchr(o_stash, '\n')))
 	{
 		rd = read(fd, stash, BUFFER_SIZE);

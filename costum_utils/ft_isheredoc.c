@@ -77,12 +77,17 @@ static int name_reserved(char *name, t_data *data)
 }
 static char *create_file_name(t_data *data)
 {
-    char    *og_name = ".tmp.txt";
-    char    *counter = NULL;
-    char    *name = NULL;
-    int     count = 0; // change this to long
+    char    *og_name;
+    char    *counter;
+    char    *name;
+    int     count;
+
+	og_name = ".tmp.txt";
+    counter = NULL;
+    name = NULL;
+    count = 0;
     name = ft_strdup(og_name);
-    while ((access(name, F_OK) == 0) || ((name_reserved(name, data)) == 1)) // change this to long
+    while ((access(name, F_OK) == 0) || ((name_reserved(name, data)) == 1))
     {
         //free(name);
 		free_ft_malloc(name, 0);
@@ -92,22 +97,16 @@ static char *create_file_name(t_data *data)
 		free_ft_malloc(counter, 0);
         count++;
 		if (count == 2147483647)
-			return (unlink(name), name);
+			return (unlink(name), name); // needs to me removed not unlinked.
     }
     return (name);
 }
-int     ft_new_isheredoc(char *p, t_data *data, char *file_name)
-{
-    char    *tmp;
-    char    *dl;
-	int		fd;
-	int		isquote = 0;
-    int     index_ret = 0;
 
-	(void)data;
-	if (!(p[2]) && (p[2] == '<' || p[2] == '>'))
-		{return(ft_putstr("minishell: syntax error near unexpected token `newline'\n", 2), -1);}
-	dl = heredoc_old_delimiter(p, &isquote, &index_ret);
+static void	create_file_give_prompt(t_data *data, char *dl, int isquote, char *file_name)
+{
+	int		fd;
+	char	*tmp;
+
 	fd = open(file_name, O_RDWR | O_CREAT | O_TRUNC , 0600); // change perms
 	if (fd < 0)
 	{
@@ -125,13 +124,28 @@ int     ft_new_isheredoc(char *p, t_data *data, char *file_name)
 		}
 		if (!isquote && tmp[0])
 			tmp = c_expand(tmp, data->envp, &(data->status));
-		//c_putstr_fd(fd, tmp);
 		ft_putstr(tmp, fd);
 		write(fd, "\n", 1);
 		free_ft_malloc(tmp, 0);
 	}
-	free_ft_malloc(dl, 0);
 	close(fd);
+}
+
+int     ft_new_isheredoc(char *p, t_data *data, char *file_name)
+{
+    char    *dl;
+	int		isquote;
+    int     index_ret;
+
+	isquote = 0;
+	index_ret = 0;
+	if (!(p[2]) && (p[2] == '<' || p[2] == '>'))
+	{
+		return(ft_putstr("minishell: syntax error near unexpected token `newline'\n", 2), -1);
+	}
+	dl = heredoc_old_delimiter(p, &isquote, &index_ret);
+	create_file_give_prompt(data, dl, isquote, file_name);
+	free_ft_malloc(dl, 0);
 	return(index_ret);
 }
 void free_heredoc(t_data *data, int m_unlink)
@@ -160,13 +174,14 @@ void free_heredoc(t_data *data, int m_unlink)
 	free_ft_malloc(temp, 0);
     data->heredooc = NULL;
 }
-int create_file_heredoc(t_data *data)
+void create_file_heredoc(t_data *data)
 {
-    t_heredoc	*new = ft_calloc(sizeof(t_heredoc));
-    t_heredoc   *temp = data->heredooc;
-    new->file_name = create_file_name(data);
-    int     ret = 0;
+    t_heredoc	*new;
+    t_heredoc   *temp;
 
+    new = ft_calloc(sizeof(t_heredoc));
+    temp = data->heredooc;
+    new->file_name = create_file_name(data);
     if (!data->heredooc)
     {
         data->heredooc = new;
@@ -179,7 +194,7 @@ int create_file_heredoc(t_data *data)
         }
         temp->next = new;
     }
-    return (ret);
+    return ;
 }
 
 void	wait_a_reap_exit_code(t_data *data, int child_pid)
@@ -210,26 +225,25 @@ void	wait_a_reap_exit_code(t_data *data, int child_pid)
 static void	init_heredoc_prompt_file(t_data *data)
 {
 	size_t	i;
-	int		f_d;
-    int		f_s;
+	char	q;
 	t_heredoc *temp;
 
 	i = 0;
-	f_d = 0;
-    f_s = 0;
+	q = 0;
 	temp = data->heredooc;
     while (data->p_rdl[i])
     {
-        if (data->p_rdl[i] == '\'' && !f_d)
-            f_s = !f_s;
-        if (data->p_rdl[i] == '\"' && !f_s)
-            f_d = !f_d;
-    	if (!f_d && !f_s && data->p_rdl[i] == '<' && data->p_rdl[i + 1] == '<')
+		if (!q && (data->p_rdl[i] == '\'' || data->p_rdl[i] == '\"'))
+			q = data->p_rdl[i];
+		else if (q && data->p_rdl[i] == q)
+			q = 0;
+    	if (!q && data->p_rdl[i] == '<' && data->p_rdl[i + 1] == '<')
         {
-            while (temp && temp->taken)
+            /*while (temp && temp->taken)
                 temp = temp->next;
-            temp->taken = 1;
+            temp->taken = 1;*/
             i += ft_new_isheredoc((&data->p_rdl[i]), data, temp->file_name);
+			temp = temp->next;
         }
         else
         	i++;
@@ -237,21 +251,20 @@ static void	init_heredoc_prompt_file(t_data *data)
 }
 /* the below functions checks if the cmd includes a heredoc op, 
 	if It does it allocates a node for it and a name for the file  */
-static int	init_heredoc_struct(t_data *data)
+static int	init_heredoc_struct(t_data *data, size_t i, int found)
 {
-	size_t	i = 0;
-	int		found = 0;
-	char	q = 0 ;
+	char	q;
 
+	q = 0;
 	while (data->p_rdl[i])
 	{
 		if (found > HEREDOC_MAX)
 		{
 			ft_putstr("minishell: maximum here-document count exceeded\n", 2);
-			config_malloc(NULL, 2, 2);
+			config_malloc(NULL, 0, 2);
 			exit(2);
 		}
-		if ((data->p_rdl[i] == '\'' || data->p_rdl[i] == '\"') && !q)
+		if (!q && (data->p_rdl[i] == '\'' || data->p_rdl[i] == '\"'))
 			q = data->p_rdl[i];
 		else if (q && data->p_rdl[i] == q)
 			q = 0;
@@ -271,7 +284,7 @@ int here_doc(t_data *data)
 {
     int     child_pid;
 
-    if (init_heredoc_struct(data))
+    if (init_heredoc_struct(data, 0, 0))
     {
         child_pid = fork();
         if (child_pid < 0)
