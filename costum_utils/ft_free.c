@@ -1,16 +1,14 @@
 #include "../minishell.h"
-/*void	move_all_the_nodes(t_lstm *move)
+
+/* print the s argument using perror, frees allocated memory 
+	exits using exit_code argument*/
+void	print_free_exit(char *s, int exit_code)
 {
-	t_lstm	*tmp;
-	t_lstm	*last_node = move;
+	perror(s);
+	config_malloc(NULL, 0, 2);
+	exit(exit_code);
+}
 
-
-	while (last_node)
-	{
-		last_node = last_node->next;
-	}
-
-}*/
 t_lstm	*envp_head_of_ft_malloc_struct(t_lstm *head)
 {
 	static t_lstm *ptr = NULL;

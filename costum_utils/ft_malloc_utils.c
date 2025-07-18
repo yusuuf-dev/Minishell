@@ -14,6 +14,16 @@ static void free_list(t_lstm **lst)
     *lst = NULL;
 }
 
+static void close_dup_fds(void)
+{
+    t_data *data;
+
+    data = get_data(NULL);
+    close(data->fd0);
+    close(data->fd1);
+    close(data->fd2);
+}
+/* move the below and above function into ft_free.c */
 static void free_all_malloc(t_lstm **lstm, t_lstm **lstm_env, int isfailed)
 {
     if (*lstm_env)
@@ -26,6 +36,7 @@ static void free_all_malloc(t_lstm **lstm, t_lstm **lstm_env, int isfailed)
     }
     if (isfailed)
     {
+        close_dup_fds();
         write(2, "failed malloc\n", 14);
         exit(1);
     }
@@ -83,6 +94,7 @@ void config_malloc(void *ptr, int isfailed, int is_env)
     {
         if (is_env == 2 && isfailed == 0)
         {
+            close_dup_fds();
             free_all_malloc(&lstm,&lstm_env,0);
             return;
         }

@@ -6,19 +6,12 @@ extern volatile sig_atomic_t f_sig;
 static int reset_std_in_out_err(t_data *data)
 {
     if (dup2(data->fd0, STDIN_FILENO) == -1)
-        return (perror(""), 1);
+        print_free_exit(DUP_FAILED, errno);
     if (dup2(data->fd1, STDOUT_FILENO) == -1)
-        return (perror(""), 1);
+        print_free_exit(DUP_FAILED, errno);
     if (dup2(data->fd2, STDERR_FILENO) == -1)
-        return (perror(""), 1);       
+        print_free_exit(DUP_FAILED, errno);       
     return (0);
-}
-
-static void close_dup_fds(t_data *data)
-{
-    close(data->fd0);
-    close(data->fd1);
-    close(data->fd2);
 }
 
 int main(int ac, char **av, char **envp)
@@ -29,12 +22,10 @@ int main(int ac, char **av, char **envp)
 	(void)ac; //
   //  __environ;
     ft_setup(&data, envp);
-	while (!(data.exit) && !(data.is_a_pipe))
+	while (!(data.exit) && !(data.is_a_child))
     {
-        if (sigaction(SIGINT, &(data.SIG_INT), NULL) == -1) // remember to remove all the if condition on sigaction
-            return (perror (""), errno);                    // check the man for possible errors
-		if (sigaction(SIGQUIT, &(data.S_SIG_IGN), NULL) == -1)
-            return (perror (""), errno);
+        sigaction(SIGINT, &(data.SIG_INT), NULL);
+		sigaction(SIGQUIT, &(data.S_SIG_IGN), NULL);
         data.p_rdl = ft_read_line_gnl(1);
         if (signal_fun(-1))
         {
@@ -45,26 +36,22 @@ int main(int ac, char **av, char **envp)
         {
             if (isatty(STDIN_FILENO))
                 ft_putstr("exit\n", 1);
-			return (close_dup_fds(&data), rl_clear_history(), config_malloc(NULL, 0, 2), data.status);
+			return (rl_clear_history(), config_malloc(NULL, 0, 2), data.status);
         }
-        if (data.p_rdl[0])
-            add_history(data.p_rdl);
-        if (data.p_rdl[0] && check_syntax(&data))
-            ;
-        else if (data.p_rdl[0] && here_doc(&data))
-            return (close_dup_fds(&data), errno); // ?? free the other stuff ?
-        else if (data.p_rdl && data.p_rdl[0])
+        if (data.p_rdl[0] && !check_syntax(&data))
         {
-            if (found_pipe(data.p_rdl))
+            here_doc(&data);
+            if (data.p_rdl && data.p_rdl[0])
             {
-                data.segments = c_split(data.p_rdl,'|');
-                if (ft_pipes(&data))
-                    return (close_dup_fds(&data), errno);
+                if (found_pipe(data.p_rdl))
+                {
+                    data.segments = c_split(data.p_rdl,'|');
+                    ft_pipes(&data); // find a way to get the data into config_malloc maybe ? so that I won't have to check here for error
+                }
+                if (data.p_rdl)  // not great, this is done for when the piping is done so that the program wouldn't check for cmds;
+                    data.envp = parsing(&data);
+                reset_std_in_out_err(&data); // remember to close fd{0,1,2}
             }
-            if (data.p_rdl)  // not great, this is done for when the piping is done so that the program wouldn't check for cmds;
-                data.envp = parsing(&data);
-            if (reset_std_in_out_err(&data)) // remember to close fd{0,1,2} 
-                return (close_dup_fds(&data), config_malloc(NULL, 2, 2), 1);
         }
        // if (!data.is_a_pipe)
        // free(data.p_rdl); // we don't need this anymore since we dup and free the return of realdine.
@@ -72,7 +59,7 @@ int main(int ac, char **av, char **envp)
        // delete files of heredoc;
        config_malloc(NULL, 0, 0);
     }
-    return(close_dup_fds(&data), rl_clear_history(), config_malloc(NULL, 0, 2), data.status);
+    return(rl_clear_history(), config_malloc(NULL, 0, 2), data.status);
 }
 
 // static int     exit_minishell(char **envp, char *p, int status, char *msg)

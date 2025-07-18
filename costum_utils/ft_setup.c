@@ -3,15 +3,23 @@
 /*                                                        :::      ::::::::   */
 /*   ft_setup.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yoel-you <yoel-you@student.42.fr>          +#+  +:+       +#+        */
+/*   By: yoel-you <yoel-you@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 10:08:11 by yoel-you          #+#    #+#             */
-/*   Updated: 2025/07/17 10:49:22 by yoel-you         ###   ########.fr       */
+/*   Updated: 2025/07/18 18:32:19 by yoel-you         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
+void    *get_data(void *p)
+{
+    static void *ptr;
+
+    if (p)
+        ptr = p;
+    return (ptr);
+}
 static int assign_std_in_out_err(t_data *data)
 {
     data->fd0 = dup(STDIN_FILENO);
@@ -19,10 +27,10 @@ static int assign_std_in_out_err(t_data *data)
         return (perror(""), 1);
     data->fd1 = dup(STDOUT_FILENO);
     if (data->fd1 == -1)
-        return (perror(""), 1);
+        return (close(data->fd0), perror(""), 1);
     data->fd2 = dup(STDERR_FILENO);
     if (data->fd2 == -1)
-        return (perror(""), 1);
+        return (close(data->fd0), close(data->fd1), perror(""), 1);
     return (0);
 }
 
@@ -33,6 +41,7 @@ void    ft_setup(t_data *data, char **envp)
     (void)envp;
     if (assign_std_in_out_err(data))
       exit(errno);
+    get_data(data);
     ft_memset(data, 0, sizeof(t_data));
     data->envp = ft_duplicate(__environ, 0);
     if (!data->envp)
