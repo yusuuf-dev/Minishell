@@ -48,40 +48,32 @@ static char *c_strjoinf(char *s1, char c)
 	ptr[i] = 0;
 	return (ptr);
 }
-static char *c_expand(char *str, char **envp, unsigned char *status)
+static char *c_expand(char *str, t_data *data, size_t i, size_t	len)
 {
-	size_t	i = 0;
-	size_t	len = 0;
-	char	*ptr = NULL;
-	char	*key = NULL;
-	char	*var = NULL;
+	char	*ptr;
+	char	*key;
+	char	*var;
 
-	if (!str)
-		return (NULL);
-	while (str[i])
+	ptr = NULL;
+	while (str && str[i])
 	{
-		if (str[i] == '$' && (str[i + 1] == '_' || ft_isalpha(str[i + 1])))
+		if (str[i] == '$' && validchar_helper(str[i + 1]))
 		{
-			i++;
-			len = 0;
-			while (str[i + len] && ft_isalnum(str[i + len]))
-				len++;
-			key = ft_strldup(&str[i], len);
-			var = ft_getenv(key, envp, status);
+			len = getlen_helper(str,i + 1);
+			key = ft_strldup(&str[i + 1], len);
+			if (ft_strcmp(key, "?"))
+				var = ft_getenv("?", data->envp, &data->status);
+			else
+				var = ft_getenv(key, data->envp, &data->status);
 			if (var)
-				ptr = ft_strjoinf(ptr, var);
-			//free(key);
-			free_ft_malloc(key, 0);
+				ptr = ft_strjoinf(ptr,var);
 			i += len;
 		}
 		else
-		{
-			ptr = c_strjoinf(ptr, str[i]);
-			i++;
-		}
+			ptr = c_strjoinf(ptr,str[i]);
+		i++;
 	}
 	free_ft_malloc(str, 0);
-	//free(str);
 	return(ptr);
 }
 /* this is were the file is created and the prompt is given */
