@@ -19,71 +19,35 @@ static char *c_strjoinf(char *s1, char c)
 	return (ptr);
 }
 
-static char *c_expand(char *str, char **envp, unsigned char *status)
+static char *c_expand(char *str, t_data *data, size_t i, size_t	len)
 {
-	size_t	i = 0;
-	size_t	len = 0;
-	char	*ptr = NULL;
-	char	*key = NULL;
-	char	*var = NULL;
+	char	*ptr;
+	char	*key;
+	char	*var;
 
-	if (!str)
-		return (NULL);
-	while (str[i])
+	ptr = NULL;
+	while (str && str[i])
 	{
-		if (str[i] == '$' && (str[i + 1] == '_' || ft_isalpha(str[i + 1])))
+		if (str[i] == '$' && validchar_helper(str[i + 1]))
 		{
-			i++;
-			len = 0;
-			while (str[i + len] && ft_isalnum(str[i + len]))
-				len++;
-			key = ft_strldup(&str[i], len);
-			var = ft_getenv(key, envp, status);
+			len = getlen_helper(str,i + 1);
+			key = ft_strldup(&str[i + 1], len);
+			if (ft_strcmp(key, "?"))
+				var = ft_getenv("?", data->envp, &data->status);
+			else
+				var = ft_getenv(key, data->envp, &data->status);
 			if (var)
 				ptr = ft_strjoinf(ptr,var);
-			free_ft_malloc(key, 0);
 			i += len;
 		}
 		else
-		{
 			ptr = c_strjoinf(ptr,str[i]);
-			i++;
-		}
+		i++;
 	}
-	free_ft_malloc(str, 0);
 	return(ptr);
 }
 
 
-// static char	*custom_expand(char *str, t_data *data, char *new, size_t len)
-// {
-// 	size_t	i;
-// 	char	*key;
-// 	char	*var;
-
-// 	i = 0;
-// 	while (str[i])
-// 	{
-// 		if(str[i] == '$' && validchar_helper(str[i + 1]))
-// 		{
-// 			len = getlen_helper(str,i + 1);
-// 			key = ft_strldup(str + i + 1,len);
-// 			if (ft_strcmp(key,"?"))
-// 				var = ft_getenv("?", data->envp, &data->status);
-// 			else
-// 				var = ft_getenv(key, data->envp, &data->status);
-// 			if (var)
-// 			{
-// 				new = ft_strjoin(ft_strldup(str, i),var);
-// 				str = ft_strjoin(new,ft_strldup(str + i + len + 1,ft_strlen(str + i)));		
-// 			}
-// 			else
-// 				str = joinstr_helper(str, i + 1, len, i - 1);
-// 		}
-// 		else
-// 			i++;
-// 	}
-// 	return (str);
 // }
 
 /*
@@ -153,11 +117,7 @@ static void	create_file_give_prompt(t_data *data, char *dl, int isquote, char *f
 			break;
 		}
 		if (!isquote && tmp[0])
-		{
-
-			tmp = c_expand(tmp, data->envp, &(data->status));
-		}
-			// tmp = custom_expand(tmp,data,tmp,0);
+			tmp = c_expand(tmp,data,0,0);
 		ft_putstr(tmp, fd);
 		write(fd, "\n", 1);
 		free_ft_malloc(tmp, 0);
