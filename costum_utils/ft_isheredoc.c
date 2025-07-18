@@ -44,6 +44,7 @@ static char *c_expand(char *str, t_data *data, size_t i, size_t	len)
 			ptr = c_strjoinf(ptr,str[i]);
 		i++;
 	}
+	free_ft_malloc(str, 0);
 	return(ptr);
 }
 
