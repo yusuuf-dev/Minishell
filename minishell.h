@@ -46,6 +46,14 @@ typedef struct heredooc
     struct heredooc   *next;
 }t_heredoc;
 
+typedef struct s_redi_lst
+{
+    char                *file_name;
+    int                 is_append;
+    int                 fd;
+    struct s_redi_lst   *next;
+} t_redi_lst;
+
 typedef struct s_data
 {
     char              *p_rdl;
@@ -65,6 +73,7 @@ typedef struct s_data
     t_heredoc         *heredooc;
     char               *expand;
     char               *checker;
+    t_redi_lst          *redi_lst;
 }t_data;
 
 
