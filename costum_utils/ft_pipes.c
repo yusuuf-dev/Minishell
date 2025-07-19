@@ -6,7 +6,7 @@
 /*   By: yoel-you <yoel-you@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/21 11:11:47 by asoufian          #+#    #+#             */
-/*   Updated: 2025/07/18 18:28:13 by yoel-you         ###   ########.fr       */
+/*   Updated: 2025/07/19 10:54:00 by yoel-you         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,17 +91,17 @@ static void  redirecting_child_std(t_data *data, pipes_t *pipe_data)
     data->p_rdl = ft_strdup(pipe_data->piped_cmds[pipe_data->i]);
     if (pipe_data->i == 0)
     {
-        if (close(pipe_data->pipefd[0]))
-            ;
         if (dup2(pipe_data->pipefd[1], STDOUT_FILENO) == -1)
             print_free_exit(DUP_FAILED, errno);
+        if (close(pipe_data->pipefd[0]) && close(pipe_data->pipefd[1]))
+            ;
     }
     else if (pipe_data->piped_cmds[pipe_data->i + 1])
     {
-        if (close(pipe_data->pipefd[0]))
-            ;
         if (dup2(pipe_data->old_pipe, STDIN_FILENO) == -1 || dup2(pipe_data->pipefd[1], STDOUT_FILENO) == -1)
             print_free_exit(DUP_FAILED, errno);
+        if (close(pipe_data->pipefd[0]) && close(pipe_data->pipefd[1]) && close(pipe_data->old_pipe))
+            ;
     }
     else
     {
