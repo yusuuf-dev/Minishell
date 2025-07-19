@@ -118,8 +118,18 @@ add : expand and checker pinters on struct data
 
 
 
-update 19/07
+update 19/07 
 
 need to fix on redirections:
 
-2>fffffffff ls /somewhere
+2>fffffffff ls /somewhere  (fixed)
+
+added : 
+	redirections_execution (code that redirecte to fds after parsing redirections)
+	redirections_parsing 
+
+notes :
+	append not working
+	name files fixed but doesn't parsed yet 
+
+	

@@ -129,7 +129,7 @@ static char *remv_add_redi(char *str, t_data *data, int type, int index)
     }
     fd = redi_atoi(fd_str);
     if (fd == -1)
-        new_str = ft_strldup(str, i + 1);
+        new_str = ft_strldup(str, index);
     else
     {
         new_str = ft_strldup(str, i);
@@ -153,9 +153,8 @@ static char *remv_add_redi(char *str, t_data *data, int type, int index)
             q = 0;
         i++;
     }
-    name = ft_strldup(&str[begin], i);
+    name = ft_strldup(&str[begin], i - begin);
     new_str = ft_strjoin(new_str, &str[i]);
-
     add_list_redi(data, type, fd, name);
     return (new_str);
 }
