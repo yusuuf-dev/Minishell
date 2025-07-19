@@ -115,3 +115,11 @@ update 17/07
 
 fix custom_split function
 add : expand and checker pinters on struct data
+
+
+
+update 19/07
+
+need to fix on redirections:
+
+2>fffffffff ls /somewhere

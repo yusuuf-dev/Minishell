@@ -73,8 +73,11 @@ char	**parsing(t_data *data)
    //     {return (ft_putstr("Error unclosed quotes\n", 2), data->envp);}
 	//ft_space(data->p_rdl);
 	//if(parse_redirection(&(data->p_rdl), &(data->status), data->envp, data)) // this also removes spaces;
-	if(parse_redirection(&(data->p_rdl), data))
-	 	return (data->envp);
+	// if(parse_redirection(&(data->p_rdl), data))
+	//  	return (data->envp);
+	redirections_parsing(data);
+	if (ft_redis_execute(data))
+		return (data->envp);
 	env = ft_getenv("PATH", data->envp, &(data->status));
 	if (env)
 		data->env_paths = ft_split(env, ':');

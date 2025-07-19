@@ -51,6 +51,7 @@ typedef struct s_redi_lst
     char                *file_name;
     int                 is_append;
     int                 fd;
+    int                 redi_out;
     struct s_redi_lst   *next;
 } t_redi_lst;
 
@@ -176,5 +177,7 @@ void    custom_split(char *str, t_data *data, size_t i, char q);
 char	*joinstr_helper(char *str, size_t i, size_t len, size_t index);
 size_t	getlen_helper(char *str, size_t index);
 int	    validchar_helper(char c);
+void    redirections_parsing(t_data *data);
+int     ft_redis_execute(t_data *data);
 
 #endif
