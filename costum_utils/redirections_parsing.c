@@ -1,25 +1,25 @@
 #include "../minishell.h"
 
-static char *charjoin(char *s1, char c)
-{
-    size_t i;
-    size_t len;
-    char *ptr;
+// static char *charjoin(char *s1, char c)
+// {
+//     size_t i;
+//     size_t len;
+//     char *ptr;
 
-    if (!c)
-        return (s1);
-    len = ft_strlen(s1);
-    ptr = ft_malloc((len + 2) * sizeof(char));
-    i = 0;
-    while (i < len)
-    {
-        ptr[i] = s1[i];
-        i++;
-    }
-    ptr[i++] = c;
-    ptr[i] = 0;
-    return (ptr);
-}
+//     if (!c)
+//         return (s1);
+//     len = ft_strlen(s1);
+//     ptr = ft_malloc((len + 2) * sizeof(char));
+//     i = 0;
+//     while (i < len)
+//     {
+//         ptr[i] = s1[i];
+//         i++;
+//     }
+//     ptr[i++] = c;
+//     ptr[i] = 0;
+//     return (ptr);
+// }
 
 static int found_redi(char c1, char c2)
 {
@@ -62,7 +62,7 @@ static void add_list_redi(t_data *data, int type, int fd, char *name)
         return;
     }
     new_redi = ft_calloc(sizeof(t_redi_lst));
-    if (type == 1)
+    if (type == 1 || type == 3)
     {
         if (fd == -1)
             new_redi->fd = 1;
@@ -107,6 +107,26 @@ static int redi_atoi(char *nptr)
     return (rslt);
 }
 
+static char *parse_fd_name(char *name, t_data *data)
+{
+    char   **ptrs;
+    
+    custom_split(name,data,0,' ');
+    ptrs = data->rdl_args;
+    data->rdl_args = NULL;
+    if (!ptrs)
+        return ("");
+    else  if (ptrs[0] && ptrs[1])
+    {
+        ft_putstr("minishell:",2);
+        ft_putstr(name,2);
+        ft_putstr(": ambiguous redirect\n",2);
+        return (NULL);
+    }
+    else
+        return (ptrs[0]);
+}
+
 static char *remv_add_redi(char *str, t_data *data, int type, int index)
 {
     char *new_str;
@@ -121,20 +141,16 @@ static char *remv_add_redi(char *str, t_data *data, int type, int index)
     fd_str = NULL;
     if (i > 0 && ft_isalnum(str[i - 1]))
     {
+        begin = i;
         while (i > 0 && str[i - 1] != ' ')
-        {
-            fd_str = charjoin(fd_str, str[i - 1]);
             i--;
-        }
+        fd_str = ft_strldup(&str[i],begin - i);
     }
     fd = redi_atoi(fd_str);
     if (fd == -1)
         new_str = ft_strldup(str, index);
     else
-    {
         new_str = ft_strldup(str, i);
-        fd_str = NULL;
-    }
     q = 0;
     if (type <= 2)
         i = index + 1;
@@ -154,6 +170,7 @@ static char *remv_add_redi(char *str, t_data *data, int type, int index)
         i++;
     }
     name = ft_strldup(&str[begin], i - begin);
+    name = parse_fd_name(name,data);
     new_str = ft_strjoin(new_str, &str[i]);
     add_list_redi(data, type, fd, name);
     return (new_str);

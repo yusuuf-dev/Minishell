@@ -27,6 +27,26 @@ int main(int ac, char **av, char **envp)
         sigaction(SIGINT, &(data.SIG_INT), NULL);
 		sigaction(SIGQUIT, &(data.S_SIG_IGN), NULL);
         data.p_rdl = ft_read_line_gnl(1);
+        
+        
+        // int j = 0;
+        // printf("\n full string :\n%s\n",data.p_rdl);
+        
+        // redirections_parsing(&data);
+
+        // while (data.redi_lst)
+        // {
+        //     printf("redirection %d :\n",j);
+        //     printf("file name : %s\n",data.redi_lst->file_name);
+        //     printf("fd type : %d\n",data.redi_lst->redi_out);
+        //     printf("fd before : %d\n",data.redi_lst->fd);
+        //     printf("is append : %d\n\n\n",data.redi_lst->is_append);
+        //     data.redi_lst = data.redi_lst->next;
+        //     j++;
+        // }
+        //     printf("\nlast string :\n%s\n\n",data.p_rdl);
+        // config_malloc(NULL,0,2);
+        // exit(0);
         if (signal_fun(-1))
         {
             data.status = 130;
