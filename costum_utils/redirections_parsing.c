@@ -1,26 +1,5 @@
 #include "../minishell.h"
 
-// static char *charjoin(char *s1, char c)
-// {
-//     size_t i;
-//     size_t len;
-//     char *ptr;
-
-//     if (!c)
-//         return (s1);
-//     len = ft_strlen(s1);
-//     ptr = ft_malloc((len + 2) * sizeof(char));
-//     i = 0;
-//     while (i < len)
-//     {
-//         ptr[i] = s1[i];
-//         i++;
-//     }
-//     ptr[i++] = c;
-//     ptr[i] = 0;
-//     return (ptr);
-// }
-
 static int found_redi(char c1, char c2)
 {
     if (c1 == '>' && c2 != '>')
@@ -109,22 +88,42 @@ static int redi_atoi(char *nptr)
 
 static char *parse_fd_name(char *name, t_data *data)
 {
-    char   **ptrs;
-    
+    char    **ptrs;
+    char    *error;
+    int     check;
+
+    data->rdl_args = NULL;
+    check = found_quotes(name);
+    if (check == 0)
+        return ("");
     custom_split(name,data,0,' ');
     ptrs = data->rdl_args;
-    data->rdl_args = NULL;
-    if (!ptrs)
+    if (!ptrs && check > 1)
         return ("");
-    else  if (ptrs[0] && ptrs[1])
+    if (!ptrs || (ptrs[0] && ptrs[1]))
     {
-        ft_putstr("minishell:",2);
-        ft_putstr(name,2);
-        ft_putstr(": ambiguous redirect\n",2);
-        return (NULL);
+        error = ft_strjoin("minishell: ",name);
+        error = ft_strjoin(error,": ambiguous redirect\n");
+        ft_putstr(error, 2);
+        return (data->status = 1, NULL);
     }
     else
         return (ptrs[0]);
+}
+
+
+static int check_ambiguous(t_data *data)
+{
+    t_redi_lst *tmp;
+
+    tmp = data->redi_lst;
+    while (tmp)
+    {
+        if (tmp->file_name == NULL)
+            return (1);
+        tmp = tmp->next;
+    }
+    return (0);
 }
 
 static char *remv_add_redi(char *str, t_data *data, int type, int index)
@@ -165,13 +164,15 @@ static char *remv_add_redi(char *str, t_data *data, int type, int index)
             break;
         if (!q && (str[i] == '\'' || str[i] == '\"'))
             q = str[i];
-        if (q && str[i] == q)
+        else if (q && str[i] == q)
             q = 0;
         i++;
     }
     name = ft_strldup(&str[begin], i - begin);
-    name = parse_fd_name(name,data);
     new_str = ft_strjoin(new_str, &str[i]);
+    if (check_ambiguous(data) || type == 4)
+        return (new_str);
+    name = parse_fd_name(name, data);
     add_list_redi(data, type, fd, name);
     return (new_str);
 }

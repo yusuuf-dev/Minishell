@@ -132,4 +132,26 @@ notes :
 	append not working
 	name files fixed but doesn't parsed yet 
 
-	
+
+20/7 updates
+
+not like bash : (fixed)
+minishell : << $asfdasf
+> a
+> 
+> $asfdasf
+minishell: $asfdasf: ambiguous redirect (this is must not exist)
+
+updates :
+	replace function found_q -> found_quotes (in all code but we use it on check_syntax and we add it into parsing_redirection to check for empty string)
+	and use it on separated file found_quotes.c it was exist on file c_split.c
+
+	edit on parsing_redirection.c
+	add found_quotes.c
+	remove function (found_q from c_split.c) + replace function found_q with found_quotes on all code
+
+
+confused test :
+	export a="   "
+	echo test >""$a
+	minishell: : No such file or directory (but sometimes file created with empty name)

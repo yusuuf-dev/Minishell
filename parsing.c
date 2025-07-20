@@ -1,73 +1,95 @@
 #include "minishell.h"
 
-/*// char	*ft_getenv(char *s, char **envp)
-// {
-// 	size_t	i = 0;
-// 	size_t	len = 0;
-
-// 	if (!s || !(s[0]))
-// 		return (NULL);
-// 	len = ft_strlen(s);
-// 	while (envp[i])
-// 	{
-// 		if (!ft_strncmp(envp[i], s, len) && envp[i][len] == '=')
-// 			return (ft_strchr(envp[i], '=') + 1);
-// 		i++;
-// 	}
-// 	return (NULL);
-// }*/
-
 int			execute_command(char *path, t_data *data);
 static int	ft_built_in_cmd(t_data *data);
 
-/*static void		ft_space(char *s)
-{
-	size_t	i = 0;
-	int		f_s = 0;
-	int		f_d = 0;
-
-	while(s[i])
-	{
-		if(s[i] == '\'' && !f_d)
-			f_s = !f_s;
-		if(s[i] == '\"' && !f_s)
-			f_d = !f_d;
-		if(!f_d && !f_s && s[i] >= 9 && s[i] <= 13)
-			s[i] = ' ';
-		i++;
-	}
-}*/
-
 static  int executable(t_data *data)
 {
-	int is_a_file = 0;
+	int is_a_file;
 
+	is_a_file = 0;
 	if (!data->rdl_args || !data->rdl_args[0])
 		return (1);
     if (!(ft_strchr(data->rdl_args[0], '/')))
-    {    return (0);}
+    {
+		return (0);
+	}
 	is_a_file = open(data->rdl_args[0], O_DIRECTORY); // check for errno in case open fails for some reason, and return error ?
 	if (is_a_file != -1)
-		{return (data->status = 126, close(is_a_file), ft_putstr("minishell: ", 2), ft_putstr(data->rdl_args[0], 2), ft_putstr(": Is a directory\n", 2), 1);} // need to set the status to 126;
-    if (access(data->rdl_args[0],F_OK) == -1)
+	{
+		return (data->status = 126, close(is_a_file), ft_putstr("minishell: ", 2), ft_putstr(data->rdl_args[0], 2), ft_putstr(": Is a directory\n", 2), 1);
+	}
+    if (access(data->rdl_args[0], F_OK) == -1)
     {
         perror("minishell");
         return(data->status = 127, 127);
     }
-    if (access(data->rdl_args[0],X_OK) == 0)
+    if (access(data->rdl_args[0], X_OK) == 0)
         return (execute_command(NULL, data));
     else
         perror("minishell");
     return(data->status = 126, 1);
 }
 
+static int	is_file_executable(t_data *data, char *path, char **msg)
+{
+	int		is_a_file;
+
+	is_a_file = 0;
+	if (!access(path, X_OK))
+	{
+		is_a_file = open(path, O_DIRECTORY);
+		if (is_a_file == -1) // check for errno
+		{
+			execute_command(path, data); // need to do cleanup since this now returns on error
+			return (1);
+		}
+		close(is_a_file);
+	}
+	else
+	{
+		if (!(*msg))
+		{
+			*msg = ft_strjoin("minishell: ", path);
+			*msg = ft_strjoinf(*msg, ": Permission denied");
+			*msg = ft_strjoinf(*msg, "\n");
+		}
+		data->status = 126;
+	}
+	return (0);
+}
+
+static void	cmd_exist_in_path(t_data *data, char *env)
+{
+	char	*path;
+	char	*msg;
+	int		i;
+
+	env = ft_getenv("PATH", data->envp, &(data->status));
+	if (env)
+		data->env_paths = ft_split(env, ':');
+	else
+		data->env_paths = NULL; // In case we unset the PATH later, the pointer will be pointing to a non-valid memory (dangling pointer)
+	i = 0;
+	msg = NULL;
+	while (env && data->env_paths[i])
+	{
+		path = ft_strjoinf(ft_strjoin(data->env_paths[i], "/"), data->rdl_args[0]);
+		if (!access(path, F_OK))
+		{
+			if (is_file_executable(data, path, &msg))
+				return;
+		}
+		i++;
+	}
+	if (data->status != 126)
+		return (data->status = 127, ft_putstr(data->rdl_args[0], 2), ft_putstr(": command not found\n", 2));
+	else
+		ft_putstr(msg, 2);
+}
+
 char	**parsing(t_data *data)
 {
-    char	*env;
-    char	*path;
-	char 	*msg = NULL;
-    int		i = 0;
-	int		is_a_file = 0;
 
   //  if (found_q(data->p_rdl) == -1) // check if the quotes are closed;
    //     {return (ft_putstr("Error unclosed quotes\n", 2), data->envp);}
@@ -78,67 +100,19 @@ char	**parsing(t_data *data)
 	redirections_parsing(data);
 	if (ft_redis_execute(data))
 		return (data->envp);
-	env = ft_getenv("PATH", data->envp, &(data->status));
-	if (env)
-		data->env_paths = ft_split(env, ':');
-	else
-		data->env_paths = NULL; // In case we unset the PATH later, the pointer will be pointing to a non-valid memory (dangling pointer)
 	// data->dup_rdl = ft_strdup(data->p_rdl);
     // data->rdl_args = c_split(data->p_rdl,' ', data->envp, &(data->status));
 	if (!data->p_rdl || !data->p_rdl[0])
 		return (data->envp);
 	data->rdl_args = NULL; // important to set it NULL because will need it again with new promt that only free it and doesn't set it to NULL
-	custom_split(data->p_rdl,data, 0, 0);
+	custom_split(data->p_rdl, data, 0, 0);
 	
-	if (executable(data)) // next 
+	if (executable(data)) // next
 		return (data->envp);
 	if (ft_built_in_cmd(data))
-		(void)data->p_rdl;
-	else
-	{	
-		while (env && data->env_paths[i])
-		{
-			path = ft_strjoinf(ft_strjoin(data->env_paths[i], "/"),data->rdl_args[0]);
-			if (!access(path, F_OK))
-			{
-				if (!access(path, X_OK))
-				{
-					is_a_file = open(path, O_DIRECTORY);
-					if (is_a_file == -1) // check for errno
-					{
-						if (execute_command(path, data) != 200) // need to do cleanup since this now returns on error
-							return (data->envp);
-						return (data->envp);
-					}
-					close(is_a_file);
-				}
-				else
-				{
-					if (!msg)
-					{
-						msg = ft_strjoin("minishell: ", path);
-						msg = ft_strjoinf(msg, ": Permission denied");
-						msg = ft_strjoinf(msg, "\n");
-					}
-					data->status = 126;
-				}
-			}
-			//free(path);
-			i++;
-		}
-		if (data->status != 126)
-		{
-			ft_putstr(data->rdl_args[0], 2);
-			ft_putstr(": command not found\n", 2);
-			data->status = 127;
-		}
-		else
-		{
-			ft_putstr(msg, 2);
-			free(msg);
-		}
-	}
-	return ( data->envp);
+		return (data->envp);
+	cmd_exist_in_path(data, NULL);
+	return (data->envp);
 }
 
 static int	ft_built_in_cmd(t_data *data)
@@ -166,7 +140,8 @@ static int	ft_built_in_cmd(t_data *data)
 	else if (i == 13)
 		data->status = ft_echo(data->rdl_args);
 	else if (i == 14)
-		data->status = ft_env(data->rdl_args, data->envp, data->env_paths);
+		ft_env(data); // change this
+		//data->status = ft_env(data->rdl_args, data->envp, data->env_paths); // change this
 	else if (i == 15)
 		data->status = ft_unset(data);
 	//	data->envp = ft_unset(data->rdl_args, data->envp, &(data->status));
