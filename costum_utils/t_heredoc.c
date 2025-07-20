@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   t_heredoc.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yoel-you <yoel-you@student.1337.ma>          +#+  +:+       +#+        */
+/*   By: yoel-you <yoel-you@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/18 10:41:26 by asoufian          #+#    #+#             */
 /*   Updated: 2025/07/18 18:12:14 by yoel-you         ###   ########.fr       */

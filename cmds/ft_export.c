@@ -158,7 +158,7 @@ static char	**ft_duplicate_add_s(char **dup, char *s)
 	// 	return (NULL);
 	while(dup[size])
 		size++;
-	size = (sizeof(char *) * (size + 1));
+	size = (sizeof(char *) * (size + 2));
 //	p = ft_calloc(sizeof(char *) * (size + 1));
 	p = ft_malloc_env(size);
 	memset(p, 0, size);
@@ -175,35 +175,6 @@ static char	**ft_duplicate_add_s(char **dup, char *s)
 	p[i] = ft_strdup(s);*/
 	//free_all(dup);
 	return (p);
-}
-char	**ft_export(char **argv, char **envp, unsigned char *status)
-{
-	size_t	ar = 1;
-	//int		valid = 0;
-
-	*status = 0;
-	if (!argv[ar])
-		return (*status = 0, no_args(envp), envp);
-	while (argv[ar])
-	{ 
-		while (argv[ar] && (valid_var(argv[ar])))
-		{
-			print_error("minishell: export: `", argv[ar], "': not a valid identifier\n");
-			*status = 1;
-			ar++;
-		}
-		if (argv[ar] == NULL)
-			return (envp);		
-		if (ft_var_exists(argv[ar], envp)) // It has to have an equal '=' if we want to change the value of the given variable;
-		{
-			//*status = 0;
-			envp = ft_duplicate_add_s(envp, argv[ar]); // copying the old variables and making space for the new one;
-			if (!envp) ///////////////// CHECK FOR OTHER MALLOCS !!!!!!!!!!!!!!!
-				return (*status = -1, NULL);
-		}
-		ar++;
-	}
-	return (envp);
 }
 
 char **ft_new_export(t_data *data)
@@ -234,4 +205,34 @@ char **ft_new_export(t_data *data)
 		ar++;
 	}
 	return (data->envp);
+}
+
+char	**ft_export(char **argv, char **envp, unsigned char *status)
+{
+	size_t	ar = 1;
+	//int		valid = 0;
+
+	*status = 0;
+	if (!argv[ar])
+		return (*status = 0, no_args(envp), envp);
+	while (argv[ar])
+	{ 
+		while (argv[ar] && (valid_var(argv[ar])))
+		{
+			print_error("minishell: export: `", argv[ar], "': not a valid identifier\n");
+			*status = 1;
+			ar++;
+		}
+		if (argv[ar] == NULL)
+			return (envp);		
+		if (ft_var_exists(argv[ar], envp)) // It has to have an equal '=' if we want to change the value of the given variable;
+		{
+			*status = 0;
+			envp = ft_duplicate_add_s(envp, argv[ar]); // copying the old variables and making space for the new one;
+			if (!envp) ///////////////// CHECK FOR OTHER MALLOCS !!!!!!!!!!!!!!!
+				return (*status = -1, NULL);
+		}
+		ar++;
+	}
+	return (envp);
 }

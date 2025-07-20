@@ -1,6 +1,37 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_env.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: asoufian <asoufian@student.1337.ma>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/11 11:00:03 by asoufian          #+#    #+#             */
+/*   Updated: 2025/04/13 11:29:06 by asoufian         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../minishell.h"
  // make the function print the var only if it has '=' on it;
-int	ft_env(char **argv, char **envp, char **envp_paths)
+void	ft_env(t_data *data)
+{
+	int		i;
+
+	i = 0;
+	while (data->envp[i])
+	{
+		if (ft_strchr(data->envp[i], '='))
+		{
+			write(1, data->envp[i], ft_strlen(data->envp[i]));
+			write(1, "\n", 1);
+				//printf("%s\n", envp[i]); // this used to not print the output to the desired stdout, maybe because printf stores the strings in a buffer, and then
+				// prints them once so that the printf func won't have to make multiple system calls.
+		}
+		i++;
+	}
+	return ;
+}
+
+/*int	ft_env(char **argv, char **envp, char **envp_paths)
 {
 	size_t	i = 0;
 //	size_t	size = 0;
@@ -72,4 +103,4 @@ int	ft_env(char **argv, char **envp, char **envp_paths)
 	if (WIFEXITED(child_info))
 		return (WEXITSTATUS(child_info));
 	return (0);
-}
+}*/

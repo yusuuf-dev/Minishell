@@ -158,3 +158,15 @@ yoel-you@c1r7p1:~$ echo $?$?$?
 	modified:   minishell.c
 	modified:   minishell.h
 	modified:   parsing.c
+- Ayoub 20_07 Added/modified the following:
+	modified:   cmds/ft_env.c
+	modified:   cmds/ft_export.c
+	deleted:    costum_utils/ft_all_redirections.c
+	modified:   costum_utils/ft_here_doc_utils.c
+	modified:   costum_utils/ft_pipes.c
+	modified:   costum_utils/t_heredoc.c
+	modified:   minishell.c
+	modified:   minishell.h
+	modified:   parsing.c
+	costum_utils/redirections_execution.c
+	costum_utils/redirections_parsing.c

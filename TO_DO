@@ -316,3 +316,10 @@ block so that 'config_malloc' won't cause double free error
 
 minishell : export a="a   b"
 minishell : > $a
+
+memory leak on the child:
+minishell : << hola
+> "hola"
+> 'hola'
+> hla
+> hola

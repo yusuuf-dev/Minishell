@@ -16,10 +16,12 @@
 
 #define BUFFER_SIZE 1
 #define HEREDOC_MAX 16
+#define PTR_TO_NULL 8
 #define PIPE_FAILED "pipe function failed\n"
 #define FORK_FAILED "fork function failed\n"
 #define DUP_FAILED  "dup function failed\n"
 #define EXECVE_FAILED "execve function failed\n"
+#define OPEN_FAILED   "open function failed\n"
 // for malloc garbage collector
 typedef struct s_lstm
 {
@@ -46,25 +48,38 @@ typedef struct heredooc
     struct heredooc   *next;
 }t_heredoc;
 
+typedef struct s_redi_lst
+{
+    char                *file_name;
+    int                 is_append;
+    int                 fd;
+    int                 redi_out;
+    struct s_redi_lst   *next;
+} t_redi_lst;
+
+/* remember that we reset the first PTR_TO_NULL num of pointers
+    to NULL using memset */
+/* DO NOT CHANGE THE ORDER OF THE FIRST PTR_TO_NULL pointers*/
 typedef struct s_data
 {
     char              *p_rdl;
     char              **rdl_args;
-    char              **envp;
     char              **env_paths;
+    char              **segments;
+    char              *expand;
+    char              *checker;
+    t_heredoc         *heredooc;
+    t_redi_lst        *redi_lst;
+    char              **envp;
     unsigned char     status;
     int               exit;
     int               is_a_child;
     int               fd0, fd1, fd2;
-    char              **segments;
     struct sigaction    S_SIG_IGN;
     struct sigaction    S_SIG_DFL;
     struct sigaction    SIG_INT;
     struct sigaction    OLD_SIG_QUIT;
     struct sigaction    OLD_SIG_INT;
-    t_heredoc         *heredooc;
-    char               *expand;
-    char               *checker;
 }t_data;
 
 
@@ -89,7 +104,8 @@ int     ft_cd(char **argv, char ***envp);
 char	**ft_export(char **argv, char **envp, unsigned char *status);
 char    **ft_new_export(t_data *data); // new export just to parse only data i didn't change original one because we call other place ft_export to chane vars
 int		ft_unset(t_data *data);
-int     ft_env(char **argv, char **envp, char **envp_paths);
+//int     ft_env(char **argv, char **envp, char **envp_paths);
+void    ft_env(t_data *data);
 int     ft_exit(char **argv, unsigned char *status, int *s_exit);
 /***************************************************************/
 /****************************SIGNALS*******************************/
@@ -110,6 +126,11 @@ int     ft_isheredoc(char *p, char **envp, unsigned char *status);
 /***************************************************************/
 /****************************PIPE*******************************/
 void     ft_pipes(t_data *data);
+/***************************************************************/
+/***************************REDICTIONS**************************/
+int	    parse_redirection(t_data *data);
+void    redirections_parsing(t_data *data);
+int     ft_redis_execute(t_data *data);
 /***************************************************************/
 void    *get_data(void *p);
 int     c_strncmp(const char *s1, const char *s2);
@@ -134,7 +155,6 @@ char    *rm_quotes_expand(char *str, char **envp, unsigned char *status);
 int	    ft_isalpha(int c);
 int	    ft_isalnum(int c);
 int	    c_atoi(char *s, long *rslt);
-int	    parse_redirection(char **full_str, t_data *data);
 int     costum_atoi(char *nptr, unsigned char *status, int fd);
 void    ft_setup(t_data *data, char **envp);
 ///////////malloc
