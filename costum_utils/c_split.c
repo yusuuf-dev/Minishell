@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   c_split.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yoel-you <yoel-you@student.42.fr>          +#+  +:+       +#+        */
+/*   By: yoel-you <yoel-you@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/14 17:17:31 by yoel-you          #+#    #+#             */
-/*   Updated: 2025/07/14 18:51:03 by yoel-you         ###   ########.fr       */
+/*   Updated: 2025/07/20 16:05:16 by yoel-you         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,32 +97,4 @@ char	**c_split(char *str, char c)
 	}
 	ptr[j] = NULL;
 	return (ptr);
-}
-
-int	found_q(char *s)
-{
-	size_t	i;
-	int		f_s;
-	int		f_d;
-	int		found;
-
-	i = 0;
-	f_s = 0;
-	f_d = 0;
-	found = 0;
-	while (s[i])
-	{
-		if (s[i] == '\'' && !f_d)
-			f_s = !f_s;
-		if (s[i] == '\"' && !f_s)
-			f_d = !f_d;
-		if (s[i] == '\"' || s[i] == '\'')
-			found++;
-		i++;
-	}
-	if ((f_d || f_s) && found > 0)
-		return (-1);
-	else if (found == 0)
-		return (0);
-	return (1);
 }

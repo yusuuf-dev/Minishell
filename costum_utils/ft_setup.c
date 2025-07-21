@@ -39,10 +39,10 @@ void    ft_setup(t_data *data, char **envp)
   //  char    *env;
 
     (void)envp;
-    if (assign_std_in_out_err(data))
-      exit(errno);
     get_data(data);
     ft_memset(data, 0, sizeof(t_data));
+    if (assign_std_in_out_err(data))
+      exit(errno);
     data->envp = ft_duplicate(__environ, 0);
     if (!data->envp)
     {

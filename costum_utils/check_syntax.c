@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   check_syntax.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yoel-you <yoel-you@student.42.fr>          +#+  +:+       +#+        */
+/*   By: yoel-you <yoel-you@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/14 17:19:15 by yoel-you          #+#    #+#             */
-/*   Updated: 2025/07/16 09:31:51 by yoel-you         ###   ########.fr       */
+/*   Updated: 2025/07/20 16:34:31 by yoel-you         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,7 @@ int	check_syntax(t_data *data)
 	if (is_onlyspace(data->p_rdl))
 		return (1);
 	add_history(data->p_rdl);
-	if (found_q(data->p_rdl) == -1)
+	if (found_quotes(data->p_rdl) == -1)
 		return (ft_putstr("Error Unclose quote\n", 2),data->status = 2, 1);
 	while (data->p_rdl[i] == ' ')
 		i++;

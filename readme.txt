@@ -170,3 +170,11 @@ yoel-you@c1r7p1:~$ echo $?$?$?
 	modified:   parsing.c
 	costum_utils/redirections_execution.c
 	costum_utils/redirections_parsing.c
+
+
+new update 
+		heredoc_delimiter.c:10
+		redirections_execution
+		redirections_parsing
+		minishell.h (add macros + change struct of redirections + change macro 8 -> 9 + add pointer into data struct)
+		ft_setup.c

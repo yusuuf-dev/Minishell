@@ -7,7 +7,7 @@ static size_t get_delimiter_end(char *s, int *isquote)
 
     while (s[i] == ' ')
         i++;
-    while (s[i] && s[i] != ' ' && s[i] != '<' && s[i] != '>')
+    while (s[i] && s[i] != ' ' && s[i] != '<' && s[i] != '>' && s[i] != '|')
     {
         if (!q && (s[i] == '\'' || s[i] == '\"'))
         {

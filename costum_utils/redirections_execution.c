@@ -1,17 +1,54 @@
 
 #include "../minishell.h"
 
-static int    open_create_file_name(t_redi_lst *redis, int *file_fd)
+/*int found_here_doc(t_data *data, char *s)
+{
+	t_heredoc	*temp = data->heredooc;
+	int			fd;
+	while(temp->next && temp->arg_num)
+	{
+		temp = temp->next;
+	}
+
+	fd = open(temp->file_name, O_RDONLY);
+	if (fd < 0)
+		return (perror(""), errno);
+	if (dup2(fd, 0) < 0)
+		{return (close(fd), perror(""), errno);}
+	close(fd);
+	temp->arg_num = 1;
+	remove_heredoc(s);
+	return (0);
+}*/
+
+static void    *get_here_doc_file(t_data *data)
+{
+    t_heredoc   *temp;
+
+    temp = data->heredooc;
+    if (!temp)
+        {return (NULL);}
+	while(temp->next && temp->arg_num)
+	{
+		temp = temp->next;
+	}
+    temp->arg_num = 1;
+    return (temp->file_name);
+}
+
+static int    open_create_file_name(t_data *data, t_redi_lst *redis, int *file_fd)
 {
     char    *error_print;
 
-    if (redis->redi_out == 0)
+    if (redis->redi_type == REDI_HEREDOC)
+        *file_fd = open(get_here_doc_file(data), O_RDONLY, 00644);
+    else if (redis->redi_type == REDI_IN)
     {
         *file_fd = open(redis->file_name, O_RDONLY, 00644);
     }
     else
     {
-        if (redis->is_append)
+        if (redis->redi_type == REDI_APPEND)
             *file_fd = open(redis->file_name, O_WRONLY|O_CREAT|O_APPEND, 00644);
         else
             *file_fd = open(redis->file_name, O_WRONLY|O_CREAT|O_TRUNC, 00644);
@@ -56,9 +93,9 @@ int    ft_redis_execute(t_data *data)
         return (0);
     while (temp)
     {
-        if (!temp->file_name)
-            return (data->status = 1, 1);
-        if (open_create_file_name(temp, &file_fd))
+        if (!temp->file_name && temp->redi_type != REDI_HEREDOC)
+            return (ft_putstr(data->ptr_ambiguous, 2), data->status = 1, 1);
+        if (open_create_file_name(data, temp, &file_fd))
             return (data->status = 1, 1);
         if (redirect_to_file(temp, &file_fd))
             return (data->status = 1, 1);

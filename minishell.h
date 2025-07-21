@@ -14,14 +14,19 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
-#define BUFFER_SIZE 1
-#define HEREDOC_MAX 16
-#define PTR_TO_NULL 8
-#define PIPE_FAILED "pipe function failed\n"
-#define FORK_FAILED "fork function failed\n"
-#define DUP_FAILED  "dup function failed\n"
-#define EXECVE_FAILED "execve function failed\n"
-#define OPEN_FAILED   "open function failed\n"
+#define BUFFER_SIZE     1
+#define HEREDOC_MAX     16
+#define PTR_TO_NULL     9
+#define PIPE_FAILED     "pipe function failed\n"
+#define FORK_FAILED     "fork function failed\n"
+#define DUP_FAILED      "dup function failed\n"
+#define EXECVE_FAILED   "execve function failed\n"
+#define OPEN_FAILED     "open function failed\n"
+#define REDI_IN         0
+#define REDI_OUT        1
+#define REDI_APPEND     2
+#define REDI_HEREDOC    3
+//#define INVALID_FD      -1
 // for malloc garbage collector
 typedef struct s_lstm
 {
@@ -51,9 +56,8 @@ typedef struct heredooc
 typedef struct s_redi_lst
 {
     char                *file_name;
-    int                 is_append;
     int                 fd;
-    int                 redi_out;
+    int                 redi_type;
     struct s_redi_lst   *next;
 } t_redi_lst;
 
@@ -70,6 +74,7 @@ typedef struct s_data
     char              *checker;
     t_heredoc         *heredooc;
     t_redi_lst        *redi_lst;
+    char              *ptr_ambiguous;
     char              **envp;
     unsigned char     status;
     int               exit;
@@ -187,5 +192,6 @@ void    custom_split(char *str, t_data *data, size_t i, char q);
 char	*joinstr_helper(char *str, size_t i, size_t len, size_t index);
 size_t	getlen_helper(char *str, size_t index);
 int	    validchar_helper(char c);
+int     found_quotes(char *s);
 
 #endif

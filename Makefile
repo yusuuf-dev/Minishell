@@ -44,7 +44,7 @@ SRC = minishell.c parsing.c ./utils/ft_calloc.c ./costum_utils/ft_putstr.c ./cos
 ./utils/ft_get_next_line.c ./costum_utils/custom_split.c ./costum_utils/custom_split_utils.c ./costum_utils/ft_getenv.c ./costum_utils/c_strncmp.c \
 ./costum_utils/ft_free.c costum_utils/ft_read_line_gnl.c ./utils/ft_strcpy.c ./utils/ft_itoa.c ./costum_utils/ft_malloc_utils.c ./costum_utils/ft_strdup_env.c \
 ./costum_utils/ft_here_doc.c ./costum_utils/ft_here_doc_utils.c ./costum_utils/t_heredoc.c ./costum_utils/redirections_execution.c \
-./costum_utils/redirections_parsing.c
+./costum_utils/redirections_parsing.c ./costum_utils/found_quotes.c
 
 OBJ = $(SRC:.c=.o)
 
