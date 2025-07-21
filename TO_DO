@@ -323,3 +323,10 @@ minishell : << hola
 > 'hola'
 > hla
 > hola
+
+ls | cat << stop >
+
+""
+minishell : export X="  A  B  "
+minishell : /bin/echo ?$X'2'
+

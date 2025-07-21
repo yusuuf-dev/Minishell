@@ -154,7 +154,6 @@ char    *convert_env_var(char *s,char **envp);
 //char	**c_split(char *str, char c, char **envp, unsigned char *status);
 // char	**c_split(char *str, char c);
 char    *rm_quotes(char *str);
-int     found_q(char *s);
 int     found_pipe(char *line);
 char    *rm_quotes_expand(char *str, char **envp, unsigned char *status);
 int	    ft_isalpha(int c);

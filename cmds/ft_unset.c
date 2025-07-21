@@ -41,7 +41,7 @@ static void	remove_var_from_env(t_data *data, size_t ar)
 	i = 0;
 	while (data->envp[i]) // query the env
 	{
-		if (!c_strncmp(data->rdl_args[ar], data->envp[i]))
+		if (!c_strncmp(data->envp[i], data->rdl_args[ar]))
 		{
 			//free(envp[i]); // we use ft_malloc this is going to use a double free error,
 			free_ft_malloc(data->envp[i], 1);

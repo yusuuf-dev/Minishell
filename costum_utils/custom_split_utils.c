@@ -30,7 +30,7 @@ size_t	getlen_helper(char *str, size_t index)
 	{
 		if (ft_isalnum(str[index + len]))
 			len++;
-		else if (str[index] == '_')
+		else if (str[index + len] == '_')
 			len++;
 		else
 			break ;

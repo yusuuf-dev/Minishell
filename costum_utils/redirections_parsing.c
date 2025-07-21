@@ -195,7 +195,7 @@ void redirections_parsing(t_data *data)
     {
         if (!q && (str[i] == '\'' || str[i] == '\"'))
             q = str[i];
-        if (q && str[i] == q)
+        else if (q && str[i] == q)
             q = 0;
         if (!q && (found_redi(str[i], str[i + 1]) != -1)) // if we applied the above changes
         {                                         // we need to chanage this condition to  !q && found_redi(str[i], str[i + 1]) != -1

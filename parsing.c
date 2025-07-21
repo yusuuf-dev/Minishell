@@ -3,14 +3,14 @@
 int			execute_command(char *path, t_data *data);
 static int	ft_built_in_cmd(t_data *data);
 
-static  int executable(t_data *data)
+static  int executable(t_data *data, int mode)
 {
 	int is_a_file;
 
 	is_a_file = 0;
 	if (!data->rdl_args || !data->rdl_args[0])
 		return (1);
-    if (!(ft_strchr(data->rdl_args[0], '/')))
+    if (!(ft_strchr(data->rdl_args[0], '/')) && !mode)
     {
 		return (0);
 	}
@@ -69,7 +69,11 @@ static void	cmd_exist_in_path(t_data *data, char *env)
 	if (env)
 		data->env_paths = ft_split(env, ':');
 	else
-		data->env_paths = NULL; // In case we unset the PATH later, the pointer will be pointing to a non-valid memory (dangling pointer)
+	{
+		data->env_paths = NULL;
+		executable(data, 1); // In case we unset the PATH later, the pointer will be pointing to a non-valid memory (dangling pointer)
+		return ;
+	}
 	i = 0;
 	msg = NULL;
 	while (env && data->env_paths[i])
@@ -107,7 +111,7 @@ char	**parsing(t_data *data)
 	data->rdl_args = NULL; // important to set it NULL because will need it again with new promt that only free it and doesn't set it to NULL
 	custom_split(data->p_rdl, data, 0, 0);
 	
-	if (executable(data)) // next
+	if (executable(data, 0)) // next
 		return (data->envp);
 	if (ft_built_in_cmd(data))
 		return (data->envp);

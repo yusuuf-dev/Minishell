@@ -177,4 +177,7 @@ new update
 		redirections_execution
 		redirections_parsing
 		minishell.h (add macros + change struct of redirections + change macro 8 -> 9 + add pointer into data struct)
-		ft_setup.c
+		ft_setup.c- 21_07 Ayoub modified the following files:
+		ft_unset.c
+		redirections_execution.c
+	parsing.c
