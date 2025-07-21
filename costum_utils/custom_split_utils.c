@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   custom_split_utils.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yoel-you <yoel-you@student.42.fr>          +#+  +:+       +#+        */
+/*   By: yoel-you <yoel-you@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/14 17:04:57 by yoel-you          #+#    #+#             */
-/*   Updated: 2025/07/14 17:05:51 by yoel-you         ###   ########.fr       */
+/*   Updated: 2025/07/21 18:02:20 by yoel-you         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ size_t	getlen_helper(char *str, size_t index)
 	{
 		if (ft_isalnum(str[index + len]))
 			len++;
-		else if (str[index] == '_')
+		else if (str[index + len] == '_')
 			len++;
 		else
 			break ;
