@@ -3,15 +3,15 @@
 static int found_redi(char c1, char c2)
 {
     if (c1 == '>' && c2 != '>')
-        return (1);
+        return (REDI_OUT);
     else if (c1 == '<' && c2 != '<')
-        return (2);
+        return (REDI_IN); // makes this return 0
     else if (c1 == '>' && c2 == '>')
-        return (3);
+        return (REDI_APPEND);
     else if (c1 == '<' && c2 == '<')
-        return (4);
+        return (REDI_HEREDOC);
     else
-        return (0);
+        return (-1); // and this returns - 1
 }
 
 static void add_linkedlist(t_data *data, t_redi_lst *new)
@@ -35,20 +35,21 @@ static void add_list_redi(t_data *data, int type, int fd, char *name)
 {
     t_redi_lst *new_redi;
 
-    if (type == 4)
+    /*if (type == 4)
     {
         // this is for heredoc found it
         return;
-    }
+    }*/
     new_redi = ft_calloc(sizeof(t_redi_lst));
-    if (type == 1 || type == 3)
+    new_redi->redi_type = type;
+    if (type == REDI_OUT || type == REDI_APPEND)
     {
         if (fd == -1)
             new_redi->fd = 1;
-        new_redi->redi_out = 1;
+    //    new_redi->redi_out = 1;
     }
-    if (type > 2)
-        new_redi->is_append = 1;
+   /* if (type > 2)
+        new_redi->is_append = 1;*/
     if (fd != -1)
         new_redi->fd = fd;
     new_redi->file_name = name;
@@ -86,17 +87,19 @@ static int redi_atoi(char *nptr)
     return (rslt);
 }
 
-static char *parse_fd_name(char *name, t_data *data)
+static char *parse_fd_name(char *name, t_data *data, int type)
 {
     char    **ptrs;
     char    *error;
     int     check;
 
+    if (type == REDI_HEREDOC)
+        return (NULL);
     data->rdl_args = NULL;
     check = found_quotes(name);
     if (check == 0)
         return ("");
-    custom_split(name,data,0,' ');
+    custom_split(name,data, 0, ' ');
     ptrs = data->rdl_args;
     if (!ptrs && check > 1)
         return ("");
@@ -104,7 +107,7 @@ static char *parse_fd_name(char *name, t_data *data)
     {
         error = ft_strjoin("minishell: ",name);
         error = ft_strjoin(error,": ambiguous redirect\n");
-        ft_putstr(error, 2);
+        data->ptr_ambiguous = error;
         return (data->status = 1, NULL);
     }
     else
@@ -118,8 +121,8 @@ static int check_ambiguous(t_data *data)
 
     tmp = data->redi_lst;
     while (tmp)
-    {
-        if (tmp->file_name == NULL)
+    {       
+        if (tmp->file_name == NULL && tmp->redi_type != REDI_HEREDOC)
             return (1);
         tmp = tmp->next;
     }
@@ -151,7 +154,7 @@ static char *remv_add_redi(char *str, t_data *data, int type, int index)
     else
         new_str = ft_strldup(str, i);
     q = 0;
-    if (type <= 2)
+    if (type == REDI_IN || type == REDI_OUT)
         i = index + 1;
     else
         i = index + 2;
@@ -160,7 +163,7 @@ static char *remv_add_redi(char *str, t_data *data, int type, int index)
     begin = i;
     while (str[i])
     {
-        if (!q && str[i] == ' ')
+        if (!q && (str[i] == ' ' || found_redi(str[i],str[i + 1]) != -1))
             break;
         if (!q && (str[i] == '\'' || str[i] == '\"'))
             q = str[i];
@@ -170,9 +173,9 @@ static char *remv_add_redi(char *str, t_data *data, int type, int index)
     }
     name = ft_strldup(&str[begin], i - begin);
     new_str = ft_strjoin(new_str, &str[i]);
-    if (check_ambiguous(data) || type == 4)
+    if (type != REDI_HEREDOC && check_ambiguous(data))
         return (new_str);
-    name = parse_fd_name(name, data);
+    name = parse_fd_name(name, data, type);
     add_list_redi(data, type, fd, name);
     return (new_str);
 }
@@ -192,10 +195,10 @@ void redirections_parsing(t_data *data)
     {
         if (!q && (str[i] == '\'' || str[i] == '\"'))
             q = str[i];
-        if (q && str[i] == q)
+        else if (q && str[i] == q)
             q = 0;
-        if (!q && found_redi(str[i], str[i + 1]))
-        {
+        if (!q && (found_redi(str[i], str[i + 1]) != -1)) // if we applied the above changes
+        {                                         // we need to chanage this condition to  !q && found_redi(str[i], str[i + 1]) != -1
             str = remv_add_redi(str, data, found_redi(str[i], str[i + 1]), i);
             i = 0;
             q = 0;

@@ -59,12 +59,12 @@ static void	remove_var_from_env(t_data *data, size_t ar)
 int		ft_unset(t_data *data)
 {
 	size_t	ar = 1;
-	size_t	i;
+	// size_t	i;
 
 	// check if the arg is valid otherwise skip to the next arg set the exit status to 0;
 	while (data->rdl_args[ar])
 	{
-		i = 0;
+		// i = 0;
 		if (data->rdl_args[ar] && valid_var(data->rdl_args[ar]))
 			ar++;
 		if (!data->rdl_args[ar])
