@@ -99,7 +99,7 @@ static char *parse_fd_name(char *name, t_data *data, int type)
     check = found_quotes(name);
     if (check == 0)
         return ("");
-    custom_split(name,data, 0, 0);
+    custom_split(name,data, 0,0);
     ptrs = data->rdl_args;
     if (!ptrs && check > 1)
         return ("");

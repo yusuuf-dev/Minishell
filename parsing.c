@@ -1,3 +1,4 @@
+
 #include "minishell.h"
 
 int			execute_command(char *path, t_data *data);
@@ -88,7 +89,7 @@ static int	cmd_exist_in_path(t_data *data, char *env)
 	return (0);
 }
 
-char	**parsing(t_data *data)
+void	parsing(t_data *data)
 {
 
   //  if (found_q(data->p_rdl) == -1) // check if the quotes are closed;
@@ -99,20 +100,20 @@ char	**parsing(t_data *data)
 	//  	return (data->envp);
 	redirections_parsing(data);
 	if (ft_redis_execute(data))
-		return (data->envp);
+		return ;
 	// data->dup_rdl = ft_strdup(data->p_rdl);
     // data->rdl_args = c_split(data->p_rdl,' ', data->envp, &(data->status));
 	if (!data->p_rdl || !data->p_rdl[0])
-		return (data->envp);
+		return ;
 	data->rdl_args = NULL; // important to set it NULL because will need it again with new promt that only free it and doesn't set it to NULL
 	custom_split(data->p_rdl, data, 0, 0);
 	
 	if (executable(data, 0)) // next
-		return (data->envp);
+		return ;
 	if (ft_built_in_cmd(data))
-		return (data->envp);
+		return ;
 	cmd_exist_in_path(data, NULL);
-	return (data->envp);
+	return ;
 }
 
 static int	ft_built_in_cmd(t_data *data)

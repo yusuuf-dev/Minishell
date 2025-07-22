@@ -72,7 +72,7 @@ static void print_the_envs(char **envp, int *sorted)
 	
 	i = 0;
 	j = 0;
-	while (envp[i])
+	while (envp && envp[i])
 	{
 		j = 0;
 		while (sorted[j] != (i + 1))
@@ -93,12 +93,12 @@ void	no_args(char **envp)
 	int		*sorted; // I need to change the starting point of the index from 0 to 1 cuz how would I know if 0 is alread sorted or not ?
 
 	i = j = smallest = 0;
-	while (envp[j])
+	while (envp && envp[j])
 		j++;
 	sorted = ft_calloc((j) * sizeof(int));
 	//if (!sorted)
 	//	exit(-1);// exit the program;
-	while (envp[i])
+	while (envp && envp[i])
 	{
 		j = smallest = 0;
 		while (sorted[smallest]) // skips the string if It's already sorted,
@@ -127,7 +127,7 @@ static int ft_var_exists(char *s, char **envp)
 	while (s[size] && s[size] != '=')
 		size++;
 	// if the exported variable exist in the environement file
-	while (envp[i])
+	while (envp && envp[i])
 	{
 		//if (!ft_strncmp(envp[i], s, size))
 		if (!c_strncmp(s, envp[i]))
@@ -156,14 +156,14 @@ static char	**ft_duplicate_add_s(char **dup, char *s)
 ///	p = ft_duplicate(dup, 1);
 	// if (!p) ///////////////// CHECK FOR OTHER MALLOCS !!!!!!!!!!!!!!!
 	// 	return (NULL);
-	while(dup[size])
+	while(dup && dup[size])
 		size++;
 	size = (sizeof(char *) * (size + 2));
 //	p = ft_calloc(sizeof(char *) * (size + 1));
 	p = ft_malloc_env(size);
 	memset(p, 0, size);
 	size = 0;
-	while (dup[size])
+	while (dup && dup[size])
 	{
 		p[size] = dup[size];
 		size++;
