@@ -59,21 +59,16 @@ static int	is_file_executable(t_data *data, char *path, char **msg)
 	return (0);
 }
 
-static void	cmd_exist_in_path(t_data *data, char *env)
+static int	cmd_exist_in_path(t_data *data, char *env)
 {
 	char	*path;
 	char	*msg;
 	int		i;
 
 	env = ft_getenv("PATH", data->envp, &(data->status));
-	if (env)
-		data->env_paths = ft_split(env, ':');
-	else
-	{
-		data->env_paths = NULL;
-		executable(data, 1); // In case we unset the PATH later, the pointer will be pointing to a non-valid memory (dangling pointer)
-		return ;
-	}
+	if (!env)
+		return (data->env_paths = NULL, executable(data, 1), 0);//In case we unset the PATH later, the pointer will be pointing to a non-valid memory (dangling pointer)
+	data->env_paths = ft_split(env, ':');
 	i = 0;
 	msg = NULL;
 	while (env && data->env_paths[i])
@@ -82,14 +77,15 @@ static void	cmd_exist_in_path(t_data *data, char *env)
 		if (!access(path, F_OK))
 		{
 			if (is_file_executable(data, path, &msg))
-				return;
+				return(0);
 		}
 		i++;
 	}
 	if (data->status != 126)
-		return (data->status = 127, ft_putstr(data->rdl_args[0], 2), ft_putstr(": command not found\n", 2));
+		return (data->status = 127, ft_putstr(data->rdl_args[0], 2), ft_putstr(": command not found\n", 2), 0);
 	else
 		ft_putstr(msg, 2);
+	return (0);
 }
 
 char	**parsing(t_data *data)

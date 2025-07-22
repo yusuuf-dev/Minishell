@@ -181,3 +181,5 @@ new update
 		ft_unset.c
 		redirections_execution.c
 	parsing.c
+- 22_07 Ayoub Modified the following:
+	cmds/ft_cd.c

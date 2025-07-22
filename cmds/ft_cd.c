@@ -72,12 +72,14 @@ int	search_cdpath_var(char **argv, char ***envp, char **pwd_variable)
 char	*update_env_pwd(char **pwd_variable, char ***envp, unsigned char *status)
 {
 	char	*p = NULL;
+	char	*temp;
 
 	*envp = ft_export(pwd_variable, *envp, status);
 	//p = getcwd(p, 4100);
 	p = getcwd(p, 0);
-	if (!p)
-		return (NULL);
+	temp = p;
+	p = ft_strdup(p);
+	free(temp);
 	pwd_variable[2] = ft_strjoin("PWD=", p);
 	*envp = ft_export(&pwd_variable[1], *envp, status);
 	return (p);
