@@ -3,14 +3,14 @@
 int			execute_command(char *path, t_data *data);
 static int	ft_built_in_cmd(t_data *data);
 
-static  int executable(t_data *data)
+static  int executable(t_data *data, int mode)
 {
 	int is_a_file;
 
 	is_a_file = 0;
 	if (!data->rdl_args || !data->rdl_args[0])
 		return (1);
-    if (!(ft_strchr(data->rdl_args[0], '/')))
+    if (!(ft_strchr(data->rdl_args[0], '/')) && !mode)
     {
 		return (0);
 	}
@@ -59,17 +59,16 @@ static int	is_file_executable(t_data *data, char *path, char **msg)
 	return (0);
 }
 
-static void	cmd_exist_in_path(t_data *data, char *env)
+static int	cmd_exist_in_path(t_data *data, char *env)
 {
 	char	*path;
 	char	*msg;
 	int		i;
 
 	env = ft_getenv("PATH", data->envp, &(data->status));
-	if (env)
-		data->env_paths = ft_split(env, ':');
-	else
-		data->env_paths = NULL; // In case we unset the PATH later, the pointer will be pointing to a non-valid memory (dangling pointer)
+	if (!env)
+		return (data->env_paths = NULL, executable(data, 1), 0);//In case we unset the PATH later, the pointer will be pointing to a non-valid memory (dangling pointer)
+	data->env_paths = ft_split(env, ':');
 	i = 0;
 	msg = NULL;
 	while (env && data->env_paths[i])
@@ -78,17 +77,18 @@ static void	cmd_exist_in_path(t_data *data, char *env)
 		if (!access(path, F_OK))
 		{
 			if (is_file_executable(data, path, &msg))
-				return;
+				return(0);
 		}
 		i++;
 	}
 	if (data->status != 126)
-		return (data->status = 127, ft_putstr(data->rdl_args[0], 2), ft_putstr(": command not found\n", 2));
+		return (data->status = 127, ft_putstr(data->rdl_args[0], 2), ft_putstr(": command not found\n", 2), 0);
 	else
 		ft_putstr(msg, 2);
+	return (0);
 }
 
-char	**parsing(t_data *data)
+void	parsing(t_data *data)
 {
 
   //  if (found_q(data->p_rdl) == -1) // check if the quotes are closed;
@@ -99,20 +99,20 @@ char	**parsing(t_data *data)
 	//  	return (data->envp);
 	redirections_parsing(data);
 	if (ft_redis_execute(data))
-		return (data->envp);
+		return ;
 	// data->dup_rdl = ft_strdup(data->p_rdl);
     // data->rdl_args = c_split(data->p_rdl,' ', data->envp, &(data->status));
 	if (!data->p_rdl || !data->p_rdl[0])
-		return (data->envp);
+		return ;
 	data->rdl_args = NULL; // important to set it NULL because will need it again with new promt that only free it and doesn't set it to NULL
 	custom_split(data->p_rdl, data, 0, 0);
 	
-	if (executable(data)) // next
-		return (data->envp);
+	if (executable(data, 0)) // next
+		return ;
 	if (ft_built_in_cmd(data))
-		return (data->envp);
+		return ;
 	cmd_exist_in_path(data, NULL);
-	return (data->envp);
+	return ;
 }
 
 static int	ft_built_in_cmd(t_data *data)

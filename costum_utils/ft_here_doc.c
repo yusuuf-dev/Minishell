@@ -6,7 +6,7 @@
 /*   By: yoel-you <yoel-you@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/18 11:00:09 by asoufian          #+#    #+#             */
-/*   Updated: 2025/07/18 18:21:38 by yoel-you         ###   ########.fr       */
+/*   Updated: 2025/07/22 11:59:00 by yoel-you         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,6 +95,7 @@ void	here_doc(t_data *data)
 		if (child_pid == 0)
 		{
 			data->is_a_child = 1;
+			data->status = 0;	
 			sigaction(SIGINT, &(data->S_SIG_DFL), NULL);
 			init_heredoc_prompt_file(data);
 		}

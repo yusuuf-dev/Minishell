@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_calloc.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yoel-you <yoel-you@student.42.fr>          +#+  +:+       +#+        */
+/*   By: yoel-you <yoel-you@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/16 10:40:14 by yoel-you          #+#    #+#             */
-/*   Updated: 2025/07/16 10:40:15 by yoel-you         ###   ########.fr       */
+/*   Updated: 2025/07/22 11:29:55 by yoel-you         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,15 +14,16 @@
 
 void	*ft_calloc(size_t n)
 {
-	char	*p;
+	void	*p;
 
 	p = ft_malloc(n);
-	n--;
+	memset(p, 0, n);
+	/*n--;
 	while (n)
 	{
 		p[n] = 0;
 		n--;
 	}
-	p[n] = 0;
+	p[n] = 0;*/
 	return (p);
 }

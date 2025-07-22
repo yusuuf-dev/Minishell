@@ -60,7 +60,7 @@ int main(int ac, char **av, char **envp)
                     ft_pipes(&data); // find a way to get the data into config_malloc maybe ? so that I won't have to check here for error
                 }
                 if (data.p_rdl)  // not great, this is done for when the piping is done so that the program wouldn't check for cmds;
-                    data.envp = parsing(&data);
+                    parsing(&data);
                 reset_std_in_out_err(&data); // remember to close fd{0,1,2}
             }
         }

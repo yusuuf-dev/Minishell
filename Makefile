@@ -32,7 +32,7 @@
 
 
 CC = cc
-FLAGS = -Werror -Wextra -Wall
+FLAGS = -Werror -Wextra -Wall -g
 NAME = minishell
 SRC = minishell.c parsing.c ./utils/ft_calloc.c ./costum_utils/ft_putstr.c ./costum_utils/ft_check_spaces.c ./utils/ft_substr.c \
 ./costum_utils/ft_duplicate.c ./utils/ft_strdup.c ./utils/ft_strldup.c ./utils/ft_split.c ./utils/ft_strjoin.c ./utils/ft_strlen.c ./utils/ft_strcmp.c \
@@ -51,10 +51,10 @@ READLINE_INCLUDE = -I/usr/local/opt/readline/include
 READLINE_LIB = -L/usr/local/opt/readline/lib -lreadline
 
 %.o : %.c
-	$(CC) $(FLAGS) -g $(READLINE_INCLUDE) -c $< -o $@
+	$(CC) $(FLAGS) $(READLINE_INCLUDE) -c $< -o $@
 
 $(NAME) : $(OBJ)
-	$(CC) $(FLAGS) $(OBJ) $(READLINE_LIB) -g -o $(NAME)
+	$(CC) $(FLAGS) $(OBJ) $(READLINE_LIB) -o $(NAME)
 
 all : $(NAME)
 

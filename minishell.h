@@ -141,7 +141,7 @@ void    *get_data(void *p);
 int     c_strncmp(const char *s1, const char *s2);
 int     costum_atoi(char *s, unsigned char *status, int fd);
 //int     minishell(int ac, char **av);
-char	**parsing(t_data *data);
+void	parsing(t_data *data);
 //char	*ft_remove_isspace(char *s);
 //char	**free_all(char **str);
 char	**ft_duplicate(char	**s, size_t add_size);

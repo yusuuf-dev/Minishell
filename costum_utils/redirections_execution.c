@@ -28,11 +28,11 @@ static void    *get_here_doc_file(t_data *data)
     temp = data->heredooc;
     if (!temp)
         {return (NULL);}
-	while(temp->next && temp->arg_num)
+	while(temp->next && temp->taken)
 	{
 		temp = temp->next;
 	}
-    temp->arg_num = 1;
+    temp->taken = 1;
     return (temp->file_name);
 }
 

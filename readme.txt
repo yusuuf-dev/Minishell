@@ -155,3 +155,12 @@ confused test :
 	export a="   "
 	echo test >""$a
 	minishell: : No such file or directory (but sometimes file created with empty name)
+
+new updates 22/07
+
+changes :
+
+ft_export.c
+ft_here_doc.c
+ft_calloc.c
+parsing.c
