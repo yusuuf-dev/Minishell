@@ -183,3 +183,12 @@ new update
 	parsing.c
 - 22_07 Ayoub Modified the following:
 	cmds/ft_cd.c
+- 23_07 Ayoub modefied the following files:
+		modified:   cmds/ft_cd.c
+	modified:   cmds/ft_export.c
+	modified:   cmds/ft_pwd.c
+	modified:   costum_utils/ft_getenv.c
+	modified:   costum_utils/ft_setup.c
+	modified:   minishell.h
+	modified:   parsing.c
+
