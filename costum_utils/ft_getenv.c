@@ -15,13 +15,17 @@
 char	*ft_getenv(char *s, char **envp, unsigned char *status)
 {
 	size_t	i;
+	char	*value;
 
 	i = 0;
 	while (envp[i])
 	{
 		if (!c_strncmp(envp[i], s))
 		{
-			return (ft_strchr(envp[i], '=') + 1);
+			value = ft_strchr(envp[i], '=');
+			if (value)
+				return (value + 1);
+			return (NULL);
 		}
 		if (s[0] == '?' && !s[1])
 			return (i = *status, ft_itoa(i));

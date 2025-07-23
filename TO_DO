@@ -330,3 +330,4 @@ ls | cat << stop >
 minishell : export X="  A  B  "
 minishell : /bin/echo ?$X'2'
 
+tests num: 440, and check error printing if It's correct

@@ -13,6 +13,7 @@
 #include <errno.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <stdbool.h>
 
 #define BUFFER_SIZE     1
 #define HEREDOC_MAX     16
@@ -76,6 +77,7 @@ typedef struct s_data
     t_redi_lst        *redi_lst;
     char              *ptr_ambiguous;
     char              **envp;
+    char              *cwd;
     unsigned char     status;
     int               exit;
     int               is_a_child;
@@ -104,9 +106,9 @@ void    *ft_calloc(size_t n);
 /***************************************************************/
 /***************************BUILT-INS***************************/
 int     ft_echo(char **p);
-int     ft_pwd(char	**argv, char **envp);
-int     ft_cd(char **argv, char ***envp);
-char	**ft_export(char **argv, char **envp, unsigned char *status);
+int     ft_pwd(char	**argv, char **envp, t_data *data);
+int     ft_cd(char **argv, char *argv_bkp, t_data *data, bool	exists_in_cdpath);
+//char	**ft_export(char **argv, char **envp, unsigned char *status);
 char    **ft_new_export(t_data *data); // new export just to parse only data i didn't change original one because we call other place ft_export to chane vars
 int		ft_unset(t_data *data);
 //int     ft_env(char **argv, char **envp, char **envp_paths);
@@ -192,5 +194,6 @@ char	*joinstr_helper(char *str, size_t i, size_t len, size_t index);
 size_t	getlen_helper(char *str, size_t index);
 int	    validchar_helper(char c);
 int     found_quotes(char *s);
-
+int     ft_var_exists(char *s, char **envp);
+char	**ft_duplicate_add_s(char **dup, char *s);
 #endif

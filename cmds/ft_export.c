@@ -116,7 +116,7 @@ void	no_args(char **envp)
 	//free(sorted);
 }
 
-static int ft_var_exists(char *s, char **envp)
+int ft_var_exists(char *s, char **envp)
 {
 	size_t	i;
 	size_t	size;
@@ -147,7 +147,7 @@ static int ft_var_exists(char *s, char **envp)
 	}
 	return (1);
 }
-static char	**ft_duplicate_add_s(char **dup, char *s)
+char	**ft_duplicate_add_s(char **dup, char *s)
 {
 	char **p;
 ///	size_t		i = 0;
@@ -207,7 +207,7 @@ char **ft_new_export(t_data *data)
 	return (data->envp);
 }
 
-char	**ft_export(char **argv, char **envp, unsigned char *status)
+/*char	**ft_export(char **argv, char **envp, unsigned char *status)
 {
 	size_t	ar = 1;
 	//int		valid = 0;
@@ -235,4 +235,4 @@ char	**ft_export(char **argv, char **envp, unsigned char *status)
 		ar++;
 	}
 	return (envp);
-}
+}*/

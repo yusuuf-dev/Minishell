@@ -1,22 +1,24 @@
 #include "../minishell.h"
 
-int     ft_pwd(char **argv, char **envp)
+int     ft_pwd(char **argv, char **envp, t_data *data)
 {
     char    *p;
 
 	(void)argv;
 	(void)envp;
     p = NULL;
-	//p = getcwd(p, 4100);
-	p = getcwd(p, 0);
-	if (!p)
+
+	if (!data->cwd)
 	{
-		perror("pwd");
-		return (errno);
+		p = getcwd(p, 0);
+		if (!p)
+		{
+			return (perror("pwd: getcwd: "), 1);
+		}
+		data->cwd = ft_strdup_env(p);
+		free(p);
 	}
-	ft_putstr(p, 1);
+	ft_putstr(data->cwd, 1);
 	write(1, "\n", 1);
-    //printf("%s\n", p);
-    free(p); // this was commented, why ?
     return (0);
 }

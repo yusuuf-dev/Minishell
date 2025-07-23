@@ -1,86 +1,104 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_cd.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: asoufian <asoufian@student.1337.ma>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/22 17:57:39 by asoufian          #+#    #+#             */
+/*   Updated: 2025/07/22 17:59:37 by asoufian         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../minishell.h"
 
-char	*update_env_pwd(char **pwd_variable, char ***envp, unsigned char *status);
-int		search_cdpath_var(char **argv, char ***envp, char **pwd_variable);
-
-int     ft_cd(char **argv, char ***envp)
+static char	*update_env_pwd(t_data *data, char *argv_bkp)
 {
-	char	**pwd_variable;
-	char	*p = NULL;
-	char	*t = NULL;
-	int		f = 0;
-	unsigned char	status;	// this does nothing yet
+	char	*p;
+	char	*var_pwd;
+	char	*var_oldpwd;
 
-
-	if (argv[1] && argv[2] != NULL) // if we have more than 1 argument, the program returns error
-		return (ft_putstr("minishell: cd: too many arguments\n", 2), 1);
-	t = argv[1]; // this is for when we want to use the $HOME env variable
-	pwd_variable = ft_calloc(sizeof (char *) * 4);
-	// pwd_variable[4] = argv[1]; // remember to change the allocation above if you want to uncomment this line
-	if (!pwd_variable)
-		exit (-1); // free ?
-	//p = getcwd(p, 4100);
+	p = NULL;
+	var_oldpwd = ft_strjoin("OLDPWD=", data->cwd);
+	if (ft_var_exists(var_oldpwd, data->envp))
+	{
+		data->envp = ft_duplicate_add_s(data->envp, var_oldpwd);
+	}
 	p = getcwd(p, 0);
 	if (!p)
-		return (perror("cd"), errno);
-	pwd_variable[1] = ft_strjoin("OLDPWD=", p);
+	{
+		perror("getcwd");
+		p = ft_strjoin(data->cwd, argv_bkp);
+	}
+	free_ft_malloc(data->cwd, 1);
+	data->cwd = ft_strdup_env(p);
 	free(p);
-	if (argv[1] && argv[1][0] == '-' && argv[1][1] == 0) //ft_check_spaces(&argv[1][1]))
-		argv[1] = ft_getenv("OLDPWD", *envp, NULL);	
-	else if (!argv[1]) // || ft_check_spaces(argv[1])) // || (argv[1][0] == '~' && !argv[1][1])): I don't need this here cuz the '~' gets handled in the parsing part
-		argv[1] = ft_getenv("HOME", *envp, NULL); // I don't need to do this cuz the expansion happens in the parsin part of the shell;
-	else if (argv[1][0] != '/' && argv[1][0] != '.')	
-		f = search_cdpath_var(argv, envp, pwd_variable);
-	if (argv[1] == NULL && (t == NULL || ft_check_spaces(t)))
-		return (ft_putstr("minishell: cd: HOME not set\n", 2), argv[1] = t, 1);
-	if (argv[1] == NULL && t[0] == '-')
-		return (ft_putstr("minishell: cd: OLDPWD not set\n", 2), argv[1] = t, 1);
-	if (!f && chdir(argv[1]))
-		return (argv[1] = t, perror("cd"), 1);
-	p = update_env_pwd(pwd_variable, envp, &status);
-	if (!p)
-		return (argv[1] = t, perror("cd"), errno);
-	if (t && t[0] == '-' && ft_check_spaces(&t[1]))
-		printf("%s\n", (ft_strchr(pwd_variable[2], '=') + 1));
-	return (argv[1] = t, 0);
+	var_pwd = ft_strjoin("PWD=", data->cwd);
+	if (ft_var_exists(var_pwd, data->envp))
+	{
+		data->envp = ft_duplicate_add_s(data->envp, var_pwd);
+	}
+	return (data->cwd);
 }
 
-int	search_cdpath_var(char **argv, char ***envp, char **pwd_variable)
+static int	var_not_set(char **argv, char *argv_bkp)
 {
-	char	*cdpath = NULL;
-	char	**paths = NULL;
-	char	*try_dir = NULL;
-	size_t	i = 0;
+	if (argv[1] == NULL && (argv_bkp == NULL || ft_check_spaces(argv_bkp)))
+		return (ft_putstr("minishell: cd: HOME not set\n", 2), 1);
+	if (argv[1] == NULL && argv_bkp[0] == '-' && !argv_bkp[1])
+		return (ft_putstr("minishell: cd: OLDPWD not set\n", 2), 1);
+	return (0);
+}
 
-	(void)pwd_variable;
-	cdpath = ft_getenv("CDPATH", *envp, NULL);
+static int	search_cdpath_var(char **argv, char **envp)
+{
+	char	*cdpath;
+	char	**paths;
+	char	*try_dir;
+	size_t	i;
+
+	cdpath = ft_getenv("CDPATH", envp, NULL);
 	if (!cdpath)
 		return (0);
 	paths = ft_split(cdpath, ':');
-	while (paths[i])
+	i = 0;
+	while (paths && paths[i])
 	{
 		if (paths[i][ft_strlen(paths[i]) - 1] != '/')
 			paths[i] = ft_strjoinf(paths[i], "/");
 		try_dir = ft_strjoin(paths[i], argv[1]);
 		if (!chdir(try_dir))
-			return (1);
+			return (ft_putstr(try_dir, 1), write(1, "\n", 1), 1);
 		i++;
 	}
 	return (0);
 }
 
-char	*update_env_pwd(char **pwd_variable, char ***envp, unsigned char *status)
+int	ft_cd(char **argv, char *argv_bkp, t_data *data, bool exists_in_cdpath)
 {
-	char	*p = NULL;
-	char	*temp;
+	char	*var_pwd;
 
-	*envp = ft_export(pwd_variable, *envp, status);
-	//p = getcwd(p, 4100);
-	p = getcwd(p, 0);
-	temp = p;
-	p = ft_strdup(p);
-	free(temp);
-	pwd_variable[2] = ft_strjoin("PWD=", p);
-	*envp = ft_export(&pwd_variable[1], *envp, status);
-	return (p);
+	if (argv[1] && argv[2] != NULL)
+		return (ft_putstr("minishell: cd: too many arguments\n", 2), 1);
+	if (argv[1] && argv[1][0] == '-' && !argv[1][1])
+		argv[1] = ft_getenv("OLDPWD", data->envp, NULL);
+	else if (!argv[1] || ft_check_spaces(argv[1]))
+		argv[1] = ft_getenv("HOME", data->envp, NULL);
+	else if (argv[1][0] != '/' && argv[1][0] != '.')
+		exists_in_cdpath = search_cdpath_var(argv, data->envp);
+	if (var_not_set(argv, argv_bkp))
+		return (argv[1] = argv_bkp, 1);
+	if (!exists_in_cdpath && chdir(argv[1]))
+	{
+		var_pwd = ft_strjoin(ft_strjoin("minishell : cd: ", argv[1]), ": ");
+		var_pwd = ft_strjoin(var_pwd, strerror(errno));
+		ft_putstr(var_pwd, 2);
+		return (ft_putstr("\n", 2), argv[1] = argv_bkp, 1);
+	}
+	var_pwd = update_env_pwd(data, argv_bkp);
+	if (!var_pwd)
+		return (argv[1] = argv_bkp, perror("minishell: cd: "), errno);
+	if (argv_bkp && argv_bkp[0] == '-' && argv_bkp[1] == 0)
+		ft_putstr(ft_strjoin(var_pwd, "\n"), 1);
+	return (argv[1] = argv_bkp, 0);
 }

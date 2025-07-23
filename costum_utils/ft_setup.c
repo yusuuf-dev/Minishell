@@ -34,6 +34,27 @@ static int assign_std_in_out_err(t_data *data)
     return (0);
 }
 
+static char *get_cwd(t_data *data)
+{
+    char    *p;
+    char    *temp;
+    char    *var_pwd;
+
+    p = NULL;
+	p = getcwd(p, 0);
+	if (!p)
+		return (perror("getcwd"), NULL);
+    temp = p;
+    p = ft_strdup_env(p);
+    free(temp);
+    var_pwd = ft_strjoin("PWD=", p);
+	if (ft_var_exists(var_pwd, data->envp))
+	{
+		data->envp = ft_duplicate_add_s(data->envp, var_pwd);
+	}
+    return (p);
+}
+
 void    ft_setup(t_data *data, char **envp)
 {
   //  char    *env;
@@ -49,6 +70,7 @@ void    ft_setup(t_data *data, char **envp)
         perror("");
         exit (errno);
     }
+    data->cwd = get_cwd(data);
    /* env = ft_getenv("PATH", data->envp, &(data->status));
 	if (env)
 		data->env_paths = ft_split(env, ':');*/
