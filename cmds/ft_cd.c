@@ -60,7 +60,7 @@ int	search_cdpath_var(char **argv, char ***envp, char **pwd_variable)
 	while (paths[i])
 	{
 		if (paths[i][ft_strlen(paths[i]) - 1] != '/')
-			paths[i] = ft_strjoinf(paths[i], "/");
+			paths[i] = ft_strjoin(paths[i], "/");
 		try_dir = ft_strjoin(paths[i], argv[1]);
 		if (!chdir(try_dir))
 			return (1);

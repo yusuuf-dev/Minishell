@@ -6,7 +6,7 @@
 /*   By: yoel-you <yoel-you@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/18 19:09:38 by asoufian          #+#    #+#             */
-/*   Updated: 2025/07/20 15:34:44 by yoel-you         ###   ########.fr       */
+/*   Updated: 2025/07/23 09:45:29 by yoel-you         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ static char	*c_expand(char *str, t_data *data, size_t i, size_t	len)
 			else
 				var = ft_getenv(key, data->envp, &data->status);
 			if (var)
-				ptr = ft_strjoinf(ptr, var);
+				ptr = ft_strjoin(ptr, var);
 			i += len;
 		}
 		else

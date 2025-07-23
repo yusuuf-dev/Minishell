@@ -98,7 +98,7 @@ char	*ft_strdup(char *s);
 int     ft_strncmp(const char *s1, const char *s2, size_t n);
 int     ft_strcmp(char *s1, char *s2);
 char	*ft_strchr(char *s, char c);
-char	*ft_strjoinf(char *s1, char *s2);
+char	*ft_strjoin(char *s1, char *s2);
 char    *ft_strldup(char *s, size_t     n);
 void    *ft_calloc(size_t n);
 /***************************************************************/
@@ -136,10 +136,14 @@ void     ft_pipes(t_data *data);
 int	    parse_redirection(t_data *data);
 void    redirections_parsing(t_data *data);
 int     ft_redis_execute(t_data *data);
+int     check_ambiguous(t_data *data);
+int     found_redi(char c1, char c2);
+void    add_linkedlist(t_data *data, t_redi_lst *new);
+void    add_list_redi(t_data *data, int type, int fd, char *name);
 /***************************************************************/
 void    *get_data(void *p);
 int     c_strncmp(const char *s1, const char *s2);
-int     costum_atoi(char *s, unsigned char *status, int fd);
+
 //int     minishell(int ac, char **av);
 void	parsing(t_data *data);
 //char	*ft_remove_isspace(char *s);
@@ -151,16 +155,17 @@ char	*ft_getenv(char *s, char **envp, unsigned char *status);
 int		ft_check_spaces(char *s); // this function returns 1 if the argument contains only (isspace) chars.
 void    ft_putstr(char *s, int fd);
 char    *convert_env_var(char *s,char **envp);
-//char	**c_split(char *str, char c, char **envp, unsigned char *status);
-// char	**c_split(char *str, char c);
+//char	**skip_quotes_split(char *str, char c, char **envp, unsigned char *status);
+// char	**skip_quotes_split(char *str, char c);
 char    *rm_quotes(char *str);
 int     found_q(char *s);
 int     found_pipe(char *line);
 char    *rm_quotes_expand(char *str, char **envp, unsigned char *status);
 int	    ft_isalpha(int c);
 int	    ft_isalnum(int c);
-int	    c_atoi(char *s, long *rslt);
-int     costum_atoi(char *nptr, unsigned char *status, int fd);
+int	    exit_atoi(char *s, long *rslt);
+int	    redi_atoi(char *nptr);
+
 void    ft_setup(t_data *data, char **envp);
 ///////////malloc
 void    *ft_malloc(size_t size);
@@ -185,13 +190,17 @@ char    *ft_read_line_gnl(int p_prompt);
 int     check_syntax(t_data *data);
 char	*get_next_line(int fd);
 char	*ft_substr_c(char *s, unsigned int start, size_t len);
-char	**c_split_02(char *str, char c, char **envp, unsigned char *func_status);
+char	**skip_quotes_split_02(char *str, char c, char **envp, unsigned char *func_status);
 char    *expand(char *str, char **envp, unsigned char *status);
-char	**c_split(char *str, char c);
+char	**skip_quotes_split(char *str, char c);
+
+//*************************************custom split************************************ */
 void    custom_split(char *str, t_data *data, size_t i, char q);
 char	*joinstr_helper(char *str, size_t i, size_t len, size_t index);
 size_t	getlen_helper(char *str, size_t index);
 int	    validchar_helper(char c);
 int     found_quotes(char *s);
+void	generate_checker(t_data *data, size_t is_exp);
+char	*charjoin(char *s1, char c);
 
 #endif

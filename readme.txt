@@ -7,7 +7,7 @@ call void config_malloc(void *ptr, int isfailed) function to free all malloced b
 
 new update 30/06/2025 functions :
 
-c_split ( refactor for norminette )
+skip_quotes_split ( refactor for norminette )
 check_syntax ( refactor for norminette )
 found_pipe ( refactor for norminette  and remove check for error already exist on check_syntax )
 heredoc_delimiter ( refactor for norminette )
@@ -15,7 +15,7 @@ heredoc_delimiter ( refactor for norminette )
 
 new update 08/07/2025 :
 
-change logic of c_split for data->args in parsing from (split -> expande) to (expande -> split)
+change logic of skip_quotes_split for data->args in parsing from (split -> expande) to (expande -> split)
 but we back to first logic if we found later cmd built in (export) then back (split -> expande)
 add new export function - new split 
 
@@ -35,7 +35,7 @@ static  int executable(t_data *data)
 
 cuz found error on test minishell : ""
 
-change logic of c_split and rm_quotes_expand to handle this cases like bash :
+change logic of skip_quotes_split and rm_quotes_expand to handle this cases like bash :
 
 export a="test0               test1                  test2"
 echo $HOME$a$HOME"$a"$HOME
@@ -144,11 +144,11 @@ minishell: $asfdasf: ambiguous redirect (this is must not exist)
 
 updates :
 	replace function found_q -> found_quotes (in all code but we use it on check_syntax and we add it into parsing_redirection to check for empty string)
-	and use it on separated file found_quotes.c it was exist on file c_split.c
+	and use it on separated file found_quotes.c it was exist on file skip_quotes_split.c
 
 	edit on parsing_redirection.c
 	add found_quotes.c
-	remove function (found_q from c_split.c) + replace function found_q with found_quotes on all code
+	remove function (found_q from skip_quotes_split.c) + replace function found_q with found_quotes on all code
 
 
 confused test :
@@ -164,3 +164,20 @@ ft_export.c
 ft_here_doc.c
 ft_calloc.c
 parsing.c
+
+
+new updates 23/7 :
+
+put 2 atoi that we use in our project in new separated file ./costum_utils/utils_atoi.c
+int	    exit_atoi(char *s, long *rslt);
+int	    redi_atoi(char *nptr);
+add them to header file
+
+remove ft_strjoinf and replace it with ft_strjoin we don't need it anymore because we are using ft_malloc
+
+change custom_split.c and custom_split_utils.c (refactor add this function to header char	*charjoin(char *s1, char c);) 
+
+add new file redirections_parsing_utils.c (add its functions to header)
+change on redirections_parsing.c (refactor)
+
+change name of function and file c_split.c to skip_quotes_split.c also function c_split to skip_quotes_split

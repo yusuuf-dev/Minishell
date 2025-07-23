@@ -56,7 +56,7 @@ int main(int ac, char **av, char **envp)
             {
                 if (found_pipe(data.p_rdl))
                 {
-                    data.segments = c_split(data.p_rdl, '|');
+                    data.segments = skip_quotes_split(data.p_rdl, '|');
                     ft_pipes(&data); // find a way to get the data into config_malloc maybe ? so that I won't have to check here for error
                 }
                 if (data.p_rdl)  // not great, this is done for when the piping is done so that the program wouldn't check for cmds;
@@ -143,7 +143,7 @@ int main(int ac, char **av, char **envp)
 //             if (i == 1)
 //             {
 //                 i = 0;
-//                 segments = c_split(p, '|',envp);
+//                 segments = skip_quotes_split(p, '|',envp);
 //                 if (!segments)
 //                     return(exit_minishell(envp,p,1,"failed malloc\n"));//protect malloc                    
 //                 while(segments[i])

@@ -56,9 +56,9 @@ static int    open_create_file_name(t_data *data, t_redi_lst *redis, int *file_f
     if (*file_fd < 0)
     {
         error_print = ft_strjoin("minishell: ", redis->file_name);
-        error_print = ft_strjoinf(error_print, ": ");
-        error_print = ft_strjoinf(error_print, strerror(errno));
-        error_print = ft_strjoinf(error_print, "\n");
+        error_print = ft_strjoin(error_print, ": ");
+        error_print = ft_strjoin(error_print, strerror(errno));
+        error_print = ft_strjoin(error_print, "\n");
         ft_putstr(error_print, 2);
         return (1);
     }
@@ -75,9 +75,9 @@ static int    redirect_to_file(t_redi_lst *redis, int *file_fd)
     if (redis->fd < 0)
     {
         error_print = ft_strjoin("minishell: ", ft_itoa(redis->fd));
-        error_print = ft_strjoinf(error_print, " ");
-        error_print = ft_strjoinf(error_print, strerror(errno));
-        error_print = ft_strjoinf(error_print, "\n");
+        error_print = ft_strjoin(error_print, " ");
+        error_print = ft_strjoin(error_print, strerror(errno));
+        error_print = ft_strjoin(error_print, "\n");
         ft_putstr(error_print, 2);
         return (1);
     }

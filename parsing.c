@@ -51,8 +51,8 @@ static int	is_file_executable(t_data *data, char *path, char **msg)
 		if (!(*msg))
 		{
 			*msg = ft_strjoin("minishell: ", path);
-			*msg = ft_strjoinf(*msg, ": Permission denied");
-			*msg = ft_strjoinf(*msg, "\n");
+			*msg = ft_strjoin(*msg, ": Permission denied");
+			*msg = ft_strjoin(*msg, "\n");
 		}
 		data->status = 126;
 	}
@@ -73,7 +73,7 @@ static int	cmd_exist_in_path(t_data *data, char *env)
 	msg = NULL;
 	while (env && data->env_paths[i])
 	{
-		path = ft_strjoinf(ft_strjoin(data->env_paths[i], "/"), data->rdl_args[0]);
+		path = ft_strjoin(ft_strjoin(data->env_paths[i], "/"), data->rdl_args[0]);
 		if (!access(path, F_OK))
 		{
 			if (is_file_executable(data, path, &msg))
@@ -101,7 +101,7 @@ void	parsing(t_data *data)
 	if (ft_redis_execute(data))
 		return ;
 	// data->dup_rdl = ft_strdup(data->p_rdl);
-    // data->rdl_args = c_split(data->p_rdl,' ', data->envp, &(data->status));
+    // data->rdl_args = skip_quotes_split(data->p_rdl,' ', data->envp, &(data->status));
 	if (!data->p_rdl || !data->p_rdl[0])
 		return ;
 	data->rdl_args = NULL; // important to set it NULL because will need it again with new promt that only free it and doesn't set it to NULL

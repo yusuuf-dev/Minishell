@@ -1,91 +1,16 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   redirections_parsing.c                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: yoel-you <yoel-you@student.1337.ma>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/23 11:23:49 by yoel-you          #+#    #+#             */
+/*   Updated: 2025/07/23 11:52:28 by yoel-you         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../minishell.h"
-
-static int found_redi(char c1, char c2)
-{
-    if (c1 == '>' && c2 != '>')
-        return (REDI_OUT);
-    else if (c1 == '<' && c2 != '<')
-        return (REDI_IN); // makes this return 0
-    else if (c1 == '>' && c2 == '>')
-        return (REDI_APPEND);
-    else if (c1 == '<' && c2 == '<')
-        return (REDI_HEREDOC);
-    else
-        return (-1); // and this returns - 1
-}
-
-static void add_linkedlist(t_data *data, t_redi_lst *new)
-{
-    t_redi_lst *tmp;
-
-    if (!data->redi_lst)
-    {
-        data->redi_lst = new;
-        return;
-    }
-    tmp = data->redi_lst;
-    while (tmp->next)
-    {
-        tmp = tmp->next;
-    }
-    tmp->next = new;
-}
-
-static void add_list_redi(t_data *data, int type, int fd, char *name)
-{
-    t_redi_lst *new_redi;
-
-    /*if (type == 4)
-    {
-        // this is for heredoc found it
-        return;
-    }*/
-    new_redi = ft_calloc(sizeof(t_redi_lst));
-    new_redi->redi_type = type;
-    if (type == REDI_OUT || type == REDI_APPEND)
-    {
-        if (fd == -1)
-            new_redi->fd = 1;
-    //    new_redi->redi_out = 1;
-    }
-   /* if (type > 2)
-        new_redi->is_append = 1;*/
-    if (fd != -1)
-        new_redi->fd = fd;
-    new_redi->file_name = name;
-    add_linkedlist(data, new_redi);
-}
-
-static int redi_atoi(char *nptr)
-{
-    int i;
-    long rslt;
-
-    i = 0;
-    rslt = 0;
-    if (!nptr || !nptr[0])
-    {
-        return (-1);
-    }
-    while (nptr[i])
-    {
-        if (ft_isdigit(nptr[i]))
-        {
-            if (rslt > 2147483647)
-                return (-1); // the return used to be '2';
-            rslt = rslt * 10;
-            rslt = rslt + (nptr[i] - 48);
-        }
-        else
-            return (-1); // the return used to be '2';
-        i++;
-    }
-    if (rslt > 2147483647)
-    {
-        return (-1);
-    }
-    return (rslt);
-}
 
 static char *parse_fd_name(char *name, t_data *data, int type)
 {
@@ -114,50 +39,55 @@ static char *parse_fd_name(char *name, t_data *data, int type)
         return (ptrs[0]);
 }
 
-
-static int check_ambiguous(t_data *data)
+static char *is_fd_redirection(char *str, size_t *i, int *fd, int type)
 {
-    t_redi_lst *tmp;
+    size_t  begin;
+    size_t  save_i;
+    char    *new_str;
+    char    *fd_str;
 
-    tmp = data->redi_lst;
-    while (tmp)
-    {       
-        if (tmp->file_name == NULL && tmp->redi_type != REDI_HEREDOC)
-            return (1);
-        tmp = tmp->next;
+    fd_str = NULL;
+    save_i = *i;
+    if(*i > 0 && ft_isalnum(str[*i -1]))
+    {
+        begin = *i;
+        while (*i > 0 && str[*i - 1] != ' ')
+            (*i)--;
+        fd_str = ft_strldup(&str[*i],begin - *i);
     }
-    return (0);
+    *fd = redi_atoi(fd_str);
+    if (*fd == -1)
+        new_str = ft_strldup(str, save_i);
+    else
+        new_str = ft_strldup(str, *i);
+    if (type == REDI_IN || type == REDI_OUT)
+        *i = save_i + 1;
+    else
+        *i = save_i + 2;
+    return (new_str);
 }
 
-static char *remv_add_redi(char *str, t_data *data, int type, int index)
+static void check_status_add(t_data *data, char *name, int type, int fd)
+{
+    if (type != REDI_HEREDOC && check_ambiguous(data))
+        return ;
+    else
+    {
+        name = parse_fd_name(name, data, type);
+        add_list_redi(data, type, fd, name);
+    }
+}
+
+static char *remv_add_redi(char *str, t_data *data, int type, size_t i)
 {
     char *new_str;
-    char *fd_str;
     int fd;
     char *name;
     char q;
-    size_t i;
     size_t begin;
 
-    i = index;
-    fd_str = NULL;
-    if (i > 0 && ft_isalnum(str[i - 1]))
-    {
-        begin = i;
-        while (i > 0 && str[i - 1] != ' ')
-            i--;
-        fd_str = ft_strldup(&str[i],begin - i);
-    }
-    fd = redi_atoi(fd_str);
-    if (fd == -1)
-        new_str = ft_strldup(str, index);
-    else
-        new_str = ft_strldup(str, i);
+    new_str = is_fd_redirection(str,&i,&fd,type);
     q = 0;
-    if (type == REDI_IN || type == REDI_OUT)
-        i = index + 1;
-    else
-        i = index + 2;
     while (str[i] == ' ')
         i++;
     begin = i;
@@ -173,17 +103,13 @@ static char *remv_add_redi(char *str, t_data *data, int type, int index)
     }
     name = ft_strldup(&str[begin], i - begin);
     new_str = ft_strjoin(new_str, &str[i]);
-    if (type != REDI_HEREDOC && check_ambiguous(data))
-        return (new_str);
-    name = parse_fd_name(name, data, type);
-    add_list_redi(data, type, fd, name);
+    check_status_add(data,name,type,fd);
     return (new_str);
 }
 
 void redirections_parsing(t_data *data)
 {
     char *str;
-    // char        *new;
     size_t i;
     char q;
 
@@ -197,8 +123,8 @@ void redirections_parsing(t_data *data)
             q = str[i];
         else if (q && str[i] == q)
             q = 0;
-        if (!q && (found_redi(str[i], str[i + 1]) != -1)) // if we applied the above changes
-        {                                         // we need to chanage this condition to  !q && found_redi(str[i], str[i + 1]) != -1
+        if (!q && (found_redi(str[i], str[i + 1]) != -1))
+        {                                     
             str = remv_add_redi(str, data, found_redi(str[i], str[i + 1]), i);
             i = 0;
             q = 0;

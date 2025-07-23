@@ -136,7 +136,7 @@ static int ft_var_exists(char *s, char **envp)
 			if (!s) // if the entered command doesn't include an '=' we shouldn't change the value that the var has;
 				return (0);
 			new = ft_strldup(envp[i], ft_strchr(envp[i], '=') - envp[i]);
-			new = ft_strjoinf(new, s);
+			new = ft_strjoin(new, s);
 			free_ft_malloc(envp[i], 1);
 			//free(envp[i]);
 			envp[i] = ft_strdup_env(new);
@@ -181,7 +181,7 @@ char **ft_new_export(t_data *data)
 {
 	size_t	ar = 1;
 
-	//data->rdl_args = c_split_02(data->dup_rdl,' ',data->envp,&data->status);
+	//data->rdl_args = skip_quotes_split_02(data->dup_rdl,' ',data->envp,&data->status);
 	data->status = 0;
 	if (!data->rdl_args[ar])
 		return (data->status = 0, no_args(data->envp), data->envp);

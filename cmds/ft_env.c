@@ -6,7 +6,7 @@
 /*   By: yoel-you <yoel-you@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/11 11:00:03 by asoufian          #+#    #+#             */
-/*   Updated: 2025/07/20 15:31:19 by yoel-you         ###   ########.fr       */
+/*   Updated: 2025/07/23 09:45:29 by yoel-you         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ void	ft_env(t_data *data)
 	{
 		while (envp_paths[i])
 		{
-			path = ft_strjoinf(ft_strjoin(envp_paths[i], "/"), argv[ar]);
+			path = ft_strjoin(ft_strjoin(envp_paths[i], "/"), argv[ar]);
 			if (execve(path, new_arg, new_envp))
 			{
 				perror("execve");

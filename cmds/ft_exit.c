@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_exit.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yoel-you <yoel-you@student.42.fr>          +#+  +:+       +#+        */
+/*   By: yoel-you <yoel-you@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 18:24:06 by asoufian          #+#    #+#             */
-/*   Updated: 2025/07/17 10:56:32 by yoel-you         ###   ########.fr       */
+/*   Updated: 2025/07/23 11:40:57 by yoel-you         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ int	ft_exit(char **argv, unsigned char *status, int *s_exit)
 			*s_exit = 0, 1);
 	if (ft_valid_int(argv[1]))
 	{
-		if (c_atoi(argv[1], &ret) == -1)
+		if (exit_atoi(argv[1], &ret) == -1)
 		{
 			ft_putstr("exit\nminishell: exit: ", 2);
 			ft_putstr(argv[1], 2);

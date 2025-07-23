@@ -6,32 +6,12 @@
 /*   By: yoel-you <yoel-you@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/14 17:00:05 by yoel-you          #+#    #+#             */
-/*   Updated: 2025/07/18 18:18:58 by yoel-you         ###   ########.fr       */
+/*   Updated: 2025/07/23 10:18:55 by yoel-you         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-static char	*charjoin(char *s1, char c)
-{
-	size_t	i;
-	size_t	len;
-	char	*ptr;
-
-	if (!c)
-		return (s1);
-	len = ft_strlen(s1);
-	ptr = ft_malloc((len + 2) * sizeof(char));
-	i = 0;
-	while (i < len)
-	{
-		ptr[i] = s1[i];
-		i++;
-	}
-	ptr[i++] = c;
-	ptr[i] = 0;
-	return (ptr);
-}
 
 static void	add_ptr(char **ptr, t_data *data, int i, int j)
 {
@@ -116,6 +96,7 @@ static void	get_argements(char *str, char *checker, t_data *data)
 	}
 }
 
+
 void	custom_split(char *str, t_data *data, size_t i, char q)
 {
 	size_t	is_exp;
@@ -136,10 +117,7 @@ void	custom_split(char *str, t_data *data, size_t i, char q)
 		data->expand = charjoin(data->expand, str[i]);
 		if (!str[i])
 			break;
-		if (is_exp)
-			data->checker = charjoin(data->checker, '1');
-		else
-			data->checker = charjoin(data->checker, '0');
+		generate_checker(data,is_exp);
 		i++;
 		if (is_exp)
 			is_exp--;
