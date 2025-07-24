@@ -80,7 +80,7 @@ static char	*c_expand(char *str, t_data *data, size_t i, size_t	len)
 			else
 				var = ft_getenv(key, data->envp, &data->status);
 			if (var)
-				ptr = ft_strjoinf(ptr, var);
+				ptr = ft_strjoin(ptr, var);
 			i += len;
 		}
 		else

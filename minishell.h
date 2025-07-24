@@ -95,21 +95,21 @@ void    ft_strcpy(char *dest, char *src);
 char	*ft_itoa(int n);
 size_t	ft_strlen(char *s);
 char	**ft_split(char *str, char c);
-char	*ft_strjoin(char *s1, char *s2);
 char	*ft_strdup(char *s);
 int     ft_strncmp(const char *s1, const char *s2, size_t n);
 int     ft_strcmp(char *s1, char *s2);
 char	*ft_strchr(char *s, char c);
-char	*ft_strjoinf(char *s1, char *s2);
+char	*ft_strjoin(char *s1, char *s2);
 char    *ft_strldup(char *s, size_t     n);
 void    *ft_calloc(size_t n);
 /***************************************************************/
 /***************************BUILT-INS***************************/
 int     ft_echo(char **p);
-int     ft_pwd(char	**argv, char **envp, t_data *data);
+int     ft_pwd(t_data *data);
 int     ft_cd(char **argv, char *argv_bkp, t_data *data, bool	exists_in_cdpath);
 //char	**ft_export(char **argv, char **envp, unsigned char *status);
 char    **ft_new_export(t_data *data); // new export just to parse only data i didn't change original one because we call other place ft_export to chane vars
+void	print_env(char **envp, int i, int j, int smallest);
 int		ft_unset(t_data *data);
 //int     ft_env(char **argv, char **envp, char **envp_paths);
 void    ft_env(t_data *data);
@@ -141,7 +141,7 @@ int     ft_redis_execute(t_data *data);
 /***************************************************************/
 void    *get_data(void *p);
 int     c_strncmp(const char *s1, const char *s2);
-int     costum_atoi(char *s, unsigned char *status, int fd);
+
 //int     minishell(int ac, char **av);
 void	 parsing(t_data *data);
 //char	*ft_remove_isspace(char *s);
@@ -153,16 +153,16 @@ char	*ft_getenv(char *s, char **envp, unsigned char *status);
 int		ft_check_spaces(char *s); // this function returns 1 if the argument contains only (isspace) chars.
 void    ft_putstr(char *s, int fd);
 char    *convert_env_var(char *s,char **envp);
-//char	**c_split(char *str, char c, char **envp, unsigned char *status);
-// char	**c_split(char *str, char c);
+//char	**skip_quotes_split(char *str, char c, char **envp, unsigned char *status);
+// char	**skip_quotes_split(char *str, char c);
 char    *rm_quotes(char *str);
 int     found_pipe(char *line);
 char    *rm_quotes_expand(char *str, char **envp, unsigned char *status);
 int	    ft_isalpha(int c);
 int	    ft_isalnum(int c);
-int	    c_atoi(char *s, long *rslt);
-int     costum_atoi(char *nptr, unsigned char *status, int fd);
-void    ft_setup(t_data *data, char **envp);
+int	    exit_atoi(char *s, long *rslt);
+int	    redi_atoi(char *nptr);
+void    ft_setup(t_data *data, char **envp, int ac, char **av);
 ///////////malloc
 void    *ft_malloc(size_t size);
 void    *ft_malloc_env(size_t size);
@@ -186,9 +186,9 @@ char    *ft_read_line_gnl(int p_prompt);
 int     check_syntax(t_data *data);
 char	*get_next_line(int fd);
 char	*ft_substr_c(char *s, unsigned int start, size_t len);
-char	**c_split_02(char *str, char c, char **envp, unsigned char *func_status);
+char	**skip_quotes_split_02(char *str, char c, char **envp, unsigned char *func_status);
 char    *expand(char *str, char **envp, unsigned char *status);
-char	**c_split(char *str, char c);
+char	**skip_quotes_split(char *str, char c);
 void    custom_split(char *str, t_data *data, size_t i, char q);
 char	*joinstr_helper(char *str, size_t i, size_t len, size_t index);
 size_t	getlen_helper(char *str, size_t index);
@@ -196,4 +196,15 @@ int	    validchar_helper(char c);
 int     found_quotes(char *s);
 int     ft_var_exists(char *s, char **envp);
 char	**ft_duplicate_add_s(char **dup, char *s);
+
+void	generate_checker(t_data *data, size_t is_exp);
+char	*charjoin(char *s1, char c);
+
+int     check_ambiguous(t_data *data);
+int     found_redi(char c1, char c2);
+void    add_linkedlist(t_data *data, t_redi_lst *new);
+void    add_list_redi(t_data *data, int type, int fd, char *name);
+int     valid_var(char *s);
+
+
 #endif

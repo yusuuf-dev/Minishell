@@ -7,7 +7,7 @@ call void config_malloc(void *ptr, int isfailed) function to free all malloced b
 
 new update 30/06/2025 functions :
 
-c_split ( refactor for norminette )
+skip_quotes_split ( refactor for norminette )
 check_syntax ( refactor for norminette )
 found_pipe ( refactor for norminette  and remove check for error already exist on check_syntax )
 heredoc_delimiter ( refactor for norminette )
@@ -15,7 +15,7 @@ heredoc_delimiter ( refactor for norminette )
 
 new update 08/07/2025 :
 
-change logic of c_split for data->args in parsing from (split -> expande) to (expande -> split)
+change logic of skip_quotes_split for data->args in parsing from (split -> expande) to (expande -> split)
 but we back to first logic if we found later cmd built in (export) then back (split -> expande)
 add new export function - new split 
 
@@ -35,7 +35,7 @@ static  int executable(t_data *data)
 
 cuz found error on test minishell : ""
 
-change logic of c_split and rm_quotes_expand to handle this cases like bash :
+change logic of skip_quotes_split and rm_quotes_expand to handle this cases like bash :
 
 export a="test0               test1                  test2"
 echo $HOME$a$HOME"$a"$HOME
@@ -191,4 +191,16 @@ new update
 	modified:   costum_utils/ft_setup.c
 	modified:   minishell.h
 	modified:   parsing.c
+
+- 24_07 Ayoub added/modified the following:
+modified:   Makefile
+	modified:   cmds/ft_cd.c
+	modified:   cmds/ft_env.c
+	modified:   cmds/ft_exit.c
+	modified:   cmds/ft_export.c
+	modified:   cmds/ft_pwd.c
+	modified:   cmds/ft_unset.c
+	modified:   costum_utils/ft_setup.c
+	Added   :   cmds/ft_export_utils.c
+	Added   :    costum_utils/valid_var.c
 

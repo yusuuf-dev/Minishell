@@ -1,33 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_pwd.c                                           :+:      :+:    :+:   */
+/*   valid_var.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: asoufian <asoufian@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/24 11:29:22 by asoufian          #+#    #+#             */
-/*   Updated: 2025/07/24 11:30:17 by asoufian         ###   ########.fr       */
+/*   Created: 2025/07/24 11:36:21 by asoufian          #+#    #+#             */
+/*   Updated: 2025/07/24 11:36:29 by asoufian         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-int	ft_pwd(t_data *data)
+int	valid_var(char *s)
 {
-	char	*p;
+	size_t	i;
 
-	p = NULL;
-	if (!data->cwd)
+	i = 1;
+	if (s[0] && (s[0] != '_' && !ft_isalpha(s[0])))
+		return (1);
+	while (s[i] && s[i] != '=')
 	{
-		p = getcwd(p, 0);
-		if (!p)
-		{
-			return (perror("pwd: getcwd: "), 1);
-		}
-		data->cwd = ft_strdup_env(p);
-		free(p);
+		if (!ft_isalnum(s[i]) && s[i] != '_' && s[i] != '=')
+			return (1);
+		i++;
 	}
-	ft_putstr(data->cwd, 1);
-	write(1, "\n", 1);
 	return (0);
 }

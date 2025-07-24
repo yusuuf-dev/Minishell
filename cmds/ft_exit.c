@@ -55,7 +55,7 @@ int	ft_exit(char **argv, unsigned char *status, int *s_exit)
 			*s_exit = 0, 1);
 	if (ft_valid_int(argv[1]))
 	{
-		if (c_atoi(argv[1], &ret) == -1)
+		if (exit_atoi(argv[1], &ret) == -1)
 		{
 			ft_putstr("exit\nminishell: exit: ", 2);
 			ft_putstr(argv[1], 2);

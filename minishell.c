@@ -29,10 +29,7 @@ int main(int ac, char **av, char **envp)
 {
     t_data data;
 
-	(void)av; // maybe we can remove these two from the argument since we don't use them, the problem is wether the envp will work or not;
-	(void)ac; //
-  //  __environ;
-    ft_setup(&data, envp);
+    ft_setup(&data, envp, ac, av);
 	while (!(data.exit) && !(data.is_a_child))
     {
         sigaction(SIGINT, &(data.SIG_INT), NULL);
@@ -56,7 +53,7 @@ int main(int ac, char **av, char **envp)
             {
                 if (found_pipe(data.p_rdl))
                 {
-                    data.segments = c_split(data.p_rdl, '|');
+                    data.segments = skip_quotes_split(data.p_rdl, '|');
                     ft_pipes(&data); // find a way to get the data into config_malloc maybe ? so that I won't have to check here for error
                 }
                 if (data.p_rdl)  // not great, this is done for when the piping is done so that the program wouldn't check for cmds;
@@ -64,11 +61,6 @@ int main(int ac, char **av, char **envp)
                 reset_std_in_out_err(&data); // remember to close fd{0,1,2}
             }
         }
-       // if (!data.is_a_pipe)
-       // free(data.p_rdl); // we don't need this anymore since we dup and free the return of realdine.
-       // config_malloc(NULL,0);
-       // delete files of heredoc;
-       //reset_ptrs_2_null(&data);
        memset(&data, 0, (sizeof(void *) * PTR_TO_NULL));
        config_malloc(NULL, 0, 0);
     }
@@ -143,7 +135,7 @@ int main(int ac, char **av, char **envp)
 //             if (i == 1)
 //             {
 //                 i = 0;
-//                 segments = c_split(p, '|',envp);
+//                 segments = skip_quotes_split(p, '|',envp);
 //                 if (!segments)
 //                     return(exit_minishell(envp,p,1,"failed malloc\n"));//protect malloc                    
 //                 while(segments[i])

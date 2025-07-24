@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   c_split.c                                          :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: yoel-you <yoel-you@student.1337.ma>        +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/14 17:17:31 by yoel-you          #+#    #+#             */
-/*   Updated: 2025/07/20 16:05:16 by yoel-you         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "../minishell.h"
 
 static size_t	ft_count_wd(char *s, char c)
@@ -73,7 +61,7 @@ static size_t	skip_quotes(char *str, char c, size_t i)
 	return (i);
 }
 
-char	**c_split(char *str, char c)
+char	**skip_quotes_split(char *str, char c)
 {
 	char	**ptr;
 	size_t	wd;

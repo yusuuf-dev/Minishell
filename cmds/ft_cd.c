@@ -6,7 +6,7 @@
 /*   By: asoufian <asoufian@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 17:57:39 by asoufian          #+#    #+#             */
-/*   Updated: 2025/07/22 17:59:37 by asoufian         ###   ########.fr       */
+/*   Updated: 2025/07/24 09:33:56 by asoufian         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,23 +21,21 @@ static char	*update_env_pwd(t_data *data, char *argv_bkp)
 	p = NULL;
 	var_oldpwd = ft_strjoin("OLDPWD=", data->cwd);
 	if (ft_var_exists(var_oldpwd, data->envp))
-	{
 		data->envp = ft_duplicate_add_s(data->envp, var_oldpwd);
-	}
 	p = getcwd(p, 0);
 	if (!p)
 	{
 		perror("getcwd");
 		p = ft_strjoin(data->cwd, argv_bkp);
 	}
+	var_pwd = p;
+	p = ft_strdup(var_pwd);
+	free(var_pwd);
 	free_ft_malloc(data->cwd, 1);
 	data->cwd = ft_strdup_env(p);
-	free(p);
 	var_pwd = ft_strjoin("PWD=", data->cwd);
 	if (ft_var_exists(var_pwd, data->envp))
-	{
 		data->envp = ft_duplicate_add_s(data->envp, var_pwd);
-	}
 	return (data->cwd);
 }
 
@@ -65,7 +63,7 @@ static int	search_cdpath_var(char **argv, char **envp)
 	while (paths && paths[i])
 	{
 		if (paths[i][ft_strlen(paths[i]) - 1] != '/')
-			paths[i] = ft_strjoinf(paths[i], "/");
+			paths[i] = ft_strjoin(paths[i], "/");
 		try_dir = ft_strjoin(paths[i], argv[1]);
 		if (!chdir(try_dir))
 			return (ft_putstr(try_dir, 1), write(1, "\n", 1), 1);

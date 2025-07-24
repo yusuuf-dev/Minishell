@@ -55,11 +55,13 @@ static char *get_cwd(t_data *data)
     return (p);
 }
 
-void    ft_setup(t_data *data, char **envp)
+void    ft_setup(t_data *data, char **envp, int ac, char **av)
 {
   //  char    *env;
 
     (void)envp;
+    (void)ac;
+    (void)av;
     get_data(data);
     ft_memset(data, 0, sizeof(t_data));
     if (assign_std_in_out_err(data))

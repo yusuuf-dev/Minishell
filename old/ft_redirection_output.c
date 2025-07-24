@@ -173,10 +173,10 @@ static char *var_expansion(char **str, char **envp, int *n, char **full_str)
 	if (!var && !(*n))
 		return (ft_putstr("minishell: $" , 2), ft_putstr(extract, 2), ft_putstr(": ambiguous redirect\n", 2), free(left_side), free(extract), NULL);
 	if (var)
-		left_side =	ft_strjoinf(left_side, var);
+		left_side =	ft_strjoin(left_side, var);
 	right_side = ft_strdup(c_strpbrk(&s[*n + 1]));
 	free(*full_str);
-	s = ft_strjoinf(left_side, right_side);
+	s = ft_strjoin(left_side, right_side);
 	*full_str = s;
 
 	if (ft_strlen(var))
