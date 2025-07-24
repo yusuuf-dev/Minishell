@@ -1,3 +1,4 @@
+
 #include "minishell.h"
 
 int			execute_command(char *path, t_data *data);
@@ -129,9 +130,9 @@ static int	ft_built_in_cmd(t_data *data)
         i++;
 	}
 	if (i == 10)
-		data->status = ft_pwd(data->rdl_args, data->envp);
+		data->status = ft_pwd(data);
 	else if (i == 11)
-		data->status = ft_cd(data->rdl_args, &(data->envp));
+		data->status = ft_cd(data->rdl_args, data->rdl_args[1], data, 0);
 	else if (i == 12)
 	{
 		data->envp = ft_new_export(data);

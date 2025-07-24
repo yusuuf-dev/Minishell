@@ -3,32 +3,31 @@
 /*                                                        :::      ::::::::   */
 /*   ft_pwd.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yoel-you <yoel-you@student.42.fr>          +#+  +:+       +#+        */
+/*   By: yoel-you <yoel-you@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/16 11:23:19 by yoel-you          #+#    #+#             */
-/*   Updated: 2025/07/16 11:23:20 by yoel-you         ###   ########.fr       */
+/*   Created: 2025/07/24 11:29:22 by asoufian          #+#    #+#             */
+/*   Updated: 2025/07/24 14:34:15 by yoel-you         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-int     ft_pwd(char **argv, char **envp)
+int	ft_pwd(t_data *data)
 {
-    char    *p;
+	char	*p;
 
-	(void)argv;
-	(void)envp;
-    p = NULL;
-	//p = getcwd(p, 4100);
-	p = getcwd(p, 0);
-	if (!p)
+	p = NULL;
+	if (!data->cwd)
 	{
-		perror("pwd");
-		return (errno);
+		p = getcwd(p, 0);
+		if (!p)
+		{
+			return (perror("pwd: getcwd: "), 1);
+		}
+		data->cwd = ft_strdup_env(p);
+		free(p);
 	}
-	ft_putstr(p, 1);
+	ft_putstr(data->cwd, 1);
 	write(1, "\n", 1);
-    //printf("%s\n", p);
-    free(p); // this was commented, why ?
-    return (0);
+	return (0);
 }

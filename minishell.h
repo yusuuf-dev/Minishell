@@ -13,6 +13,7 @@
 #include <errno.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <stdbool.h>
 
 #define BUFFER_SIZE     1
 #define HEREDOC_MAX     16
@@ -76,6 +77,7 @@ typedef struct s_data
     t_redi_lst        *redi_lst;
     char              *ptr_ambiguous;
     char              **envp;
+    char              *cwd;
     unsigned char     status;
     int               exit;
     int               is_a_child;
@@ -93,7 +95,6 @@ void    ft_strcpy(char *dest, char *src);
 char	*ft_itoa(int n);
 size_t	ft_strlen(char *s);
 char	**ft_split(char *str, char c);
-char	*ft_strjoin(char *s1, char *s2);
 char	*ft_strdup(char *s);
 int     ft_strncmp(const char *s1, const char *s2, size_t n);
 int     ft_strcmp(char *s1, char *s2);
@@ -104,10 +105,11 @@ void    *ft_calloc(size_t n);
 /***************************************************************/
 /***************************BUILT-INS***************************/
 int     ft_echo(char **p);
-int     ft_pwd(char	**argv, char **envp);
-int     ft_cd(char **argv, char ***envp);
-char	**ft_export(char **argv, char **envp, unsigned char *status);
+int     ft_pwd(t_data *data);
+int     ft_cd(char **argv, char *argv_bkp, t_data *data, bool	exists_in_cdpath);
+//char	**ft_export(char **argv, char **envp, unsigned char *status);
 char    **ft_new_export(t_data *data); // new export just to parse only data i didn't change original one because we call other place ft_export to chane vars
+void	print_env(char **envp, int i, int j, int smallest);
 int		ft_unset(t_data *data);
 //int     ft_env(char **argv, char **envp, char **envp_paths);
 void    ft_env(t_data *data);
@@ -136,16 +138,12 @@ void     ft_pipes(t_data *data);
 int	    parse_redirection(t_data *data);
 void    redirections_parsing(t_data *data);
 int     ft_redis_execute(t_data *data);
-int     check_ambiguous(t_data *data);
-int     found_redi(char c1, char c2);
-void    add_linkedlist(t_data *data, t_redi_lst *new);
-void    add_list_redi(t_data *data, int type, int fd, char *name);
 /***************************************************************/
 void    *get_data(void *p);
 int     c_strncmp(const char *s1, const char *s2);
 
 //int     minishell(int ac, char **av);
-void	parsing(t_data *data);
+void	 parsing(t_data *data);
 //char	*ft_remove_isspace(char *s);
 //char	**free_all(char **str);
 char	**ft_duplicate(char	**s, size_t add_size);
@@ -158,15 +156,13 @@ char    *convert_env_var(char *s,char **envp);
 //char	**skip_quotes_split(char *str, char c, char **envp, unsigned char *status);
 // char	**skip_quotes_split(char *str, char c);
 char    *rm_quotes(char *str);
-int     found_q(char *s);
 int     found_pipe(char *line);
 char    *rm_quotes_expand(char *str, char **envp, unsigned char *status);
 int	    ft_isalpha(int c);
 int	    ft_isalnum(int c);
 int	    exit_atoi(char *s, long *rslt);
 int	    redi_atoi(char *nptr);
-
-void    ft_setup(t_data *data, char **envp);
+void    ft_setup(t_data *data, char **envp, int ac, char **av);
 ///////////malloc
 void    *ft_malloc(size_t size);
 void    *ft_malloc_env(size_t size);
@@ -193,14 +189,22 @@ char	*ft_substr_c(char *s, unsigned int start, size_t len);
 char	**skip_quotes_split_02(char *str, char c, char **envp, unsigned char *func_status);
 char    *expand(char *str, char **envp, unsigned char *status);
 char	**skip_quotes_split(char *str, char c);
-
-//*************************************custom split************************************ */
 void    custom_split(char *str, t_data *data, size_t i, char q);
 char	*joinstr_helper(char *str, size_t i, size_t len, size_t index);
 size_t	getlen_helper(char *str, size_t index);
 int	    validchar_helper(char c);
 int     found_quotes(char *s);
+int     ft_var_exists(char *s, char **envp);
+char	**ft_duplicate_add_s(char **dup, char *s);
+
 void	generate_checker(t_data *data, size_t is_exp);
 char	*charjoin(char *s1, char c);
+
+int     check_ambiguous(t_data *data);
+int     found_redi(char c1, char c2);
+void    add_linkedlist(t_data *data, t_redi_lst *new);
+void    add_list_redi(t_data *data, int type, int fd, char *name);
+int     valid_var(char *s);
+
 
 #endif

@@ -1,30 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_env.c                                           :+:      :+:    :+:   */
+/*   valid_var.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yoel-you <yoel-you@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/11 11:00:03 by asoufian          #+#    #+#             */
-/*   Updated: 2025/07/24 14:39:08 by yoel-you         ###   ########.fr       */
+/*   Created: 2025/07/24 11:36:21 by asoufian          #+#    #+#             */
+/*   Updated: 2025/07/24 14:42:42 by yoel-you         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-void	ft_env(t_data *data)
+int	valid_var(char *s)
 {
-	int		i;
+	size_t	i;
 
-	i = 0;
-	while (data->envp[i])
+	i = 1;
+	if (s[0] && (s[0] != '_' && !ft_isalpha(s[0])))
+		return (1);
+	while (s[i] && s[i] != '=')
 	{
-		if (ft_strchr(data->envp[i], '='))
-		{
-			write(1, data->envp[i], ft_strlen(data->envp[i]));
-			write(1, "\n", 1);
-		}
+		if (!ft_isalnum(s[i]) && s[i] != '_' && s[i] != '=')
+			return (1);
 		i++;
 	}
-	return ;
+	return (0);
 }
