@@ -6,13 +6,14 @@
 /*   By: yoel-you <yoel-you@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/18 10:41:26 by asoufian          #+#    #+#             */
-/*   Updated: 2025/07/23 12:02:34 by yoel-you         ###   ########.fr       */
+/*   Updated: 2025/07/26 09:44:12 by yoel-you         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
+
 /* frees the t_heredoc linked list and unlinks the files that were
-    used.*/
+	used.*/
 void	free_heredoc(t_data *data)
 {
 	t_heredoc	*temp;
@@ -80,7 +81,7 @@ static char	*generate_file_name(t_data *data)
 }
 
 /* creates a node for the linked list used by the heredoc and generates a
-    file nameto be created later by the heredoc_execute*/
+	file nameto be created later by the heredoc_execute*/
 void	create_t_heredoc_node(t_data *data)
 {
 	t_heredoc	*new;
@@ -104,16 +105,16 @@ void	create_t_heredoc_node(t_data *data)
 	return ;
 }
 
-/* this here is used if there's a pipe and heredoc ops in the cmd, 
+/* this here is used if there's a pipe and heredoc ops in the cmd,
 	this works as follows: */
 /*    - the minishell creates the linked list and gives the user the prompt,
 		saves the input into a file */
 /*    - after, when we split the cmd so that each one gets executed by itself*/
 /* (how pipes are supposed to work) we need to assign each cmd in the pipeline*/
 /*        It's correct node in the linked list (which contains a file name)*/
-/*        and I achieve this by the int 'taken' and this functions sets 
+/*        and I achieve this by the int 'taken' and this functions sets
 	that int to 1 only if the cmd contains a heredoc operator */
-int	update_used_heredoc_list(char *s, t_data *data, int found, int i)
+int	update_heredoc_lst(char *s, t_data *data, int found, int i)
 {
 	t_heredoc	*temp;
 	char		q;

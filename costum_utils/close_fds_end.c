@@ -1,22 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_calloc.c                                        :+:      :+:    :+:   */
+/*   close_fds_end.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yoel-you <yoel-you@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/16 10:40:14 by yoel-you          #+#    #+#             */
-/*   Updated: 2025/07/26 10:57:59 by yoel-you         ###   ########.fr       */
+/*   Created: 2025/07/26 09:32:45 by yoel-you          #+#    #+#             */
+/*   Updated: 2025/07/26 10:40:45 by yoel-you         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-void	*ft_calloc(size_t n)
+void	close_dup_fds(void)
 {
-	void	*p;
+	t_data	*data;
 
-	p = ft_malloc(n);
-	memset(p, 0, n);
-	return (p);
+	data = get_data(NULL);
+	close(data->fd0);
+	close(data->fd1);
+	close(data->fd2);
 }

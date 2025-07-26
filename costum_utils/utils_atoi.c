@@ -6,7 +6,7 @@
 /*   By: yoel-you <yoel-you@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 11:34:28 by yoel-you          #+#    #+#             */
-/*   Updated: 2025/07/23 11:38:24 by yoel-you         ###   ########.fr       */
+/*   Updated: 2025/07/26 10:57:26 by yoel-you         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,7 @@ int	exit_atoi(char *s, long *rslt)
 
 	i = 0;
 	sign = 1;
-	while ((s[i] > 8 && s[i] < 14) || s[i] == ' ')
-		// I probably don't need this anymore since the split skips whitespaces
+	while (s[i] == ' ')
 		i++;
 	if (s[i] == '-')
 		sign = -1;
@@ -33,12 +32,10 @@ int	exit_atoi(char *s, long *rslt)
 		if ((*rslt >= 922337203685477580 && s[i] > '8' && sign == -1))
 			return (-1);
 		*rslt = (*rslt) * 10;
-		*rslt = (*rslt) + (s[i] - 48);
-		i++;
-		if (((*rslt >= 9223372036854775807 && sign == 1)
-				|| (*rslt >= 9223372036854775807 && sign == -1))
-			&& ft_isdigit(s[i]))
-			return (-1); // not good enough needs rework
+		*rslt = (*rslt) + (s[i++] - 48);
+		if (((*rslt >= LONG_MAX && sign == 1) || (*rslt >= LONG_MAX && sign
+					== -1)) && ft_isdigit(s[i]))
+			return (-1);
 	}
 	*rslt = (*rslt) * sign;
 	return (0);
@@ -58,12 +55,12 @@ int	redi_atoi(char *nptr)
 		if (ft_isdigit(nptr[i]))
 		{
 			if (rslt > 2147483647)
-				return (-1); // the return (used to be '2');
+				return (-1);
 			rslt = rslt * 10;
 			rslt = rslt + (nptr[i] - 48);
 		}
 		else
-			return (-1); // the return (used to be '2');
+			return (-1);
 		i++;
 	}
 	if (rslt > 2147483647)

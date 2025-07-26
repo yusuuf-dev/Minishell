@@ -12,7 +12,6 @@
 
 #include "../minishell.h"
 
-
 static void	add_ptr(char **ptr, t_data *data, int i, int j)
 {
 	char	**ptrs;
@@ -96,7 +95,6 @@ static void	get_argements(char *str, char *checker, t_data *data)
 	}
 }
 
-
 void	custom_split(char *str, t_data *data, size_t i, char q)
 {
 	size_t	is_exp;
@@ -113,11 +111,11 @@ void	custom_split(char *str, t_data *data, size_t i, char q)
 		while (q != '\'' && str[i] == '$' && validchar_helper(str[i + 1]))
 			str = expand_join(str, data, i, &is_exp);
 		if (!str[0])
-			return;
+			return ;
 		data->expand = charjoin(data->expand, str[i]);
 		if (!str[i])
-			break;
-		generate_checker(data,is_exp);
+			break ;
+		generate_checker(data, is_exp);
 		i++;
 		if (is_exp)
 			is_exp--;

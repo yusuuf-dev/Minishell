@@ -12,7 +12,7 @@
 
 #include "../minishell.h"
 
-/* the below function checks if the cmd includes a heredoc op, 
+/* the below function checks if the cmd includes a heredoc op,
 	if It does it allocates a node for it and a name for the file  */
 int	check_for_heredoc_create_node(t_data *data, size_t i, int found)
 {
@@ -45,9 +45,9 @@ int	check_for_heredoc_create_node(t_data *data, size_t i, int found)
 
 static char	*c_strjoinf(char *s1, char c)
 {
-	size_t		i;
-	size_t		len;
-	char		*ptr;
+	size_t	i;
+	size_t	len;
+	char	*ptr;
 
 	len = ft_strlen(s1);
 	ptr = ft_malloc((len + 2) * sizeof(char));
@@ -62,7 +62,7 @@ static char	*c_strjoinf(char *s1, char c)
 	return (ptr);
 }
 
-static char	*c_expand(char *str, t_data *data, size_t i, size_t	len)
+static char	*c_expand(char *str, t_data *data, size_t i, size_t len)
 {
 	char	*ptr;
 	char	*key;
@@ -92,8 +92,8 @@ static char	*c_expand(char *str, t_data *data, size_t i, size_t	len)
 }
 
 /* this is were the file is created and the prompt is given */
-void	create_file_give_prompt(t_data *data, char *dl, int isquote
-	, char *file_name)
+void	create_file_give_prompt(t_data *data, char *dl, int isquote,
+		char *file_name)
 {
 	int		fd;
 	char	*tmp;

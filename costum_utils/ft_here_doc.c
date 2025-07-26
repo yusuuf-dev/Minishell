@@ -6,7 +6,7 @@
 /*   By: yoel-you <yoel-you@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/18 11:00:09 by asoufian          #+#    #+#             */
-/*   Updated: 2025/07/22 11:59:00 by yoel-you         ###   ########.fr       */
+/*   Updated: 2025/07/26 12:15:30 by yoel-you         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ static int	execute_heredoc(char *p, t_data *data, char *file_name)
 
 	isquote = 0;
 	index_ret = 0;
-	dl = heredoc_old_delimiter(p, &isquote, &index_ret);
+	dl = heredoc_delimiter(p, &isquote, &index_ret);
 	create_file_give_prompt(data, dl, isquote, file_name);
 	free_ft_malloc(dl, 0);
 	return (index_ret);
@@ -56,17 +56,17 @@ static void	init_heredoc_prompt_file(t_data *data)
 }
 
 /* the parent (minishell) here waits for the child (heredoc) to finish it's job
-	reaps or collects the exit status of the child then frees t_heredoc 
-	(linked list used by heredoc) and unlinks the created files by 
+	reaps or collects the exit status of the child then frees t_heredoc
+	(linked list used by heredoc) and unlinks the created files by
 	the child (heredoc)*/
 static void	wait_a_reap_exit_code(t_data *data, int child_pid)
 {
 	int	child_status;
 
 	child_status = 0;
-	sigaction(SIGINT, &(data->S_SIG_IGN), NULL);
+	sigaction(SIGINT, &(data->s_sig_ign), NULL);
 	waitpid(child_pid, &child_status, 0);
-	sigaction(SIGINT, &(data->SIG_INT), NULL);
+	sigaction(SIGINT, &(data->sig_int), NULL);
 	if (WIFEXITED(child_status))
 		data->status = (WEXITSTATUS(child_status));
 	else if (WIFSIGNALED(child_status))
@@ -85,7 +85,7 @@ static void	wait_a_reap_exit_code(t_data *data, int child_pid)
 
 void	here_doc(t_data *data)
 {
-	int		child_pid;
+	int	child_pid;
 
 	if (check_for_heredoc_create_node(data, 0, 0))
 	{
@@ -95,8 +95,8 @@ void	here_doc(t_data *data)
 		if (child_pid == 0)
 		{
 			data->is_a_child = 1;
-			data->status = 0;	
-			sigaction(SIGINT, &(data->S_SIG_DFL), NULL);
+			data->status = 0;
+			sigaction(SIGINT, &(data->s_sig_dfl), NULL);
 			init_heredoc_prompt_file(data);
 		}
 		else

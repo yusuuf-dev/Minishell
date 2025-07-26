@@ -6,15 +6,17 @@
 /*   By: yoel-you <yoel-you@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 09:41:51 by yoel-you          #+#    #+#             */
-/*   Updated: 2025/07/23 09:41:52 by yoel-you         ###   ########.fr       */
+/*   Updated: 2025/07/26 09:26:17 by yoel-you         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-int		ft_check_spaces(char *s)
+int	ft_check_spaces(char *s)
 {
-	size_t	i = 0;
+	size_t	i;
+
+	i = 0;
 	while (s[i])
 	{
 		if ((s[i] <= 13 && s[i] >= 11) || s[i] == 9)

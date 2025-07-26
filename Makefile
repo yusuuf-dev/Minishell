@@ -10,7 +10,8 @@ SRC = minishell.c parsing.c ./utils/ft_calloc.c ./costum_utils/ft_putstr.c ./cos
 ./costum_utils/ft_setup.c ./costum_utils/ft_malloc.c ./utils/ft_memset.c ./costum_utils/signals_handler.c ./costum_utils/check_syntax.c \
 ./costum_utils/custom_split.c ./costum_utils/custom_split_utils.c ./costum_utils/ft_getenv.c ./costum_utils/ft_free.c ./costum_utils/ft_here_doc_utils.c \
 ./costum_utils/ft_read_line_gnl.c ./utils/ft_itoa.c ./utils/ft_strcpy.c ./costum_utils/c_strncmp.c ./costum_utils/ft_malloc_utils.c \
-./costum_utils/redirections_execution.c ./cmds/ft_export_utils.c ./costum_utils/redirections_parsing.c ./utils/ft_get_next_line.c
+./costum_utils/redirections_execution.c ./cmds/ft_export_utils.c ./costum_utils/redirections_parsing.c ./utils/ft_get_next_line.c  \
+./costum_utils/close_fds_end.c parsing_utils.c
 
 OBJ = $(SRC:.c=.o)
 

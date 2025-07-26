@@ -91,7 +91,7 @@ int	check_syntax(t_data *data)
 		return (1);
 	add_history(data->p_rdl);
 	if (found_quotes(data->p_rdl) == -1)
-		return (ft_putstr("Error Unclose quote\n", 2),data->status = 2, 1);
+		return (ft_putstr("Error Unclose quote\n", 2), data->status = 2, 1);
 	while (data->p_rdl[i] == ' ')
 		i++;
 	if (data->p_rdl[i] == '|')
@@ -103,7 +103,7 @@ int	check_syntax(t_data *data)
 		else if (q && data->p_rdl[i] == q)
 			q = 0;
 		else if (!q && check_operator(data->p_rdl, i))
-			return (data->status = 2,1);
+			return (data->status = 2, 1);
 		i++;
 	}
 	return (0);

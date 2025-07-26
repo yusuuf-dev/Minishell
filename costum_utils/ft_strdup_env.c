@@ -12,20 +12,20 @@
 
 #include "../minishell.h"
 
-char    *ft_strdup_env(char *s)
+char	*ft_strdup_env(char *s)
 {
-        size_t  i;
-        char    *p;
+	size_t	i;
+	char	*p;
 
-        i = 0;
-        if (!s)
-                return (NULL);
-        p = ft_malloc_env(ft_strlen(s) + 1);
-        while (s[i])
-        {
-                p[i] = s[i];
-                i++;
-        }
-        p[i] = 0;
-        return (p);
+	i = 0;
+	if (!s)
+		return (NULL);
+	p = ft_malloc_env(ft_strlen(s) + 1);
+	while (s[i])
+	{
+		p[i] = s[i];
+		i++;
+	}
+	p[i] = 0;
+	return (p);
 }
