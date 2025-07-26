@@ -6,7 +6,7 @@
 /*   By: yoel-you <yoel-you@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 12:13:16 by yoel-you          #+#    #+#             */
-/*   Updated: 2025/07/26 12:16:17 by yoel-you         ###   ########.fr       */
+/*   Updated: 2025/07/26 18:35:33 by yoel-you         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,8 +123,7 @@ char					**ft_new_export(t_data *data);
 void					print_env(char **envp, int i, int j, int smallest);
 int						ft_unset(t_data *data);
 void					ft_env(t_data *data);
-int						ft_exit(char **argv, unsigned char *status,
-							int *s_exit);
+int						ft_exit(char **argv, t_data *data);
 /***************************************************************/
 /****************************SIGNALS*******************************/
 void					signal_handler(int signum);

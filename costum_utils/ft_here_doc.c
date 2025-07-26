@@ -6,7 +6,7 @@
 /*   By: yoel-you <yoel-you@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/18 11:00:09 by asoufian          #+#    #+#             */
-/*   Updated: 2025/07/26 12:15:30 by yoel-you         ###   ########.fr       */
+/*   Updated: 2025/07/26 18:57:03 by yoel-you         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,6 +94,7 @@ void	here_doc(t_data *data)
 			print_free_exit(FORK_FAILED, errno);
 		if (child_pid == 0)
 		{
+			close_dup_fds();
 			data->is_a_child = 1;
 			data->status = 0;
 			sigaction(SIGINT, &(data->s_sig_dfl), NULL);

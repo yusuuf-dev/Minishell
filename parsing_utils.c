@@ -6,7 +6,7 @@
 /*   By: yoel-you <yoel-you@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 11:49:13 by yoel-you          #+#    #+#             */
-/*   Updated: 2025/07/26 12:15:58 by yoel-you         ###   ########.fr       */
+/*   Updated: 2025/07/26 18:53:56 by yoel-you         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,8 @@ int	execute_command(char *path, t_data *data)
 	}
 	if (!child_pid || data->is_a_child)
 	{
+		if (!child_pid && !data->is_a_child)
+			close_dup_fds();
 		sigaction(SIGINT, &(data->old_sig_int), NULL);
 		sigaction(SIGQUIT, &(data->old_sig_quit), NULL);
 		if (path)

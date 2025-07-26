@@ -6,7 +6,7 @@
 /*   By: yoel-you <yoel-you@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 12:04:21 by yoel-you          #+#    #+#             */
-/*   Updated: 2025/07/26 12:15:30 by yoel-you         ###   ########.fr       */
+/*   Updated: 2025/07/26 19:18:12 by yoel-you         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 
 static int	reset_std_in_out_err(t_data *data)
 {
+	if (data->is_a_child)
+		return (0);
 	if (dup2(data->fd0, STDIN_FILENO) == -1)
 		print_free_exit(DUP_FAILED, errno);
 	if (dup2(data->fd1, STDOUT_FILENO) == -1)
@@ -36,7 +38,7 @@ static void	signals_readline(t_data *data)
 	if (!data->p_rdl)
 	{
 		if (isatty(STDIN_FILENO))
-			ft_putstr("exit\n", 1);
+			ft_putstr("exit\n", 2);
 		rl_clear_history();
 		config_malloc(NULL, 0, 2);
 		exit(data->status);

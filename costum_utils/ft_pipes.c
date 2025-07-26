@@ -6,7 +6,7 @@
 /*   By: yoel-you <yoel-you@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/21 11:11:47 by asoufian          #+#    #+#             */
-/*   Updated: 2025/07/26 12:15:58 by yoel-you         ###   ########.fr       */
+/*   Updated: 2025/07/26 18:58:30 by yoel-you         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,6 +92,8 @@ static void	close_save_old_pipe(t_pipes *pipe_data, int state)
 
 static void	redirecting_child_std(t_data *data, t_pipes *pipe_data)
 {
+	if (!data->is_a_child)
+		close_dup_fds();
 	data->is_a_child = 1;
 	sigaction(SIGINT, &(data->old_sig_int), NULL);
 	sigaction(SIGQUIT, &(data->old_sig_quit), NULL);

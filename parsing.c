@@ -6,7 +6,7 @@
 /*   By: yoel-you <yoel-you@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 11:26:06 by yoel-you          #+#    #+#             */
-/*   Updated: 2025/07/26 11:52:59 by yoel-you         ###   ########.fr       */
+/*   Updated: 2025/07/26 18:35:22 by yoel-you         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,7 +121,7 @@ static int	ft_built_in_cmd(t_data *data)
 	else if (i == 15)
 		data->status = ft_unset(data);
 	else if (i == 16)
-		data->status = ft_exit(data->rdl_args, &(data->status), &(data->exit));
+		data->exit = ft_exit(data->rdl_args, data);
 	if (i > 9)
 		return (1);
 	return (0);

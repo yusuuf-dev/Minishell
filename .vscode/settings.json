@@ -4,6 +4,7 @@
         "minishell.h": "c",
         "wait.h": "c",
         "sstream": "c",
-        "charconv": "c"
+        "charconv": "c",
+        "random": "c"
     }
 }
