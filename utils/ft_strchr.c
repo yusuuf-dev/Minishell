@@ -12,18 +12,18 @@
 
 #include "../minishell.h"
 
-char    *ft_strchr(char *s, char c)
+char	*ft_strchr(char *s, char c)
 {
-        size_t  i;
+	size_t	i;
 
-        i = 0;
-        if (!s)
-                return (NULL);
-        while (s[i])
-        {
-                if (s[i] == c)
-                        return (s + i);
-                i++;
-        }
-        return (NULL);
+	i = 0;
+	if (!s)
+		return (NULL);
+	while (s[i])
+	{
+		if (s[i] == c)
+			return (s + i);
+		i++;
+	}
+	return (NULL);
 }

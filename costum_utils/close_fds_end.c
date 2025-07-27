@@ -1,27 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strcmp.c                                        :+:      :+:    :+:   */
+/*   close_fds_end.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: asoufian <asoufian@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: yoel-you <yoel-you@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/14 09:04:28 by asoufian          #+#    #+#             */
-/*   Updated: 2025/04/14 09:07:36 by asoufian         ###   ########.fr       */
+/*   Created: 2025/07/26 09:32:45 by yoel-you          #+#    #+#             */
+/*   Updated: 2025/07/26 10:40:45 by yoel-you         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-int	ft_strcmp(char *s1, char *s2)
+void	close_dup_fds(void)
 {
-	int	i;
+	t_data	*data;
 
-	i = 0;
-	while (s1[i] || s2[i])
-	{
-		if (s1[i] != s2[i])
-			return (0);
-		i++;
-	}
-	return (1);
+	data = get_data(NULL);
+	close(data->fd0);
+	close(data->fd1);
+	close(data->fd2);
 }

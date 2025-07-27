@@ -1,3 +1,18 @@
+<<<<<<< HEAD
+=======
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   skip_quotes_split.c                                :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: yoel-you <yoel-you@student.1337.ma>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/14 17:17:31 by yoel-you          #+#    #+#             */
+/*   Updated: 2025/07/23 12:06:32 by yoel-you         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+>>>>>>> 40ab6a92f5ee8ea4ead42ea65eb919d4bac9e369
 #include "../minishell.h"
 
 static size_t	ft_count_wd(char *s, char c)
@@ -36,7 +51,13 @@ static char	*ft_substr(char *s, int st, int ed)
 	str = ft_malloc((ed - st + 1) * sizeof(char));
 	while (st < ed)
 	{
+<<<<<<< HEAD
 		str[i++] = s[st++];
+=======
+		str[i] = s[st];
+		i++;
+		st++;
+>>>>>>> 40ab6a92f5ee8ea4ead42ea65eb919d4bac9e369
 	}
 	str[i] = '\0';
 	return (str);
@@ -85,4 +106,8 @@ char	**skip_quotes_split(char *str, char c)
 	}
 	ptr[j] = NULL;
 	return (ptr);
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 40ab6a92f5ee8ea4ead42ea65eb919d4bac9e369

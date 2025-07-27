@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_split.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: asoufian <asoufian@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: yoel-you <yoel-you@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/14 09:18:43 by asoufian          #+#    #+#             */
-/*   Updated: 2025/04/14 09:18:43 by asoufian         ###   ########.fr       */
+/*   Created: 2025/07/19 10:34:26 by yoel-you          #+#    #+#             */
+/*   Updated: 2025/07/19 10:34:27 by yoel-you         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,12 +31,15 @@ static int	ft_count_wd(char *s, char c)
 static char	*ft_substr(char *s, int st, int ed)
 {
 	char	*str;
-	int	i;
+	int		i;
 
 	i = 0;
 	str = ft_malloc((ed - st + 1) * sizeof(char));
+<<<<<<< HEAD
 	if (!str)
 		return (NULL);
+=======
+>>>>>>> 40ab6a92f5ee8ea4ead42ea65eb919d4bac9e369
 	while (st < ed)
 	{
 		str[i++] = s[st++];
@@ -45,34 +48,23 @@ static char	*ft_substr(char *s, int st, int ed)
 	return (str);
 }
 
-char	**free_all(char **str)
-{
-	int	i;
-
-	if (!str)
-		return (NULL);
-	i = 0;
-	while (str[i])
-	{
-		free(str[i]);
-		i++;
-	}
-	free(str);
-	return(NULL);
-}
-
 char	**ft_split(char *str, char c)
 {
 	char	**ptr;
-	int	i;
-	int	j;
-	int	st;
-	int	wd;
+	int		i;
+	int		j;
+	int		st;
+	int		wd;
 
+<<<<<<< HEAD
 	wd = ft_count_wd(str,c);
 	ptr = ft_malloc((wd + 1) * sizeof(char*));
 	if(!ptr)
 		return(NULL);
+=======
+	wd = ft_count_wd(str, c);
+	ptr = ft_malloc((wd + 1) * sizeof(char *));
+>>>>>>> 40ab6a92f5ee8ea4ead42ea65eb919d4bac9e369
 	i = 0;
 	j = 0;
 	while (str[i] && j < wd)
@@ -82,9 +74,8 @@ char	**ft_split(char *str, char c)
 		st = i;
 		while (str[i] != c && str[i])
 			i++;
-		ptr[j] = ft_substr(str,st,i);
-		if (!ptr[j++])
-			return(free_all(ptr));
+		ptr[j] = ft_substr(str, st, i);
+		j++;
 	}
 	ptr[j] = NULL;
 	return (ptr);

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 #include "minishell.h"
 
@@ -7,10 +8,30 @@ static int	ft_built_in_cmd(t_data *data);
 static  int executable(t_data *data, int mode)
 {
 	int is_a_file;
+=======
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parsing.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: yoel-you <yoel-you@student.1337.ma>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/26 11:26:06 by yoel-you          #+#    #+#             */
+/*   Updated: 2025/07/26 18:35:22 by yoel-you         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "minishell.h"
+
+static int	executable(t_data *data, int mode)
+{
+	int	is_a_file;
+>>>>>>> 40ab6a92f5ee8ea4ead42ea65eb919d4bac9e369
 
 	is_a_file = 0;
 	if (!data->rdl_args || !data->rdl_args[0])
 		return (1);
+<<<<<<< HEAD
     if (!(ft_strchr(data->rdl_args[0], '/')) && !mode)
     {
 		return (0);
@@ -47,6 +68,45 @@ static int	is_file_executable(t_data *data, char *path, char **msg)
 		}
 		close(is_a_file);
 	}
+=======
+	if (!(ft_strchr(data->rdl_args[0], '/')) && !mode)
+		return (0);
+	is_a_file = open(data->rdl_args[0], O_DIRECTORY);
+	if (is_a_file != -1)
+	{
+		data->status = 126;
+		return (close(is_a_file), ft_putstr("minishell: ", 2),
+			ft_putstr(data->rdl_args[0], 2), ft_putstr(": Is a directory\n", 2),
+			1);
+	}
+	if (access(data->rdl_args[0], F_OK) == -1)
+	{
+		perror("minishell");
+		return (data->status = 127, 127);
+	}
+	if (access(data->rdl_args[0], X_OK) == 0)
+		return (execute_command(NULL, data));
+	else
+		perror("minishell");
+	return (data->status = 126, 1);
+}
+
+static int	is_file_executable(t_data *data, char *path, char **msg)
+{
+	int	is_a_file;
+
+	is_a_file = 0;
+	if (!access(path, X_OK))
+	{
+		is_a_file = open(path, O_DIRECTORY);
+		if (is_a_file == -1)
+		{
+			execute_command(path, data);
+			return (1);
+		}
+		close(is_a_file);
+	}
+>>>>>>> 40ab6a92f5ee8ea4ead42ea65eb919d4bac9e369
 	else
 	{
 		if (!(*msg))
@@ -61,6 +121,7 @@ static int	is_file_executable(t_data *data, char *path, char **msg)
 }
 
 static int	cmd_exist_in_path(t_data *data, char *env)
+<<<<<<< HEAD
 {
 	char	*path;
 	char	*msg;
@@ -117,10 +178,14 @@ void	parsing(t_data *data)
 }
 
 static int	ft_built_in_cmd(t_data *data)
+=======
+>>>>>>> 40ab6a92f5ee8ea4ead42ea65eb919d4bac9e369
 {
-	char  **cmds = NULL;
-	int   i;
+	char	*path;
+	char	*msg;
+	int		i;
 
+<<<<<<< HEAD
 	cmds = ft_split("pwd,cd,export,echo,env,unset,exit", ',');
   	i = 0;
 	while (i < 10 && cmds[i])
@@ -128,12 +193,47 @@ static int	ft_built_in_cmd(t_data *data)
         if (ft_strcmp(cmds[i],data->rdl_args[0]))
 			    i += 9;
         i++;
+=======
+	data->status = 0;
+	env = ft_getenv("PATH", data->envp, &(data->status));
+	if (!env)
+		return (data->env_paths = NULL, executable(data, 1), 0);
+	data->env_paths = ft_split(env, ':');
+	i = 0;
+	msg = NULL;
+	while (env && data->env_paths[i])
+	{
+		path = ft_strjoin(ft_strjoin(data->env_paths[i++], "/"),
+				data->rdl_args[0]);
+		if (!access(path, F_OK))
+		{
+			if (is_file_executable(data, path, &msg))
+				return (0);
+		}
+	}
+	if (data->status != 126)
+		return (data->status = 127, ft_putstr(data->rdl_args[0], 2),
+			ft_putstr(": command not found\n", 2), 0);
+	return (ft_putstr(msg, 2), 0);
+}
+
+static int	ft_built_in_cmd(t_data *data)
+{
+	int	i;
+
+	i = 0;
+	while (i < 10 && data->built_ins[i])
+	{
+		if (ft_strcmp(data->built_ins[i++], data->rdl_args[0]))
+			i += 9;
+>>>>>>> 40ab6a92f5ee8ea4ead42ea65eb919d4bac9e369
 	}
 	if (i == 10)
 		data->status = ft_pwd(data);
 	else if (i == 11)
 		data->status = ft_cd(data->rdl_args, data->rdl_args[1], data, 0);
 	else if (i == 12)
+<<<<<<< HEAD
 	{
 		data->envp = ft_new_export(data);
 		//data->envp = ft_export(data->rdl_args, data->envp, &(data->status));
@@ -149,11 +249,23 @@ static int	ft_built_in_cmd(t_data *data)
 	else if (i == 16)
 		data->status = ft_exit(data->rdl_args, &(data->status), &(data->exit));
   	//free_all(cmds); // needs free to be freed from the linked list.
+=======
+		data->envp = ft_new_export(data);
+	else if (i == 13)
+		data->status = ft_echo(data->rdl_args);
+	else if (i == 14)
+		ft_env(data);
+	else if (i == 15)
+		data->status = ft_unset(data);
+	else if (i == 16)
+		data->exit = ft_exit(data->rdl_args, data);
+>>>>>>> 40ab6a92f5ee8ea4ead42ea65eb919d4bac9e369
 	if (i > 9)
 		return (1);
 	return (0);
 }
 
+<<<<<<< HEAD
 static void	reset_sig_a_reap_exit_code(t_data *data)
 {
 	int	child_info;
@@ -200,3 +312,21 @@ int	execute_command(char *path, t_data *data)
 		reset_sig_a_reap_exit_code(data);
 	return (200);
 }
+=======
+void	parsing(t_data *data)
+{
+	redirections_parsing(data);
+	if (ft_redis_execute(data))
+		return ;
+	if (!data->p_rdl || !data->p_rdl[0])
+		return ;
+	data->rdl_args = NULL;
+	custom_split(data->p_rdl, data, 0, 0);
+	if (executable(data, 0))
+		return ;
+	if (ft_built_in_cmd(data))
+		return ;
+	cmd_exist_in_path(data, NULL);
+	return ;
+}
+>>>>>>> 40ab6a92f5ee8ea4ead42ea65eb919d4bac9e369

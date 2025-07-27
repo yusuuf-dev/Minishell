@@ -39,4 +39,8 @@
    match-leak-kinds: definite,possible,reachable,indirect
    ...
    fun:rl_initialize
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 40ab6a92f5ee8ea4ead42ea65eb919d4bac9e369
