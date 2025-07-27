@@ -3,27 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   ft_here_doc_utils.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-<<<<<<< HEAD
-/*   By: asoufian <asoufian@student.1337.ma>        +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/18 19:09:38 by asoufian          #+#    #+#             */
-/*   Updated: 2025/07/18 19:13:40 by asoufian         ###   ########.fr       */
-=======
 /*   By: yoel-you <yoel-you@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/18 19:09:38 by asoufian          #+#    #+#             */
 /*   Updated: 2025/07/23 09:45:29 by yoel-you         ###   ########.fr       */
->>>>>>> 40ab6a92f5ee8ea4ead42ea65eb919d4bac9e369
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-<<<<<<< HEAD
-/* the below function checks if the cmd includes a heredoc op, 
-=======
 /* the below function checks if the cmd includes a heredoc op,
->>>>>>> 40ab6a92f5ee8ea4ead42ea65eb919d4bac9e369
 	if It does it allocates a node for it and a name for the file  */
 int	check_for_heredoc_create_node(t_data *data, size_t i, int found)
 {
@@ -56,15 +45,9 @@ int	check_for_heredoc_create_node(t_data *data, size_t i, int found)
 
 static char	*c_strjoinf(char *s1, char c)
 {
-<<<<<<< HEAD
-	size_t		i;
-	size_t		len;
-	char		*ptr;
-=======
 	size_t	i;
 	size_t	len;
 	char	*ptr;
->>>>>>> 40ab6a92f5ee8ea4ead42ea65eb919d4bac9e369
 
 	len = ft_strlen(s1);
 	ptr = ft_malloc((len + 2) * sizeof(char));
@@ -79,11 +62,7 @@ static char	*c_strjoinf(char *s1, char c)
 	return (ptr);
 }
 
-<<<<<<< HEAD
-static char	*c_expand(char *str, t_data *data, size_t i, size_t	len)
-=======
 static char	*c_expand(char *str, t_data *data, size_t i, size_t len)
->>>>>>> 40ab6a92f5ee8ea4ead42ea65eb919d4bac9e369
 {
 	char	*ptr;
 	char	*key;
@@ -113,13 +92,8 @@ static char	*c_expand(char *str, t_data *data, size_t i, size_t len)
 }
 
 /* this is were the file is created and the prompt is given */
-<<<<<<< HEAD
-void	create_file_give_prompt(t_data *data, char *dl, int isquote
-	, char *file_name)
-=======
 void	create_file_give_prompt(t_data *data, char *dl, int isquote,
 		char *file_name)
->>>>>>> 40ab6a92f5ee8ea4ead42ea65eb919d4bac9e369
 {
 	int		fd;
 	char	*tmp;

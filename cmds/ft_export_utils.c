@@ -3,17 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_export_utils.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-<<<<<<< HEAD
-/*   By: asoufian <asoufian@student.1337.ma>        +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/24 11:22:39 by asoufian          #+#    #+#             */
-/*   Updated: 2025/07/24 11:26:48 by asoufian         ###   ########.fr       */
-=======
 /*   By: yoel-you <yoel-you@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/24 11:22:39 by asoufian          #+#    #+#             */
 /*   Updated: 2025/07/24 14:44:17 by yoel-you         ###   ########.fr       */
->>>>>>> 40ab6a92f5ee8ea4ead42ea65eb919d4bac9e369
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,14 +75,6 @@ static void	print_the_envs(char **envp, int *sorted)
 	}
 }
 
-<<<<<<< HEAD
-/* this function needs to imitate the behaviour of 
-	export without any argument:*/
-/*	It addds 'X- Declare to ever env name*/
-/*	It sorts the variables in alphabetical order */
-/*	It prints them after applying the above steps*/
-=======
->>>>>>> 40ab6a92f5ee8ea4ead42ea65eb919d4bac9e369
 void	print_env(char **envp, int i, int j, int smallest)
 {
 	int		*sorted;

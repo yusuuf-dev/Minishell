@@ -6,11 +6,7 @@
 /*   By: yoel-you <yoel-you@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/18 11:00:09 by asoufian          #+#    #+#             */
-<<<<<<< HEAD
-/*   Updated: 2025/07/22 11:59:00 by yoel-you         ###   ########.fr       */
-=======
 /*   Updated: 2025/07/26 18:57:03 by yoel-you         ###   ########.fr       */
->>>>>>> 40ab6a92f5ee8ea4ead42ea65eb919d4bac9e369
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,11 +22,7 @@ static int	execute_heredoc(char *p, t_data *data, char *file_name)
 
 	isquote = 0;
 	index_ret = 0;
-<<<<<<< HEAD
-	dl = heredoc_old_delimiter(p, &isquote, &index_ret);
-=======
 	dl = heredoc_delimiter(p, &isquote, &index_ret);
->>>>>>> 40ab6a92f5ee8ea4ead42ea65eb919d4bac9e369
 	create_file_give_prompt(data, dl, isquote, file_name);
 	free_ft_malloc(dl, 0);
 	return (index_ret);
@@ -64,28 +56,17 @@ static void	init_heredoc_prompt_file(t_data *data)
 }
 
 /* the parent (minishell) here waits for the child (heredoc) to finish it's job
-<<<<<<< HEAD
-	reaps or collects the exit status of the child then frees t_heredoc 
-	(linked list used by heredoc) and unlinks the created files by 
-=======
 	reaps or collects the exit status of the child then frees t_heredoc
 	(linked list used by heredoc) and unlinks the created files by
->>>>>>> 40ab6a92f5ee8ea4ead42ea65eb919d4bac9e369
 	the child (heredoc)*/
 static void	wait_a_reap_exit_code(t_data *data, int child_pid)
 {
 	int	child_status;
 
 	child_status = 0;
-<<<<<<< HEAD
-	sigaction(SIGINT, &(data->S_SIG_IGN), NULL);
-	waitpid(child_pid, &child_status, 0);
-	sigaction(SIGINT, &(data->SIG_INT), NULL);
-=======
 	sigaction(SIGINT, &(data->s_sig_ign), NULL);
 	waitpid(child_pid, &child_status, 0);
 	sigaction(SIGINT, &(data->sig_int), NULL);
->>>>>>> 40ab6a92f5ee8ea4ead42ea65eb919d4bac9e369
 	if (WIFEXITED(child_status))
 		data->status = (WEXITSTATUS(child_status));
 	else if (WIFSIGNALED(child_status))
@@ -104,11 +85,7 @@ static void	wait_a_reap_exit_code(t_data *data, int child_pid)
 
 void	here_doc(t_data *data)
 {
-<<<<<<< HEAD
-	int		child_pid;
-=======
 	int	child_pid;
->>>>>>> 40ab6a92f5ee8ea4ead42ea65eb919d4bac9e369
 
 	if (check_for_heredoc_create_node(data, 0, 0))
 	{
@@ -117,24 +94,14 @@ void	here_doc(t_data *data)
 			print_free_exit(FORK_FAILED, errno);
 		if (child_pid == 0)
 		{
-<<<<<<< HEAD
-			data->is_a_child = 1;
-			data->status = 0;	
-			sigaction(SIGINT, &(data->S_SIG_DFL), NULL);
-=======
 			close_dup_fds();
 			data->is_a_child = 1;
 			data->status = 0;
 			sigaction(SIGINT, &(data->s_sig_dfl), NULL);
->>>>>>> 40ab6a92f5ee8ea4ead42ea65eb919d4bac9e369
 			init_heredoc_prompt_file(data);
 		}
 		else
 			wait_a_reap_exit_code(data, child_pid);
 	}
 	return ;
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> 40ab6a92f5ee8ea4ead42ea65eb919d4bac9e369

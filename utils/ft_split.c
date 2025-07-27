@@ -35,11 +35,6 @@ static char	*ft_substr(char *s, int st, int ed)
 
 	i = 0;
 	str = ft_malloc((ed - st + 1) * sizeof(char));
-<<<<<<< HEAD
-	if (!str)
-		return (NULL);
-=======
->>>>>>> 40ab6a92f5ee8ea4ead42ea65eb919d4bac9e369
 	while (st < ed)
 	{
 		str[i++] = s[st++];
@@ -56,15 +51,8 @@ char	**ft_split(char *str, char c)
 	int		st;
 	int		wd;
 
-<<<<<<< HEAD
-	wd = ft_count_wd(str,c);
-	ptr = ft_malloc((wd + 1) * sizeof(char*));
-	if(!ptr)
-		return(NULL);
-=======
 	wd = ft_count_wd(str, c);
 	ptr = ft_malloc((wd + 1) * sizeof(char *));
->>>>>>> 40ab6a92f5ee8ea4ead42ea65eb919d4bac9e369
 	i = 0;
 	j = 0;
 	while (str[i] && j < wd)

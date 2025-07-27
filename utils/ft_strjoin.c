@@ -25,11 +25,6 @@ char	*ft_strjoin(char *s1, char *s2)
 	if (!s2)
 		return (ft_strdup(s1));
 	p = ft_malloc(ft_strlen(s1) + ft_strlen(s2) + 1);
-<<<<<<< HEAD
-	if (!p)
-		return (NULL);
-=======
->>>>>>> 40ab6a92f5ee8ea4ead42ea65eb919d4bac9e369
 	while (s1[i])
 	{
 		p[i] = s1[i];

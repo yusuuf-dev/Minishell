@@ -6,11 +6,7 @@
 /*   By: yoel-you <yoel-you@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/14 17:19:15 by yoel-you          #+#    #+#             */
-<<<<<<< HEAD
-/*   Updated: 2025/07/20 16:34:31 by yoel-you         ###   ########.fr       */
-=======
 /*   Updated: 2025/07/22 20:30:54 by yoel-you         ###   ########.fr       */
->>>>>>> 40ab6a92f5ee8ea4ead42ea65eb919d4bac9e369
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,11 +91,7 @@ int	check_syntax(t_data *data)
 		return (1);
 	add_history(data->p_rdl);
 	if (found_quotes(data->p_rdl) == -1)
-<<<<<<< HEAD
-		return (ft_putstr("Error Unclose quote\n", 2),data->status = 2, 1);
-=======
 		return (ft_putstr("Error Unclose quote\n", 2), data->status = 2, 1);
->>>>>>> 40ab6a92f5ee8ea4ead42ea65eb919d4bac9e369
 	while (data->p_rdl[i] == ' ')
 		i++;
 	if (data->p_rdl[i] == '|')
@@ -111,16 +103,8 @@ int	check_syntax(t_data *data)
 		else if (q && data->p_rdl[i] == q)
 			q = 0;
 		else if (!q && check_operator(data->p_rdl, i))
-<<<<<<< HEAD
-			return (data->status = 2,1);
-		i++;
-	}
-	return (0);
-}
-=======
 			return (data->status = 2, 1);
 		i++;
 	}
 	return (0);
 }
->>>>>>> 40ab6a92f5ee8ea4ead42ea65eb919d4bac9e369

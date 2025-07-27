@@ -1,12 +1,3 @@
-<<<<<<< HEAD
-#include "../minishell.h"
-
-void ft_strcpy(char *dest, char *src)
-{
-	size_t	i = 0;
-
-	while(src[i])
-=======
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
@@ -27,7 +18,6 @@ void	ft_strcpy(char *dest, char *src)
 
 	i = 0;
 	while (src[i])
->>>>>>> 40ab6a92f5ee8ea4ead42ea65eb919d4bac9e369
 	{
 		dest[i] = src[i];
 		i++;
