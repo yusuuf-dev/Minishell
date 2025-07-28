@@ -6,7 +6,7 @@
 /*   By: yoel-you <yoel-you@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 11:26:06 by yoel-you          #+#    #+#             */
-/*   Updated: 2025/07/26 18:35:22 by yoel-you         ###   ########.fr       */
+/*   Updated: 2025/07/28 15:35:23 by yoel-you         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,13 +31,13 @@ static int	executable(t_data *data, int mode)
 	}
 	if (access(data->rdl_args[0], F_OK) == -1)
 	{
-		perror("minishell");
+		perror(ft_strjoin("minishell: ", data->rdl_args[0]));
 		return (data->status = 127, 127);
 	}
 	if (access(data->rdl_args[0], X_OK) == 0)
 		return (execute_command(NULL, data));
 	else
-		perror("minishell");
+		perror(ft_strjoin("minishell: ", data->rdl_args[0]));
 	return (data->status = 126, 1);
 }
 
