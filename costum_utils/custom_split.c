@@ -6,7 +6,7 @@
 /*   By: yoel-you <yoel-you@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/14 17:00:05 by yoel-you          #+#    #+#             */
-/*   Updated: 2025/07/28 11:15:39 by yoel-you         ###   ########.fr       */
+/*   Updated: 2025/07/28 12:01:49 by yoel-you         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,7 @@ static int	is_empty_quotes(char *str, size_t *i, char *checker, t_data *data)
 			return (0);
 		if (!(str[*i] == '\'' || str[*i] == '\"'))
 			return (0);
-		if (checker[*i] == '1' || checker[*i + 1] == '1')
+		if (checker[*i] != checker[*i + 1])
 			return (0);
 		(*i) += 2;
 		if (!str[*i] || str[*i] == ' ')
@@ -103,7 +103,7 @@ static void	get_argements(char *str, char *checker, t_data *data, char q)
 			i++;
 			continue ;
 		}
-		if (is_empty_quotes(str, &i, checker, data))
+		if (!q && is_empty_quotes(str, &i, checker, data))
 			continue ;
 		if (checker[i] == '0' && !q && (str[i] == '\"' || str[i] == '\''))
 			q = str[i];
