@@ -6,7 +6,7 @@
 /*   By: yoel-you <yoel-you@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/24 11:17:22 by asoufian          #+#    #+#             */
-/*   Updated: 2025/07/24 14:32:55 by yoel-you         ###   ########.fr       */
+/*   Updated: 2025/07/28 11:18:08 by yoel-you         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ char	**ft_duplicate_add_s(char **dup, char *s)
 		size++;
 	size = (sizeof(char *) * (size + 2));
 	p = ft_malloc_env(size);
-	memset(p, 0, size);
+	ft_memset(p, 0, size);
 	size = 0;
 	while (dup && dup[size])
 	{

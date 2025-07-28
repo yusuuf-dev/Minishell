@@ -6,7 +6,7 @@
 /*   By: yoel-you <yoel-you@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 12:13:16 by yoel-you          #+#    #+#             */
-/*   Updated: 2025/07/26 18:35:33 by yoel-you         ###   ########.fr       */
+/*   Updated: 2025/07/28 11:18:52 by yoel-you         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,6 @@
 # include <stdbool.h>
 # include <stdio.h>
 # include <stdlib.h>
-# include <string.h>
 # include <sys/stat.h>
 # include <sys/types.h>
 # include <sys/wait.h>
@@ -193,7 +192,7 @@ void					custom_split(char *str, t_data *data, size_t i, char q);
 char					*joinstr_helper(char *str, size_t i, size_t len,
 							size_t index);
 size_t					getlen_helper(char *str, size_t index);
-int						validchar_helper(char c);
+int						valid_helper(char c);
 int						found_quotes(char *s);
 int						ft_var_exists(char *s, char **envp);
 char					**ft_duplicate_add_s(char **dup, char *s);

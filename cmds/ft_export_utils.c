@@ -29,6 +29,8 @@ static int	ft_ex_strncmp(const char *s1, const char *s2, char terminator)
 			return (s1[i] - s2[i]);
 		i++;
 	}
+	/*if (i)
+		i--;*/
 	i--;
 	return (s1[i] - s2[i]);
 }

@@ -6,7 +6,7 @@
 /*   By: yoel-you <yoel-you@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/16 10:40:14 by yoel-you          #+#    #+#             */
-/*   Updated: 2025/07/26 10:57:59 by yoel-you         ###   ########.fr       */
+/*   Updated: 2025/07/28 11:18:28 by yoel-you         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,6 @@ void	*ft_calloc(size_t n)
 	void	*p;
 
 	p = ft_malloc(n);
-	memset(p, 0, n);
+	ft_memset(p, 0, n);
 	return (p);
 }

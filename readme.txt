@@ -181,3 +181,33 @@ add new file redirections_parsing_utils.c (add its functions to header)
 change on redirections_parsing.c (refactor)
 
 change name of function and file c_split.c to skip_quotes_split.c also function c_split to skip_quotes_split
+
+
+update 27/07
+
+leaks :
+
+minishell : export HOLA=" bonjour hey "
+minishell : echo wesh"$HOLA" | cat -e
+wesh bonjour hey $
+==991310== 
+==991310== HEAP SUMMARY:
+==991310==     in use at exit: 208,707 bytes in 231 blocks
+==991310==   total heap usage: 7,371 allocs, 7,140 frees, 340,841 bytes allocated
+==991310== 
+==991310== LEAK SUMMARY:
+==991310==    definitely lost: 32 bytes in 1 blocks
+==991310==    indirectly lost: 34 bytes in 2 blocks
+==991310==      possibly lost: 0 bytes in 0 blocks
+==991310==    still reachable: 208,641 bytes in 228 blocks
+==991310==         suppressed: 0 bytes in 0 blocks
+==991310== Rerun with --leak-check=full to see details of leaked memory
+==991310== 
+==991310== For lists of detected and suppressed errors, rerun with: -s
+==991310== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+minishell :
+
+
+note in minishell.c
+
+71	memset(&data, 0, (sizeof(void *) * PTR_TO_NULL)); // we are using memeset directly (not allowed)
