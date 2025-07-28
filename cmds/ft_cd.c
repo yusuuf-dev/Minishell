@@ -6,13 +6,13 @@
 /*   By: yoel-you <yoel-you@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 17:57:39 by asoufian          #+#    #+#             */
-/*   Updated: 2025/07/24 14:33:36 by yoel-you         ###   ########.fr       */
+/*   Updated: 2025/07/28 11:22:08 by yoel-you         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-static char	*update_env_pwd(t_data *data, char *argv_bkp)
+static char	*update_env_pwd(t_data *data, char *argv_bkp, int free_flag)
 {
 	char	*p;
 	char	*var_pwd;
@@ -27,10 +27,12 @@ static char	*update_env_pwd(t_data *data, char *argv_bkp)
 	{
 		perror("getcwd");
 		p = ft_strjoin(data->cwd, argv_bkp);
+		free_flag = 1;
 	}
 	var_pwd = p;
 	p = ft_strdup(var_pwd);
-	free(var_pwd);
+	if (!free_flag)
+		free(var_pwd);
 	free_ft_malloc(data->cwd, 1);
 	data->cwd = ft_strdup_env(p);
 	var_pwd = ft_strjoin("PWD=", data->cwd);
@@ -93,7 +95,7 @@ int	ft_cd(char **argv, char *argv_bkp, t_data *data, bool exists_in_cdpath)
 		ft_putstr(var_pwd, 2);
 		return (ft_putstr("\n", 2), argv[1] = argv_bkp, 1);
 	}
-	var_pwd = update_env_pwd(data, argv_bkp);
+	var_pwd = update_env_pwd(data, argv_bkp, 0);
 	if (!var_pwd)
 		return (argv[1] = argv_bkp, perror("minishell: cd: "), errno);
 	if (argv_bkp && argv_bkp[0] == '-' && argv_bkp[1] == 0)

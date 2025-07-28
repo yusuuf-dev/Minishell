@@ -6,7 +6,7 @@
 /*   By: yoel-you <yoel-you@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 12:04:21 by yoel-you          #+#    #+#             */
-/*   Updated: 2025/07/26 19:18:12 by yoel-you         ###   ########.fr       */
+/*   Updated: 2025/07/28 11:19:17 by yoel-you         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ int	main(void)
 				reset_std_in_out_err(&data);
 			}
 		}
-		memset(&data, 0, (sizeof(void *) * PTR_TO_NULL));
+		ft_memset(&data, 0, (sizeof(void *) * PTR_TO_NULL));
 		config_malloc(NULL, 0, 0);
 	}
 	return (rl_clear_history(), config_malloc(NULL, 0, 2), data.status);

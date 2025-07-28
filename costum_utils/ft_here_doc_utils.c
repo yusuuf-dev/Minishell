@@ -6,7 +6,7 @@
 /*   By: yoel-you <yoel-you@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/18 19:09:38 by asoufian          #+#    #+#             */
-/*   Updated: 2025/07/23 09:45:29 by yoel-you         ###   ########.fr       */
+/*   Updated: 2025/07/27 16:04:48 by yoel-you         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ static char	*c_expand(char *str, t_data *data, size_t i, size_t len)
 	ptr = NULL;
 	while (str && str[i])
 	{
-		if (str[i] == '$' && validchar_helper(str[i + 1]))
+		if (str[i] == '$' && valid_helper(str[i + 1]))
 		{
 			len = getlen_helper(str, i + 1);
 			key = ft_strldup(&str[i + 1], len);

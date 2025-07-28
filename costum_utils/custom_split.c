@@ -6,7 +6,7 @@
 /*   By: yoel-you <yoel-you@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/14 17:00:05 by yoel-you          #+#    #+#             */
-/*   Updated: 2025/07/23 10:18:55 by yoel-you         ###   ########.fr       */
+/*   Updated: 2025/07/28 11:15:39 by yoel-you         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,19 +66,45 @@ static char	*expand_join(char *str, t_data *data, size_t index, size_t *expand)
 	return (new);
 }
 
-static void	get_argements(char *str, char *checker, t_data *data)
+static int	is_empty_quotes(char *str, size_t *i, char *checker, t_data *data)
+{
+	char	*ptr;
+
+	if (*i > 0 && str[*i - 1] != ' ')
+		return (0);
+	while (str[*i])
+	{
+		if (!(str[*i] && str[*i + 1] && str[*i] == str[*i + 1]))
+			return (0);
+		if (!(str[*i] == '\'' || str[*i] == '\"'))
+			return (0);
+		if (checker[*i] == '1' || checker[*i + 1] == '1')
+			return (0);
+		(*i) += 2;
+		if (!str[*i] || str[*i] == ' ')
+			break ;
+	}
+	ptr = ft_strdup("");
+	add_ptr(&ptr, data, 0, 0);
+	return (1);
+}
+
+static void	get_argements(char *str, char *checker, t_data *data, char q)
 {
 	char	*ptr;
 	size_t	i;
-	char	q;
 
-	q = 0;
 	i = 0;
 	ptr = NULL;
-	while (str[i] == ' ')
-		i++;
-	while (str[i])
+	while (str && str[i])
 	{
+		if (str[i] == ' ' && !q)
+		{
+			i++;
+			continue ;
+		}
+		if (is_empty_quotes(str, &i, checker, data))
+			continue ;
 		if (checker[i] == '0' && !q && (str[i] == '\"' || str[i] == '\''))
 			q = str[i];
 		else if (checker[i] == '0' && q && str[i] == q)
@@ -87,11 +113,7 @@ static void	get_argements(char *str, char *checker, t_data *data)
 			ptr = charjoin(ptr, str[i]);
 		i++;
 		if (ptr && !q && (str[i] == ' ' || !str[i]))
-		{
 			add_ptr(&ptr, data, 0, 0);
-			while (str[i] == ' ')
-				i++;
-		}
 	}
 }
 
@@ -102,23 +124,22 @@ void	custom_split(char *str, t_data *data, size_t i, char q)
 	data->expand = NULL;
 	data->checker = NULL;
 	is_exp = 0;
-	while (str[i])
+	while (str && str[i])
 	{
 		if (!is_exp && !q && (str[i] == '\'' || str[i] == '\"'))
 			q = str[i];
 		else if (!is_exp && q && str[i] == q)
 			q = 0;
-		while (q != '\'' && str[i] == '$' && validchar_helper(str[i + 1]))
+		if (!is_exp && q != '\'' && str[i] == '$' && valid_helper(str[i + 1]))
+		{
 			str = expand_join(str, data, i, &is_exp);
-		if (!str[0])
-			return ;
+			continue ;
+		}
 		data->expand = charjoin(data->expand, str[i]);
-		if (!str[i])
-			break ;
 		generate_checker(data, is_exp);
 		i++;
 		if (is_exp)
 			is_exp--;
 	}
-	get_argements(data->expand, data->checker, data);
+	get_argements(data->expand, data->checker, data, 0);
 }
