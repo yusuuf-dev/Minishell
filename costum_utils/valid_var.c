@@ -17,7 +17,7 @@ int	valid_var(char *s)
 	size_t	i;
 
 	i = 1;
-	if (s[0] && (s[0] != '_' && !ft_isalpha(s[0])))
+	if ((s[0] && (s[0] != '_' && !ft_isalpha(s[0]))) || !s[0])
 		return (1);
 	while (s[i] && s[i] != '=')
 	{
