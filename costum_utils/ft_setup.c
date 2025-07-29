@@ -59,6 +59,7 @@ static char	*get_cwd(t_data *data)
 void	ft_setup(t_data *data)
 {
 	char	**built_ins;
+	char	*var_pwd;
 
 	get_data(data);
 	ft_memset(data, 0, sizeof(t_data));
@@ -68,6 +69,9 @@ void	ft_setup(t_data *data)
 	built_ins = ft_split("pwd,cd,export,echo,env,unset,exit", ',');
 	data->built_ins = ft_duplicate(built_ins);
 	data->cwd = get_cwd(data);
+	var_pwd = ft_strjoin("PWD=", data->cwd);
+	if (ft_var_exists(var_pwd, data->envp))
+		data->envp = ft_duplicate_add_s(data->envp, var_pwd);
 	sigemptyset(&(data->s_sig_ign.sa_mask));
 	data->s_sig_ign.sa_flags = SA_RESTART;
 	data->s_sig_ign.sa_handler = SIG_IGN;
