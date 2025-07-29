@@ -94,7 +94,6 @@ static void	redirecting_child_std(t_data *data, t_pipes *pipe_data)
 {
 	if (!data->is_a_child)
 		close_dup_fds();
-	data->is_a_child = 1;
 	sigaction(SIGINT, &(data->old_sig_int), NULL);
 	sigaction(SIGQUIT, &(data->old_sig_quit), NULL);
 	data->p_rdl = ft_strdup(pipe_data->piped_cmds[pipe_data->i]);
@@ -115,6 +114,7 @@ static void	redirecting_child_std(t_data *data, t_pipes *pipe_data)
 	{
 		if (dup2(pipe_data->old_pipe, STDIN_FILENO) == -1)
 			print_free_exit(DUP_FAILED, errno);
+		close(pipe_data->old_pipe);
 	}
 	return ;
 }
@@ -134,7 +134,8 @@ void	ft_pipes(t_data *data)
 		if (pipe_data.cpid == -1)
 			print_free_exit(FORK_FAILED, errno);
 		if (pipe_data.cpid == 0)
-			return (redirecting_child_std(data, &pipe_data));
+			return (data->is_a_child = 1,
+				redirecting_child_std(data, &pipe_data));
 		else
 		{
 			update_heredoc_lst(pipe_data.piped_cmds[pipe_data.i], data, 0, 0);

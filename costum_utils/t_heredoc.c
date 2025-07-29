@@ -121,24 +121,24 @@ int	update_heredoc_lst(char *s, t_data *data, int found, int i)
 
 	q = 0;
 	temp = data->heredooc;
-	i = 0;
-	found = 0;
-	while ((s)[i] && !found)
+	while ((s)[i])
 	{
 		if (!q && (s[i] == '\'' || s[i] == '\"'))
 			q = s[i];
 		else if (q && s[i] == q)
 			q = 0;
 		if (!q && s[i] == '<' && s[i + 1] == '<')
-			found = 1;
+			found++;
 		i++;
 	}
 	if (!temp || !found)
 		return (1);
-	while (temp->next && temp->taken)
+	while (found)
 	{
-		temp = temp->next;
+		while (temp->next && temp->taken)
+			temp = temp->next;
+		temp->taken = 1;
+		found--;
 	}
-	temp->taken = 1;
 	return (1);
 }
