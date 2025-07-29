@@ -211,3 +211,8 @@ minishell :
 note in minishell.c
 
 71	memset(&data, 0, (sizeof(void *) * PTR_TO_NULL)); // we are using memeset directly (not allowed)
+
+
+29/07
+
+we change 

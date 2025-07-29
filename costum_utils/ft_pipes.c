@@ -16,9 +16,9 @@
 than that the process doesn't have anymore children to wait for*/
 /* wait for children and get the exit code of the last child*/
 
-static int	wait_on_other_children(int rec_sig_quit, int rec_sig_int)
+static int wait_on_other_children(int rec_sig_quit, int rec_sig_int)
 {
-	int	child_info;
+	int child_info;
 
 	child_info = 0;
 	while (wait(&child_info) != -1)
@@ -31,20 +31,20 @@ static int	wait_on_other_children(int rec_sig_quit, int rec_sig_int)
 	}
 	if (rec_sig_int)
 	{
-		write(1, "\n", 1);
+		write(1, "\n", 2);
 	}
 	if (rec_sig_quit)
 	{
-		ft_putstr("Quit (core dumped)\n", 1);
+		ft_putstr("Quit (core dumped)\n", 2);
 	}
 	return (0);
 }
 
-static void	wait_children(t_pipes *pipe_data, t_data *data)
+static void wait_children(t_pipes *pipe_data, t_data *data)
 {
-	int	child_info;
-	int	rec_sig_int;
-	int	rec_sig_quit;
+	int child_info;
+	int rec_sig_int;
+	int rec_sig_quit;
 
 	child_info = 0;
 	rec_sig_int = 0;
@@ -62,26 +62,29 @@ static void	wait_children(t_pipes *pipe_data, t_data *data)
 			rec_sig_quit = 1;
 	}
 	if (wait_on_other_children(rec_sig_quit, rec_sig_int))
-		return ;
+		return;
 	sigaction(SIGINT, &(data->sig_int), NULL);
-	return ;
+	return;
 }
 
-static void	close_save_old_pipe(t_pipes *pipe_data, int state)
+static void close_save_old_pipe(t_pipes *pipe_data, int state)
 {
 	if (state == 1)
 	{
 		if (pipe_data->i != 0)
 			close(pipe_data->old_pipe);
-		pipe_data->old_pipe = dup(pipe_data->pipefd[0]);
-		if (pipe_data->old_pipe == -1)
-			print_free_exit(DUP_FAILED, errno);
+		if (pipe_data->piped_cmds[pipe_data->i + 1])
+		{
+			pipe_data->old_pipe = dup(pipe_data->pipefd[0]);
+			if (pipe_data->old_pipe == -1)
+				print_free_exit(DUP_FAILED, errno);
+		}
 	}
 	if (state == 0)
 		close(pipe_data->old_pipe);
 	close(pipe_data->pipefd[1]);
 	close(pipe_data->pipefd[0]);
-	return ;
+	return;
 }
 
 /* this functions redirects stdin, stdout or both of them
@@ -90,7 +93,7 @@ static void	close_save_old_pipe(t_pipes *pipe_data, int state)
 	another prompt */
 /* It resets old signals too*/
 
-static void	redirecting_child_std(t_data *data, t_pipes *pipe_data)
+static void redirecting_child_std(t_data *data, t_pipes *pipe_data)
 {
 	if (!data->is_a_child)
 		close_dup_fds();
@@ -105,7 +108,7 @@ static void	redirecting_child_std(t_data *data, t_pipes *pipe_data)
 	}
 	else if (pipe_data->piped_cmds[pipe_data->i + 1])
 	{
-		if (dup2(pipe_data->old_pipe, STDIN_FILENO) == -1
+		if (dup2(pipe_data->old_pipe, STDIN_FILENO) == -1 
 			|| dup2(pipe_data->pipefd[1], STDOUT_FILENO) == -1)
 			print_free_exit(DUP_FAILED, errno);
 		close_save_old_pipe(pipe_data, 0);
@@ -116,26 +119,26 @@ static void	redirecting_child_std(t_data *data, t_pipes *pipe_data)
 			print_free_exit(DUP_FAILED, errno);
 		close(pipe_data->old_pipe);
 	}
-	return ;
+	return;
 }
 
-void	ft_pipes(t_data *data)
+int ft_pipes(t_data *data)
 {
-	t_pipes	pipe_data;
+	t_pipes pipe_data;
 
 	ft_memset(&pipe_data, 0, sizeof(t_pipes));
 	pipe_data.piped_cmds = data->segments;
 	sigaction(SIGINT, &(data->s_sig_ign), NULL);
 	while (pipe_data.piped_cmds[pipe_data.i])
 	{
-		if (pipe(pipe_data.pipefd) == -1)
+		if (pipe_data.piped_cmds[pipe_data.i + 1] && pipe(pipe_data.pipefd))
 			print_free_exit(PIPE_FAILED, errno);
 		pipe_data.cpid = fork();
 		if (pipe_data.cpid == -1)
 			print_free_exit(FORK_FAILED, errno);
 		if (pipe_data.cpid == 0)
-			return (data->is_a_child = 1,
-				redirecting_child_std(data, &pipe_data));
+			return (redirecting_child_std(data, &pipe_data),
+				(data->is_a_child = 1), 0);
 		else
 		{
 			update_heredoc_lst(pipe_data.piped_cmds[pipe_data.i], data, 0, 0);
@@ -145,5 +148,5 @@ void	ft_pipes(t_data *data)
 	}
 	wait_children(&pipe_data, data);
 	data->p_rdl = NULL;
-	return ;
+	return (0);
 }

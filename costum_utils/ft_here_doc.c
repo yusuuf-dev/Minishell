@@ -74,7 +74,7 @@ static void	wait_a_reap_exit_code(t_data *data, int child_pid)
 		data->status = WTERMSIG(child_status) + 128;
 		if (data->status == 130)
 		{
-			write(1, "\n", 1);
+			write(1, "\n", 2);
 		}
 	}
 	free_heredoc(data);

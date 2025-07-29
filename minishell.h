@@ -13,6 +13,7 @@
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
+# include <stdio.h>
 # include <errno.h>
 # include <fcntl.h>
 # include <limits.h>
@@ -20,7 +21,6 @@
 # include <readline/readline.h>
 # include <signal.h>
 # include <stdbool.h>
-# include <stdio.h>
 # include <stdlib.h>
 # include <sys/stat.h>
 # include <sys/types.h>
@@ -142,7 +142,7 @@ char					*heredoc_delimiter(char *s, int *isquote,
 							int *index_ret);
 /***************************************************************/
 /****************************PIPE*******************************/
-void					ft_pipes(t_data *data);
+int						ft_pipes(t_data *data);
 /***************************************************************/
 /***************************REDICTIONS**************************/
 void					redirections_parsing(t_data *data);

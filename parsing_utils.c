@@ -26,9 +26,9 @@ static void	reset_sig_a_reap_exit_code(t_data *data)
 	{
 		data->status = WTERMSIG(child_info) + 128;
 		if (data->status == 131)
-			ft_putstr("Quit (core dumped)\n", 1);
+			ft_putstr("Quit (core dumped)\n", 2);
 		else if (data->status == 130)
-			write(1, "\n", 1);
+			write(1, "\n", 2);
 	}
 	return ;
 }
@@ -58,5 +58,5 @@ int	execute_command(char *path, t_data *data)
 	}
 	else
 		reset_sig_a_reap_exit_code(data);
-	return (200);
+	return (1);
 }
