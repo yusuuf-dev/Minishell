@@ -1,5 +1,5 @@
-CC = gcc
-FLAGS = -Werror -Wextra -Wall -g
+CC = cc
+FLAGS = -Wextra -Wall -Werror
 NAME = minishell
 SRC = minishell.c parsing.c ./utils/ft_calloc.c ./costum_utils/ft_putstr.c ./costum_utils/ft_check_spaces.c ./utils/ft_substr.c \
 ./costum_utils/ft_duplicate.c ./utils/ft_strdup.c ./utils/ft_strldup.c ./utils/ft_split.c ./utils/ft_strjoin.c ./utils/ft_strlen.c ./utils/ft_strcmp.c \
