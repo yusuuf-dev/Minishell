@@ -6,7 +6,7 @@
 /*   By: yoel-you <yoel-you@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 10:41:19 by yoel-you          #+#    #+#             */
-/*   Updated: 2025/07/26 12:07:49 by yoel-you         ###   ########.fr       */
+/*   Updated: 2025/07/30 10:05:55 by yoel-you         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,8 +45,6 @@ static void	copy_delimiter(char *dst, char *src, size_t start, size_t end)
 	j = 0;
 	while (start < end)
 	{
-		if (!q && src[start] == '$' && src[start + 1] == '$')
-			dst[j++] = src[start++];
 		if (!q && (src[start] == '\'' || src[start] == '\"'))
 			q = src[start];
 		else if (q && src[start] == q)

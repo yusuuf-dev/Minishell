@@ -6,7 +6,7 @@
 /*   By: yoel-you <yoel-you@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/21 11:11:47 by asoufian          #+#    #+#             */
-/*   Updated: 2025/07/29 10:51:54 by yoel-you         ###   ########.fr       */
+/*   Updated: 2025/07/30 11:14:30 by yoel-you         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,9 +16,9 @@
 than that the process doesn't have anymore children to wait for*/
 /* wait for children and get the exit code of the last child*/
 
-static int wait_on_other_children(int rec_sig_quit, int rec_sig_int)
+static int	wait_on_other_children(int rec_sig_quit, int rec_sig_int)
 {
-	int child_info;
+	int	child_info;
 
 	child_info = 0;
 	while (wait(&child_info) != -1)
@@ -40,11 +40,11 @@ static int wait_on_other_children(int rec_sig_quit, int rec_sig_int)
 	return (0);
 }
 
-static void wait_children(t_pipes *pipe_data, t_data *data)
+static void	wait_children(t_pipes *pipe_data, t_data *data)
 {
-	int child_info;
-	int rec_sig_int;
-	int rec_sig_quit;
+	int	child_info;
+	int	rec_sig_int;
+	int	rec_sig_quit;
 
 	child_info = 0;
 	rec_sig_int = 0;
@@ -62,12 +62,12 @@ static void wait_children(t_pipes *pipe_data, t_data *data)
 			rec_sig_quit = 1;
 	}
 	if (wait_on_other_children(rec_sig_quit, rec_sig_int))
-		return;
+		return ;
 	sigaction(SIGINT, &(data->sig_int), NULL);
-	return;
+	return ;
 }
 
-static void close_save_old_pipe(t_pipes *pipe_data, int state)
+static void	close_save_old_pipe(t_pipes *pipe_data, int state)
 {
 	if (state == 1)
 	{
@@ -84,7 +84,7 @@ static void close_save_old_pipe(t_pipes *pipe_data, int state)
 		close(pipe_data->old_pipe);
 	close(pipe_data->pipefd[1]);
 	close(pipe_data->pipefd[0]);
-	return;
+	return ;
 }
 
 /* this functions redirects stdin, stdout or both of them
@@ -93,7 +93,7 @@ static void close_save_old_pipe(t_pipes *pipe_data, int state)
 	another prompt */
 /* It resets old signals too*/
 
-static void redirecting_child_std(t_data *data, t_pipes *pipe_data)
+static void	redirecting_child_std(t_data *data, t_pipes *pipe_data)
 {
 	if (!data->is_a_child)
 		close_dup_fds();
@@ -108,7 +108,7 @@ static void redirecting_child_std(t_data *data, t_pipes *pipe_data)
 	}
 	else if (pipe_data->piped_cmds[pipe_data->i + 1])
 	{
-		if (dup2(pipe_data->old_pipe, STDIN_FILENO) == -1 
+		if (dup2(pipe_data->old_pipe, STDIN_FILENO) == -1
 			|| dup2(pipe_data->pipefd[1], STDOUT_FILENO) == -1)
 			print_free_exit(DUP_FAILED, errno);
 		close_save_old_pipe(pipe_data, 0);
@@ -119,12 +119,12 @@ static void redirecting_child_std(t_data *data, t_pipes *pipe_data)
 			print_free_exit(DUP_FAILED, errno);
 		close(pipe_data->old_pipe);
 	}
-	return;
+	return ;
 }
 
-int ft_pipes(t_data *data)
+int	ft_pipes(t_data *data)
 {
-	t_pipes pipe_data;
+	t_pipes	pipe_data;
 
 	ft_memset(&pipe_data, 0, sizeof(t_pipes));
 	pipe_data.piped_cmds = data->segments;

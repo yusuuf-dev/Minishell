@@ -6,7 +6,7 @@
 /*   By: yoel-you <yoel-you@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 10:08:11 by yoel-you          #+#    #+#             */
-/*   Updated: 2025/07/29 11:08:24 by yoel-you         ###   ########.fr       */
+/*   Updated: 2025/07/30 11:12:15 by yoel-you         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,9 +56,6 @@ static char	*get_cwd(t_data *data)
 	return (p);
 }
 
-extern char **environ; // remove that 
-
-
 void	ft_setup(t_data *data)
 {
 	char	**built_ins;
@@ -67,7 +64,7 @@ void	ft_setup(t_data *data)
 	ft_memset(data, 0, sizeof(t_data));
 	if (assign_std_in_out_err(data))
 		exit(errno);
-	data->envp = ft_duplicate(environ); // use previous __environ
+	data->envp = ft_duplicate(__environ);
 	built_ins = ft_split("pwd,cd,export,echo,env,unset,exit", ',');
 	data->built_ins = ft_duplicate(built_ins);
 	data->cwd = get_cwd(data);

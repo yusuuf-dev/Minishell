@@ -6,7 +6,7 @@
 /*   By: yoel-you <yoel-you@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/24 11:22:39 by asoufian          #+#    #+#             */
-/*   Updated: 2025/07/24 14:44:17 by yoel-you         ###   ########.fr       */
+/*   Updated: 2025/07/30 09:54:10 by yoel-you         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ static int	ft_ex_strncmp(const char *s1, const char *s2, char terminator)
 
 	i = 0;
 	if (!s1 || !s2)
-		exit(-1);
+		return (0);
 	while (s1[i])
 	{
 		if (s1[i] == terminator && s2[i] != terminator)
