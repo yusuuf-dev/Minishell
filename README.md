@@ -27,3 +27,18 @@ git clone https://github.com/your-username/Minishell.git
 cd Minishell
 make
 make clean  # to clean env and get exucitebale file and rn it
+```
+### 2. Launch it
+```bash
+./minishell
+```
+### 3. run commands (example)
+```bash
+minishell> echo Hello World
+Hello World
+minishell> ls -l > output.txt
+minishell> cat output.txt
+# Shows the detailed list of files
+minishell> ls -l | grep minishell
+minishell> exit
+```
