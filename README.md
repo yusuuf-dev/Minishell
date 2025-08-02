@@ -22,22 +22,8 @@ Minishell is a minimal shell implementation designed to work on Unix-like operat
 
 ### 1. Clone the repository
 
+```bash
 git clone https://github.com/your-username/Minishell.git
 cd Minishell
 make
-make clean   # to clean env and get executable file
-
-lunch it :
-  ./minishell  
-
-  and enjoy use cmds on minishell like bash
-
-example :
-minishell> echo Hello World
-Hello World
-minishell> ls -l > output.txt
-minishell> cat output.txt
-# Shows the detailed list of files
-minishell> ls -l | grep minishell
-minishell> exit
-
+make clean  # to clean env and get exucitebale file and rn it
